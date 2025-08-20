@@ -23,8 +23,8 @@ export const renderRoutes = (routes: RouteInterface[]) =>
           {path === PATH.PAGE.DASHBOARD && (
               <Route index element={<Navigate to={PATH.PAGE.DASHBOARD} />}/> // Mặc định render khi vào trang
           )}
-          {(path === PATH.PAGE.HOME || path === "/") && (
-              <Route index element={<Navigate to={PATH.PAGE.HOME} />}/> // Mặc định render khi vào trang
+          {(path === PATH.SITE_SCREEN.HOME ) && (
+              <Route index element={<Navigate to={PATH.SITE_SCREEN.HOME} />}/> // Mặc định render khi vào trang
           )}
         </Route>
     );

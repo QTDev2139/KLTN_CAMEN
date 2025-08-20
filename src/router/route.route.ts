@@ -4,17 +4,18 @@ import { PATH } from '.';
 import ErrorPage from '~/pages/error';
 import Not_FoundPage from '~/pages/not_found';
 
-import HomePage from '~/pages/home';
-import CartPage from '~/pages/home/cart';
-import CategoryPage from '~/pages/home/category';
-import ProductPage from '~/pages/home/product';
-import SupportPage from '~/pages/home/support';
-import BlogPage from '~/pages/home/blog';
-import AccountPage from '~/pages/home/account';
-import CheckoutPage from '~/pages/home/checkout';
+import SitePage from '~/pages/site/site.page';
+import HomePage from '~/pages/site/home/home.screen';
+import CartPage from '~/pages/site/cart/cart.screen';
+import CategoryPage from '~/pages/site/category/category.screen';
+import ProductPage from '~/pages/site/product/product.screen';
+import SupportPage from '~/pages/site/support';
+import BlogPage from '~/pages/site/blog/blog.screen';
+import AccountPage from '~/pages/site/account/account.screen';
+import CheckoutPage from '~/pages/site/checkout/checkout.screen';
 
-import DashboardPage from '~/pages/dashboard';
-import OverviewScreen from '~/pages/dashboard/overview';
+import DashboardPage from '~/pages/dashboard/dashboard.page';
+import OverviewScreen from '~/pages/dashboard/overview/overview.screen';
 
 export type Route = {
   path: string;
@@ -37,44 +38,49 @@ export const routes: Route[] = [
     type: RouteType.PUBLIC,
   },
 
-  // HOME
+  // SITE
   {
-    path: PATH.PAGE.HOME,
-    element: HomePage,
+    path: PATH.PAGE.SITE,
+    element: SitePage,
     type: RouteType.PROTECTED,
     children: [
       {
-        path: PATH.HOME_SCREEN.CATEGORY,
+        path: PATH.SITE_SCREEN.HOME,
+        element: HomePage,
+        type: RouteType.PUBLIC,
+      },
+      {
+        path: PATH.SITE_SCREEN.CATEGORY,
         element: CategoryPage,
         type: RouteType.PUBLIC,
       },
       {
-        path: PATH.HOME_SCREEN.PRODUCT,
+        path: PATH.SITE_SCREEN.PRODUCT,
         element: ProductPage,
         type: RouteType.PUBLIC,
       },
       {
-        path: PATH.HOME_SCREEN.CART,
+        path: PATH.SITE_SCREEN.CART,
         element: CartPage,
         type: RouteType.PUBLIC,
       },
       {
-        path: PATH.HOME_SCREEN.SUPPORT,
+        path: PATH.SITE_SCREEN.SUPPORT,
         element: SupportPage,
         type: RouteType.PUBLIC,
       },
       {
-        path: PATH.HOME_SCREEN.BLOG,
+        path: PATH.SITE_SCREEN.BLOG,
         element: BlogPage,
         type: RouteType.PUBLIC,
       },
       {
-        path: PATH.HOME_SCREEN.ACCOUNT,
+        path: PATH.SITE_SCREEN.ACCOUNT,
         element: AccountPage,
         type: RouteType.PUBLIC,
       },
       {
-        path: PATH.HOME_SCREEN.CHECKOUT,
+        path: PATH.SITE_SCREEN.CHECKOUT,
         element: CheckoutPage,
         type: RouteType.PUBLIC,
       },
