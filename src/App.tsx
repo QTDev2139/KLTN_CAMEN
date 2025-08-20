@@ -1,19 +1,16 @@
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import 'normalize.css';
+import { renderRoutes } from './router/render.route';
+import { routes } from './router/route.route';
+import { PAGE } from './router/path.route';
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Error from "./pages/Error";
-
-function App() {
-    return (
-        <Router>
-          <div className="App">
-            <Routes>
-              <Route path="/" element={<Home/>}/>
-              <Route path="/error" element={<Error/>}/>
-            </Routes>
-          </div>
-        </Router>
-    );
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigate to={PAGE.HOME} replace />} />
+        {renderRoutes(routes)}
+      </Routes>
+    </Router>
+  );
 }
-
-export default App;

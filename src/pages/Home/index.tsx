@@ -1,5 +1,8 @@
-function Home() {
-    return ( <h2>Home page</h2> );
-}
+import { Outlet } from "react-router-dom";
 
-export default Home;
+export default function HomeScreen() {
+    return (<>
+    <h1>Home Page</h1>
+    <Outlet />
+    </>)
+}
