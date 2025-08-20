@@ -5,11 +5,12 @@ export const PAGE = {
     NOT_FOUND: '/*',
 
     // Private
-    HOME: '/home' ,
+    SITE: '/' ,
     DASHBOARD: '/dashboard',
 }
 
-export const HOME_SCREEN = {
+export const SITE_SCREEN = {
+    HOME: 'home',
     CATEGORY: 'c/:slug',
     PRODUCT: 'p/:slug',
     CART: 'cart',
