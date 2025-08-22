@@ -16,6 +16,7 @@ import CheckoutPage from '~/pages/site/checkout/checkout.screen';
 
 import DashboardPage from '~/pages/dashboard/dashboard.page';
 import OverviewScreen from '~/pages/dashboard/overview/overview.screen';
+import SiteLayout from '~/layouts/site.layout';
 
 export type Route = {
   path: string;
@@ -42,6 +43,7 @@ export const routes: Route[] = [
   {
     path: PATH.PAGE.SITE,
     element: SitePage,
+    layout: SiteLayout,
     type: RouteType.PROTECTED,
     children: [
       {
