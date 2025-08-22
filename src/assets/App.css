@@ -1,0 +1,10 @@
+@font-face {
+  font-family: 'Mulish';
+  src: url('../fonts/Mulish/Mulish-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;   /* hỗ trợ từ thin 100 → black 900 */
+  font-style: normal;
+}
+
+body {
+    font-family: 'Mulish', sans-serif;
+}
