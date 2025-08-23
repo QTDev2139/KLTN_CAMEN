@@ -2,6 +2,7 @@ import { Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import i18n from "i18next";
+import { PATH } from '~/router';
 
 export default function BlogScreen() {
   const { t } = useTranslation('blog');
@@ -15,7 +16,7 @@ export default function BlogScreen() {
         <div onClick={() => changeLanguage('en')}>English</div>
       </Stack>
       {t('title')}
-      <Link to="/home">Home</Link>
+      <Link to={PATH.SITE_SCREEN.HOME} >Home</Link>
     </>
   );
 }

@@ -5,18 +5,18 @@ import ErrorPage from '~/pages/error';
 import Not_FoundPage from '~/pages/not_found';
 
 import SitePage from '~/pages/site/site.page';
-import HomePage from '~/pages/site/home/home.screen';
-import CartPage from '~/pages/site/cart/cart.screen';
-import CategoryPage from '~/pages/site/category/category.screen';
-import ProductPage from '~/pages/site/product/product.screen';
-import SupportPage from '~/pages/site/support';
-import BlogPage from '~/pages/site/blog/blog.screen';
-import AccountPage from '~/pages/site/account/account.screen';
-import CheckoutPage from '~/pages/site/checkout/checkout.screen';
+import HomePage from '~/pages/site/screen/home/home.screen';
+import CartPage from '~/pages/site/screen/cart/cart.screen';
+import CategoryPage from '~/pages/site/screen/category/category.screen';
+import ProductPage from '~/pages/site/screen/product/product.screen';
+import SupportPage from '~/pages/site/screen/support';
+import BlogPage from '~/pages/site/screen/blog/blog.screen';
+import AccountPage from '~/pages/site/screen/account/account.screen';
+import CheckoutPage from '~/pages/site/screen/checkout/checkout.screen';
 
 import DashboardPage from '~/pages/dashboard/dashboard.page';
 import OverviewScreen from '~/pages/dashboard/overview/overview.screen';
-import SiteLayout from '~/layouts/site.layout';
+import SiteLayout from '~/layouts/site/site.layout';
 
 export type Route = {
   path: string;

@@ -1,12 +1,12 @@
 export const PAGE = {
     // Public
     // AUTH: '/',
-    ERROR: '/error',
-    NOT_FOUND: '/*',
+    ERROR: ':lang/error',
+    NOT_FOUND: ':lang/*',
 
     // Private
-    SITE: '/' ,
-    DASHBOARD: '/dashboard',
+    SITE: ':lang/' ,
+    DASHBOARD: ':lang/dashboard',
 }
 
 export const SITE_SCREEN = {

@@ -12,7 +12,7 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to={SITE_SCREEN.HOME} replace />} />
+        <Route path="/" element={<Navigate to={`vi/${SITE_SCREEN.HOME}`} replace />} />
         {renderRoutes(routes)}
       </Routes>
     </Router>
