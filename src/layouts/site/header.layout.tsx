@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { STYLE } from '~/common/constant';
 import BtnSwitchLanguage from '~/components/btn-switch-language/btn-switch-language';
 import ContainerWrapper from '~/components/elements/container/container.element';
-import { StackRow, StackRowJustBetween, StackRowJustEnd } from '~/components/elements/styles/stack.style';
+import { StackRow, StackRowJustBetweenAlignCenter, StackRowJustEnd } from '~/components/elements/styles/stack.style';
 import { sidebars } from '~/pages/site/part/sitebar';
 
 export default function Header() {
@@ -13,12 +13,11 @@ export default function Header() {
 
   return (
     <ContainerWrapper>
-      <StackRowJustBetween>
+      <StackRowJustBetweenAlignCenter>
         <div className="logo">CA MEN</div>
         <Stack>
           <StackRowJustEnd>
             <BtnSwitchLanguage />
-
             <div style={{ padding: '0 10px' }}>YOUTOBE</div>
             <div style={{ padding: '0 10px' }}>SHARE</div>
           </StackRowJustEnd>
@@ -30,7 +29,7 @@ export default function Header() {
             ))}
           </StackRow>
         </Stack>
-      </StackRowJustBetween>
+      </StackRowJustBetweenAlignCenter>
     </ContainerWrapper>
   );
 }

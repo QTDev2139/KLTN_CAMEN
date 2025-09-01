@@ -34,6 +34,12 @@ export const StackRowJustBetween = styled(Stack)(() => ({
     justifyContent: 'space-between'
 }))
 
+export const StackRowJustBetweenAlignCenter = styled(Stack)(() => ({
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+}))
+
 export const StackRowJustEvenly = styled(Stack)(() => ({
     flexDirection: 'row',
     justifyContent: 'space-evenly'

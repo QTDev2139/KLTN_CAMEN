@@ -5,7 +5,7 @@ import BLOG_VI from '~/locates/vi/blog.json';
 import SIDEBAR_EN from '~/locates/en/sidebar.json';
 import SIDEBAR_VI from '~/locates/vi/sidebar.json';
 import ViIcon from '~/assets/images/vi_icon.png';
-import EnIcon from '~/assets/images/en_icon.jpg';
+import EnIcon from '~/assets/images/en_icon.png';
 
 export const locates = {
   vi: { label: 'Việt Nam', icon: ViIcon },
