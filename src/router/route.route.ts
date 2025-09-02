@@ -4,6 +4,9 @@ import { PATH } from '.';
 import ErrorPage from '~/pages/error';
 import Not_FoundPage from '~/pages/not_found';
 
+import AuthPage from '~/pages/auth/index';
+import LoginPage from '~/pages/auth/login/login';
+
 import SitePage from '~/pages/site/site.page';
 import HomePage from '~/pages/site/screen/home/home.screen';
 import CartPage from '~/pages/site/screen/cart/cart.screen';
@@ -37,6 +40,19 @@ export const routes: Route[] = [
     path: PATH.PAGE.NOT_FOUND,
     element: Not_FoundPage,
     type: RouteType.PUBLIC,
+  },
+  // Auth
+  {
+    path: PATH.PAGE.AUTH,
+    element: AuthPage,
+    type: RouteType.PUBLIC,
+    children: [
+      {
+        path: PATH.AUTH_SCREEN.LOGIN,
+        element: LoginPage,
+        type: RouteType.PUBLIC,
+      },
+    ]
   },
 
   // SITE

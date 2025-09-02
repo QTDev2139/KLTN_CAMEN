@@ -1,12 +1,16 @@
 export const PAGE = {
     // Public
-    // AUTH: '/',
+    AUTH: 'auth/',
     ERROR: ':lang/error',
     NOT_FOUND: ':lang/*',
 
     // Private
     SITE: ':lang/' ,
     DASHBOARD: ':lang/dashboard',
+}
+
+export const AUTH_SCREEN = {
+    LOGIN: 'login'
 }
 
 export const SITE_SCREEN = {
