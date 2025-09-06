@@ -24,11 +24,12 @@ export const resources = {
 };
 
 export const defaultNS = 'blog';
+export const defaultLanguages = localStorage.getItem('languages')?.replace(/"/g, '') || 'vi';
 
 i18n.use(initReactI18next).init({
   resources,
   ns: ['blog', 'sidebar'], // translation, name space
-  lng: 'vi',
+  lng: defaultLanguages,
   defaultNS,
   fallbackLng: 'vi', // Khong xac dinh duoc ngon ngu => vi
   interpolation: {
