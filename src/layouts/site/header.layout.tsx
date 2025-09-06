@@ -5,7 +5,10 @@ import { STYLE } from '~/common/constant';
 import BtnSwitchLanguage from '~/components/btn-switch-language/btn-switch-language';
 import ContainerWrapper from '~/components/elements/container/container.element';
 import { StackRow, StackRowJustBetweenAlignCenter, StackRowJustEnd } from '~/components/elements/styles/stack.style';
+import Logo from '~/components/logo/logo';
 import { sidebars } from '~/pages/site/part/sitebar';
+
+
 
 export default function Header() {
 
@@ -14,7 +17,7 @@ export default function Header() {
   return (
     <ContainerWrapper>
       <StackRowJustBetweenAlignCenter>
-        <div className="logo">CA MEN</div>
+        <Logo/>
         <Stack>
           <StackRowJustEnd>
             <BtnSwitchLanguage />
