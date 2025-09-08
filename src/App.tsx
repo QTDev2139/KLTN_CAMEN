@@ -12,12 +12,14 @@ import { ThemeProvider } from '@emotion/react';
 import { theme } from './common/constant/mode.contant';
 
 export default function App() {
+  const saved = localStorage.getItem('languages');
+  const language: 'vi' | 'en' = saved === 'vi' || saved === 'en' ? saved : 'vi';
   return (
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<Navigate to={`vi/${SITE_SCREEN.HOME}`} replace />} />
+            <Route path="/" element={<Navigate to={language + '/' +SITE_SCREEN.HOME} replace />} />
             {renderRoutes(routes)}
           </Routes>
         </Router>

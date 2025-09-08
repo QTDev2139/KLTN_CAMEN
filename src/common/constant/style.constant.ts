@@ -22,6 +22,12 @@ export const BORDER_RADIUS_ELEMENT_SMALL = '6px';
 
 //
 
+export const FONT_SIZE = {
+    large: 22,
+    medium: 18,
+    small: 14,
+}
+
 export const FONT_SITE_ICON = {
     large: 22,
     medium: 18,

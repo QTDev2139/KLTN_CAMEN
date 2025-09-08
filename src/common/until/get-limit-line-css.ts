@@ -1,0 +1,6 @@
+export const getLimitLineCss = (line: number): any => ({
+  display: '-webkit-box',
+  overflow: 'hidden',
+  WebkitBoxOrient: 'vertical',
+  WebkitLineClamp: line,
+});

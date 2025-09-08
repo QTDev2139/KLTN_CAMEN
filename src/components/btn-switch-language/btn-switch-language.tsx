@@ -1,12 +1,13 @@
 import i18n from 'i18next';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import { Button, Menu, Stack, useTheme } from '@mui/material';
+import { Button, Menu, Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 import ViIcon from '~/assets/images/vi_icon.png';
 import EnIcon from '~/assets/images/en_icon.png';
 import { locates } from '~/i18n/i18n';
-import { StackRowJustBetweenAlignCenter } from '../elements/styles/stack.style';
+import { StackRowAlignCenter, StackRowJustBetweenAlignCenter } from '../elements/styles/stack.style';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { FONT_SIZE } from '~/common/constant/style.constant';
 
 export default function BtnSwitchLanguage() {
   const { palette } = useTheme();
@@ -45,12 +46,18 @@ export default function BtnSwitchLanguage() {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        sx={{ color: palette.text.primary }}
+        sx={{ color: palette.text.primary, padding:  0 }}
       >
         {language === 'vi' ? (
-          <img src={ViIcon} alt="" style={{ width: '20px', height: '16px' }} />
+          <StackRowAlignCenter>
+            <img src={ViIcon} alt="" style={{ width: '18px', height: '14px' }} /> 
+            <Typography variant='subtitle2' sx={{ paddingLeft: '6px', fontSize: FONT_SIZE.small }}>VN</Typography>
+          </StackRowAlignCenter>
         ) : (
-          <img src={EnIcon} alt="" style={{ width: '20px', height: '16px' }} />
+          <StackRowAlignCenter>
+            <img src={EnIcon} alt="" style={{ width: '18px', height: '14px' }} />
+            <Typography variant='subtitle2' sx={{ paddingLeft: '6px', fontSize: FONT_SIZE.small }}>EN</Typography>
+          </StackRowAlignCenter>
         )}
         {open ? <ExpandLess /> : <ExpandMore />}
       </Button>
