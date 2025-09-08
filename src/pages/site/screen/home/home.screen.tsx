@@ -1,6 +1,4 @@
-import { Stack, useTheme } from '@mui/material';
-import { useEffect, useState } from 'react';
-
+import { useTheme } from '@mui/material';
 
 export default function HomeScreen() {
   const { palette } = useTheme();
