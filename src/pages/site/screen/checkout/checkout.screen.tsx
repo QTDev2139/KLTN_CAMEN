@@ -1,3 +1,3 @@
 export default function CheckoutScreen() {
-    return <>Account Screen</>
+    return <>Checkout Screen</>
 }

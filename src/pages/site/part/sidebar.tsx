@@ -10,20 +10,16 @@ export const sidebars = [
       title: 'products',
     },
     {
-      to: PATH.SITE_SCREEN.HOME,
+      to: PATH.SITE_SCREEN.CHECKOUT,
       title: 'process',
     },
     {
-      to: PATH.SITE_SCREEN.HOME,
+      to: PATH.SITE_SCREEN.CATEGORY,
       title: 'dossier',
     },
     {
-      to: PATH.SITE_SCREEN.HOME,
+      to: PATH.SITE_SCREEN.BLOG,
       title: 'news',
-    },
-    {
-      to: PATH.SITE_SCREEN.HOME,
-      title: 'media',
     },
     {
       to: PATH.SITE_SCREEN.SUPPORT,

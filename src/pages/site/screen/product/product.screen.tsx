@@ -1,3 +1,3 @@
 export default function ProductScreen() {
-    return <>Account Screen</>
+    return <>Product Screen</>
 }
