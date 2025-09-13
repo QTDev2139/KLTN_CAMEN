@@ -14,6 +14,7 @@ import CategoryPage from '~/pages/site/screen/category/category.screen';
 import ProductPage from '~/pages/site/screen/product/product.screen';
 import SupportPage from '~/pages/site/screen/support';
 import BlogPage from '~/pages/site/screen/blog/blog.screen';
+import BlogDetailPage from '~/pages/site/screen/blog-detail/blog-detail.screen';
 import AccountPage from '~/pages/site/screen/account/account.screen';
 import CheckoutPage from '~/pages/site/screen/checkout/checkout.screen';
 
@@ -90,6 +91,11 @@ export const routes: Route[] = [
       {
         path: PATH.SITE_SCREEN.BLOG,
         element: BlogPage,
+        type: RouteType.PUBLIC,
+      },
+      {
+        path: PATH.SITE_SCREEN.BLOG_DETAIL,
+        element: BlogDetailPage,
         type: RouteType.PUBLIC,
       },
       {

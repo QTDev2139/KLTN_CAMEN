@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route } from 'react-router-dom';
 import { Route as RouteInterface } from './route.route';
 import React from 'react';
 import { PATH } from '.';
