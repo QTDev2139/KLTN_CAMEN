@@ -37,7 +37,6 @@ export default function BtnSwitchLanguage() {
   const saved = localStorage.getItem('languages');
   const language: 'vi' | 'en' = saved === 'vi' || saved === 'en' ? saved : 'vi';
 
-
   return (
     <React.Fragment>
       <Button
@@ -46,17 +45,21 @@ export default function BtnSwitchLanguage() {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        sx={{ color: palette.text.primary, padding:  0 }}
+        sx={{ color: palette.text.primary, padding: 0 }}
       >
         {language === 'vi' ? (
           <StackRowAlignCenter>
-            <img src={ViIcon} alt="" style={{ width: '18px', height: '14px' }} /> 
-            <Typography variant='subtitle2' sx={{ paddingLeft: '6px', fontSize: FONT_SIZE.small }}>VN</Typography>
+            <img src={ViIcon} alt="" style={{ width: '18px', height: '14px' }} />
+            <Typography variant="subtitle2" sx={{ paddingLeft: '6px', fontSize: FONT_SIZE.small }}>
+              VN
+            </Typography>
           </StackRowAlignCenter>
         ) : (
           <StackRowAlignCenter>
             <img src={EnIcon} alt="" style={{ width: '18px', height: '14px' }} />
-            <Typography variant='subtitle2' sx={{ paddingLeft: '6px', fontSize: FONT_SIZE.small }}>EN</Typography>
+            <Typography variant="subtitle2" sx={{ paddingLeft: '6px', fontSize: FONT_SIZE.small }}>
+              EN
+            </Typography>
           </StackRowAlignCenter>
         )}
         {open ? <ExpandLess /> : <ExpandMore />}
@@ -65,7 +68,7 @@ export default function BtnSwitchLanguage() {
         <Stack>
           <Button
             onClick={() => {
-              switchLang("vi");
+              switchLang('vi');
             }}
           >
             <StackRowJustBetweenAlignCenter sx={{ width: '100px' }}>
@@ -75,7 +78,7 @@ export default function BtnSwitchLanguage() {
           </Button>
           <Button
             onClick={() => {
-              switchLang("en");
+              switchLang('en');
             }}
           >
             <StackRowJustBetweenAlignCenter sx={{ width: '100px' }}>

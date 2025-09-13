@@ -4,7 +4,9 @@
   font-weight: 100 900;   /* hỗ trợ từ thin 100 → black 900 */
   font-style: normal;
 }
-
+html {
+  overflow-y: scroll;
+}
 a {
   text-decoration: none;
 }

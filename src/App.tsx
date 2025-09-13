@@ -19,7 +19,7 @@ export default function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<Navigate to={language + '/' +SITE_SCREEN.HOME} replace />} />
+            <Route path="/" element={<Navigate to={language + '/' + SITE_SCREEN.HOME} replace />} />
             {renderRoutes(routes)}
           </Routes>
         </Router>
