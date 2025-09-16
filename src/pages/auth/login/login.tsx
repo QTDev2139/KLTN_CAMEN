@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, Stack, TextField, Typography, Alert } from '@mui/material';
-import { useAuth } from '../auth-context/AuthContext';
+import { useAuth } from '~/common/auth/auth.context';
 import { useNavigate } from 'react-router-dom';
 import { SITE_SCREEN } from '~/router/path.route';
 
