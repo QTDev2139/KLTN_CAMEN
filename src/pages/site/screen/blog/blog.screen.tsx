@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardMedia, Grid } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { blogApi } from '~/apis';
+import { authApi } from '~/apis/auth/auth.api';
 import { Post } from '~/apis/blog/blog.api.interface';
 import { SITE_SCREEN } from '~/router/path.route';
 
@@ -18,7 +19,6 @@ export default function BlogScreen() {
     fetchApi();
   }, []);
 
-  // Lọc ngôn ngữ theo lang
   const lists = useMemo(() => {
     return blogResult.filter((p) => p.language?.code === lang);
   }, [blogResult, lang]);
