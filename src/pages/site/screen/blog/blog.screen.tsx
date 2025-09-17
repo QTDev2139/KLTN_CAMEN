@@ -18,7 +18,6 @@ export default function BlogScreen() {
     fetchApi();
   }, []);
 
-  // Lọc ngôn ngữ theo lang
   const lists = useMemo(() => {
     return blogResult.filter((p) => p.language?.code === lang);
   }, [blogResult, lang]);
