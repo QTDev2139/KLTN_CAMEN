@@ -4,7 +4,7 @@ export const theme = createTheme({
   palette: {
     primary: {
       main: '#f44336',
-      light: '#ef5350',
+      light: '#ffc3c2ff',
       dark: '#e53935',
     },
     // secondary: {
@@ -13,11 +13,11 @@ export const theme = createTheme({
     //   dark: '#e53935',
     // },
     text: {
-      primary: '#424242', 
+      primary: '#1b1b1bff', 
       secondary: '#757575',
       disabled: '#606060', 
     },
-    divider: '#545454', 
+    divider: '#d6d6d6ff', 
   },
   components: {
     // Viền OutlinedInput khi focus
@@ -52,19 +52,19 @@ export const theme = createTheme({
     },
     h3: {
       fontSize: 22,
-      fontWeight: 500,
+      fontWeight: 700,
     },
     h4: {
-      fontSize: 22,
-      fontWeight: 500,
+      fontSize: 18,
+      fontWeight: 700,
     },
     h5: {
-      fontSize: 22,
-      fontWeight: 500,
+      fontSize: 18,
+      fontWeight: 700,
     },
     h6: {
-      fontSize: 22,
-      fontWeight: 500,
+      fontSize: 18,
+      fontWeight: 700,
     },
     subtitle1: {
       fontSize: 18,

@@ -1,4 +1,4 @@
-import { Children, ElementType } from 'react';
+import { ElementType } from 'react';
 import { RouteType } from './route.enum';
 import { PATH } from '.';
 import ErrorPage from '~/pages/error';
@@ -7,6 +7,7 @@ import Not_FoundPage from '~/pages/not_found';
 import AuthPage from '~/pages/auth/index';
 import LoginPage from '~/pages/auth/login/login';
 
+import SiteLayout from '~/layouts/site/site.layout';
 import SitePage from '~/pages/site/site.page';
 import HomePage from '~/pages/site/screen/home/home.screen';
 import CartPage from '~/pages/site/screen/cart/cart.screen';
@@ -18,9 +19,16 @@ import BlogDetailPage from '~/pages/site/screen/blog-detail/blog-detail.screen';
 import AccountPage from '~/pages/site/screen/account/account.screen';
 import CheckoutPage from '~/pages/site/screen/checkout/checkout.screen';
 
+import DashboardLayout from '~/layouts/dashboard/dashboard.layout';
 import DashboardPage from '~/pages/dashboard/dashboard.page';
-import OverviewScreen from '~/pages/dashboard/overview/overview.screen';
-import SiteLayout from '~/layouts/site/site.layout';
+import OverviewScreen from '~/pages/dashboard/screen/overview/overview.screen';
+import OrdersScreen from '~/pages/dashboard/screen/orders/orders.screen';
+import ProductScreen from '~/pages/dashboard/screen/product/product.screen';
+import CustomersScreen from '~/pages/dashboard/screen/customers/customers.screen';
+import BlogScreen from '~/pages/dashboard/screen/blog/blog.screen';
+import CouponScreen from '~/pages/dashboard/screen/coupon/coupon.screen';
+import ReviewsScreen from '~/pages/dashboard/screen/reviews/reviews.screen';
+
 
 export type Route = {
   path: string;
@@ -115,13 +123,43 @@ export const routes: Route[] = [
   {
     path: PATH.PAGE.DASHBOARD,
     element: DashboardPage,
-    // layout: DashboardLayout,
+    layout: DashboardLayout,
     type: RouteType.PROTECTED,
     // allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.HR],
     children: [
       {
         path: PATH.DASHBOARD_SCREEN.OVERVIEW,
         element: OverviewScreen,
+        type: RouteType.PROTECTED,
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.ORDERS,
+        element: OrdersScreen,
+        type: RouteType.PROTECTED,
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.PRODUCT,
+        element: ProductScreen,
+        type: RouteType.PROTECTED,
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.CUSTOMERS,
+        element: CustomersScreen,
+        type: RouteType.PROTECTED,
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.BLOG,
+        element: BlogScreen,
+        type: RouteType.PROTECTED,
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.COUPON,
+        element: CouponScreen,
+        type: RouteType.PROTECTED,
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.REVIEWS,
+        element: ReviewsScreen,
         type: RouteType.PROTECTED,
       },
     ],

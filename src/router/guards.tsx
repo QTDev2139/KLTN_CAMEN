@@ -29,19 +29,19 @@ export function RoleGuardRoute({
 
   if (loading) return null;
   
-  // Chưa login
-  if (!user) {
-    return <Navigate to={`/${lang}/home`} replace />;
-  }
+  // // Chưa login
+  // if (!user) {
+  //   return <Navigate to={`/${lang}/home`} replace />;
+  // }
 
-  // Nếu đã login nhưng role không được phép → chuyển trang phù hợp
-  if (!allow.includes(user.role_id)) {
-    return user.role_id === UserType.CUSTOMER ? (
-      <Navigate to={`/${lang}/${PATH.SITE_SCREEN.HOME}`} replace />
-    ) : (
-      <Navigate to={`/${PAGE.DASHBOARD}/${PATH.DASHBOARD_SCREEN.OVERVIEW}`} replace />
-    );
-  }
+  // // Nếu đã login nhưng role không được phép → chuyển trang phù hợp
+  // if (!allow.includes(user.role_id)) {
+  //   return user.role_id === UserType.CUSTOMER ? (
+  //     <Navigate to={`/${lang}/${PATH.SITE_SCREEN.HOME}`} replace />
+  //   ) : (
+  //     <Navigate to={`/${PAGE.DASHBOARD}/${PATH.DASHBOARD_SCREEN.OVERVIEW}`} replace />
+  //   );
+  // }
 
   return <>{children}</>;
 }

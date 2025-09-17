@@ -15,6 +15,7 @@ export default function BlogDetailScreen() {
       const resultKey = await blogApi.getKey(slug || '');
       setKey_t(resultKey);
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function BlogDetailScreen() {
       };
       fetchApi();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang, key_t]);
 
   return (
