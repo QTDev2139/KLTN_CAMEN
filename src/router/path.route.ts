@@ -6,7 +6,7 @@ export const PAGE = {
 
     // Private
     SITE: ':lang/' ,
-    DASHBOARD: ':lang/dashboard',
+    DASHBOARD: 'dashboard',
 }
 
 export const AUTH_SCREEN = {

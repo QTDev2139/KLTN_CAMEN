@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Box, Button, Stack, TextField, Typography, Alert } from '@mui/material';
 import { useAuth } from '~/common/auth/auth.context';
 import { useNavigate } from 'react-router-dom';
-import { SITE_SCREEN } from '~/router/path.route';
+import { DASHBOARD_SCREEN, SITE_SCREEN } from '~/router/path.route';
+import { authApi } from '~/apis/auth/auth.api';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -17,7 +18,12 @@ export default function LoginPage() {
     setBusy(true);
     try {
       await login(email, password);
-      navigate(`/vi/${SITE_SCREEN.HOME}`, { replace: true });
+      const me = await authApi.profile(); // lấy user mới nhất từ BE
+      if (me.role_id === 4) {
+        navigate(`/vi/${SITE_SCREEN.HOME}`, { replace: true });
+      } else {
+        navigate('/dashboard/' + DASHBOARD_SCREEN.OVERVIEW, { replace: true });
+      }
     } catch (ex: any) {
       setErr(ex?.response?.data?.error ?? 'Đăng nhập thất bại');
     } finally {
