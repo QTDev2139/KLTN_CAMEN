@@ -1,5 +1,5 @@
 import { axiosApi } from '~/common/until/request.until';
-import { Post } from './blog.api.interface';
+import { CreatePostDto, Post } from './blog.api.interface';
 
 export const getListBlog = async () => {
   try {
@@ -26,5 +26,14 @@ export const getKey = async (slug: string): Promise<string> => {
     return res.data.post.translation_key;
   } catch (error) {
     return '';
+  }
+};
+
+export const createPost = async (payload: CreatePostDto): Promise<Post> => {
+  try {
+    const res = await axiosApi.post('posts', payload); 
+    return res.data.post as Post;
+  } catch (err) {
+    throw err;
   }
 };

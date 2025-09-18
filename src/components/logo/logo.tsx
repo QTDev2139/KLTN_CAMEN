@@ -13,7 +13,7 @@ export default function Logo() {
     );
   } else {
     return (
-      <Link to={DASHBOARD_SCREEN.OVERVIEW}>
+      <Link to={DASHBOARD_SCREEN.OVERVIEW} style={{ textAlign: 'center' }}>
         <img src={LogoVi} alt="Logo" style={{ width: '157px', height: '67px' }} />
       </Link>
     );

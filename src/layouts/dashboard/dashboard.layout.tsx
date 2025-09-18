@@ -2,6 +2,7 @@ import { Divider, Stack, useTheme } from '@mui/material';
 import { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import { STYLE } from '~/common/constant';
+import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import { TypographyHover } from '~/components/elements/styles/link.style';
 import { StackRow } from '~/components/elements/styles/stack.style';
 import Logo from '~/components/logo/logo';
@@ -14,8 +15,8 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { palette } = useTheme();
   return (
-    <StackRow>
-      <Stack sx={{ borderRight: `1px solid ${palette.divider}`, minHeight: '100vh' }}>
+    <StackRow sx={{ display: 'grid', gridTemplateColumns: '1fr 5fr' }}>
+      <Stack sx={{ borderRight: `1px solid ${palette.divider}`, minHeight: '100vh',  }}>
         <Logo />
         <Divider sx={{ color: palette.divider }} />
         {sidebarsDashboard.map((sidebar, index) => {
@@ -27,7 +28,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
                 color: isActive ? palette.primary.main : palette.text.primary,
                 background: isActive ? palette.primary.light : 'transparent',
-                transition: 'all 300ms ease', 
+                transition: 'all 500ms ease', 
               })}
             >
               <TypographyHover variant="h4" sx={{ margin: '10px 20px' }}>
@@ -37,7 +38,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           );
         })}
       </Stack>
-      <Stack>{children}</Stack>
+      <Stack sx={{ padding: `80px ${PADDING_GAP_LAYOUT}` }}>{children}</Stack>
     </StackRow>
   );
 }
