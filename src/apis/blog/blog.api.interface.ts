@@ -12,3 +12,5 @@ export interface Post {
   thumbnail?: string;
   translation_key?: string;
 }
+
+export interface CreatePostDto extends Post {}

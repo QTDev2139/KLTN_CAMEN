@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { Box, Button, Stack, TextField, Typography, Alert } from '@mui/material';
+import { Box, Button, Stack, TextField, Typography, Alert, Divider } from '@mui/material';
 import { useAuth } from '~/common/auth/auth.context';
-import { useNavigate } from 'react-router-dom';
-import { DASHBOARD_SCREEN, SITE_SCREEN } from '~/router/path.route';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { AUTH_SCREEN, DASHBOARD_SCREEN, PAGE, SITE_SCREEN } from '~/router/path.route';
 import { authApi } from '~/apis/auth/auth.api';
+import { FONT_SIZE } from '~/common/constant/style.constant';
+import Logo from '~/components/logo/logo';
+import { StackRowAlignCenter, StackRowJustEnd } from '~/components/elements/styles/stack.style';
 
 export default function LoginPage() {
+  const { lang } = useParams();
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,8 +39,9 @@ export default function LoginPage() {
     <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
       <Box component="form" onSubmit={submit} sx={{ width: 360 }}>
         <Stack spacing={2}>
-          <Typography variant="h5" fontWeight={700}>
-            Đăng nhập
+          <Logo />
+          <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, paddingBottom: '20px' }}>
+            Sign in to CamenFood
           </Typography>
           {err && <Alert severity="error">{err}</Alert>}
           <TextField
@@ -55,9 +60,23 @@ export default function LoginPage() {
             required
             fullWidth
           />
-          <Button type="submit" variant="contained" disabled={busy}>
-            {busy ? 'Đang xử lý…' : 'Đăng nhập'}
+          <StackRowJustEnd >
+            <Link to={`/${lang}/auth/${AUTH_SCREEN.FORGOT_PW}`} replace style={{ fontSize: FONT_SIZE.small }}>Forgot password?</Link>
+          </StackRowJustEnd>
+          <Button type="submit" variant="contained" disabled={busy} sx={{ padding: '10px' }}>
+            {busy ? 'Đang xử lý…' : 'Sign in'}
           </Button>
+          <StackRowAlignCenter sx={{ my: 3 }}>
+            <Divider sx={{ flex: 1 }} />
+            <Typography sx={{ padding: '10px' }}>or</Typography>
+            <Divider sx={{ flex: 1 }} />
+          </StackRowAlignCenter>
+          <StackRowAlignCenter sx={{ justifyContent: 'center' }}>
+            <Typography sx={{ paddingRight: '6px' }}>New to CamenFood?</Typography>
+            <Link to={`/${lang}/auth/${AUTH_SCREEN.SIGN_UP}`} replace>
+              Create an account
+            </Link>
+          </StackRowAlignCenter>
         </Stack>
       </Box>
     </Box>

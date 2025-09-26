@@ -1,6 +1,6 @@
 export const PAGE = {
     // Public
-    AUTH: 'auth/',
+    AUTH: ':lang/auth/',
     ERROR: ':lang/error',
     NOT_FOUND: ':lang/*',
 
@@ -10,7 +10,9 @@ export const PAGE = {
 }
 
 export const AUTH_SCREEN = {
-    LOGIN: 'login'
+    LOGIN: 'login',
+    SIGN_UP: 'sign-up',
+    FORGOT_PW: 'forgot-password',
 }
 
 export const SITE_SCREEN = {

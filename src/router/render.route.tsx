@@ -3,8 +3,9 @@ import { Route as RouteInterface } from './route.route';
 import React from 'react';
 import { PATH } from '.';
 import { RouteType } from './route.enum';
-import { RoleGuardRoute } from './guards';
+import { RoleGuardRoute } from './role-guards';
 import { UserType } from '~/apis/user/user.enum';
+import LangGuard from './lang-guard';
 
 const withGuard = (
   type: RouteType,
@@ -31,18 +32,36 @@ export const renderRoutes = (routes: RouteInterface[]) =>
       </Layout>
     );
 
+    if (path === PATH.PAGE.SITE ) {
+      return (
+        <Route key="lang-guard" path=":lang" element={<LangGuard />}>
+          <Route path="" element={guardedElement}>
+            {children && renderRoutes(children)}
+
+            <Route index element={<Navigate to={PATH.SITE_SCREEN.HOME} replace />} />
+          </Route>
+        </Route>
+      );
+    }
+
+    if (path === PATH.PAGE.AUTH) {
+      return (
+        <Route key="lang-guard-auth" path=":lang" element={<LangGuard />}>
+          <Route path="auth" element={guardedElement}>
+            {children && renderRoutes(children)}
+            <Route index element={<Navigate to={PATH.AUTH_SCREEN.LOGIN} replace />} />
+          </Route>
+        </Route>
+      );
+    }
+    
+
     return (
       <Route key={path} path={path} element={guardedElement}>
         {children && renderRoutes(children)}
 
-        {/* điều hướng index cho dashboard */}
         {path === PATH.PAGE.DASHBOARD && (
-          <Route index element={<Navigate to={PATH.DASHBOARD_SCREEN.OVERVIEW} />} />
-        )}
-
-        {/* điều hướng index cho site */}
-        {path === PATH.PAGE.SITE && (
-          <Route index element={<Navigate to={PATH.SITE_SCREEN.HOME} />} />
+          <Route index element={<Navigate to={PATH.DASHBOARD_SCREEN.OVERVIEW} replace />} />
         )}
       </Route>
     );
