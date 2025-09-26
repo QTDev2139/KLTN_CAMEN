@@ -7,7 +7,7 @@ export default function Logo() {
   const { lang } = useParams();
   if (lang) {
     return (
-      <Link to={SITE_SCREEN.HOME}>
+      <Link to={`/${lang}/${SITE_SCREEN.HOME}`} style={{ display: 'flex', justifyContent: 'center', textAlign: 'center' }}>
         <img src={lang === 'vi' ? LogoVi : LogoEn} alt="Logo" style={{ width: '157px', height: '67px' }} />
       </Link>
     );

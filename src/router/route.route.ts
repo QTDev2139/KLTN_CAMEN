@@ -5,7 +5,9 @@ import ErrorPage from '~/pages/error';
 import Not_FoundPage from '~/pages/not_found';
 
 import AuthPage from '~/pages/auth/index';
-import LoginPage from '~/pages/auth/login/login';
+import LoginPage from '~/pages/auth/sign-in/sign-in';
+import SignupPage from '~/pages/auth/sign-up/sign-up';
+import ForgotPasswordPage from '~/pages/auth/forgot-password/forgot-password';
 
 import SiteLayout from '~/layouts/site/site.layout';
 import SitePage from '~/pages/site/site.page';
@@ -59,6 +61,16 @@ export const routes: Route[] = [
       {
         path: PATH.AUTH_SCREEN.LOGIN,
         element: LoginPage,
+        type: RouteType.PUBLIC,
+      },
+      {
+        path: PATH.AUTH_SCREEN.SIGN_UP,
+        element: SignupPage,
+        type: RouteType.PUBLIC,
+      },
+      {
+        path: PATH.AUTH_SCREEN.FORGOT_PW,
+        element: ForgotPasswordPage,
         type: RouteType.PUBLIC,
       },
     ]

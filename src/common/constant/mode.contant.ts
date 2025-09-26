@@ -12,6 +12,13 @@ export const theme = createTheme({
     //   light: '#ef5350',
     //   dark: '#e53935',
     // },
+    
+    info: {
+      main: '#2196f3',
+    },
+    action: {
+      disabledBackground: '#e0e0e0', 
+    },
     text: {
       primary: '#1b1b1bff', 
       secondary: '#757575',
@@ -20,6 +27,19 @@ export const theme = createTheme({
     divider: '#d6d6d6ff', 
   },
   components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',     
+          letterSpacing: 'normal',    
+          // fontWeight: 500,         
+        },
+      },
+      // (tuỳ chọn) props mặc định cho tất cả Button
+      defaultProps: {
+        disableElevation: true,
+      },
+    },
     // Viền OutlinedInput khi focus
     MuiOutlinedInput: {
       styleOverrides: {
