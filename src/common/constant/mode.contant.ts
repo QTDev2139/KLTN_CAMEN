@@ -4,7 +4,7 @@ export const theme = createTheme({
   palette: {
     primary: {
       main: '#f44336',
-      light: '#ef5350',
+      light: '#ffc3c2ff',
       dark: '#e53935',
     },
     // secondary: {
@@ -12,14 +12,34 @@ export const theme = createTheme({
     //   light: '#ef5350',
     //   dark: '#e53935',
     // },
+    
+    info: {
+      main: '#2196f3',
+    },
+    action: {
+      disabledBackground: '#e0e0e0', 
+    },
     text: {
-      primary: '#424242', 
+      primary: '#1b1b1bff', 
       secondary: '#757575',
       disabled: '#606060', 
     },
-    divider: '#545454', 
+    divider: '#d6d6d6ff', 
   },
   components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',     
+          letterSpacing: 'normal',    
+          // fontWeight: 500,         
+        },
+      },
+      // (tuỳ chọn) props mặc định cho tất cả Button
+      defaultProps: {
+        disableElevation: true,
+      },
+    },
     // Viền OutlinedInput khi focus
     MuiOutlinedInput: {
       styleOverrides: {
@@ -52,19 +72,19 @@ export const theme = createTheme({
     },
     h3: {
       fontSize: 22,
-      fontWeight: 500,
+      fontWeight: 700,
     },
     h4: {
-      fontSize: 22,
-      fontWeight: 500,
+      fontSize: 18,
+      fontWeight: 700,
     },
     h5: {
-      fontSize: 22,
-      fontWeight: 500,
+      fontSize: 18,
+      fontWeight: 700,
     },
     h6: {
-      fontSize: 22,
-      fontWeight: 500,
+      fontSize: 18,
+      fontWeight: 700,
     },
     subtitle1: {
       fontSize: 18,

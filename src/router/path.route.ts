@@ -1,6 +1,6 @@
 export const PAGE = {
     // Public
-    AUTH: 'auth/',
+    AUTH: ':lang/auth/',
     ERROR: ':lang/error',
     NOT_FOUND: ':lang/*',
 
@@ -10,7 +10,9 @@ export const PAGE = {
 }
 
 export const AUTH_SCREEN = {
-    LOGIN: 'login'
+    LOGIN: 'login',
+    SIGN_UP: 'sign-up',
+    FORGOT_PW: 'forgot-password',
 }
 
 export const SITE_SCREEN = {
@@ -28,11 +30,12 @@ export const SITE_SCREEN = {
 
 export const DASHBOARD_SCREEN = {
     OVERVIEW: 'overview',
-    PRODUCT: 'product',
     ORDERS: 'orders',
+    PRODUCT: 'product',
     CUSTOMERS: 'customers',
-    FEEDBACK: 'feedback',
-    // FEEDBACK_REVIEWS: 'feedback_reviews',
-    ANALYTICS: 'analytics',
+    BLOG: 'blog',
+    COUPON: 'coupon',
+    REVIEWS: 'review',
+    // ANALYTICS: 'analytics',
     // SETTINGS: 'settings',
 }
