@@ -37,7 +37,21 @@ export default function LoginPage() {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
-      <Box component="form" onSubmit={submit} sx={{ width: 360 }}>
+      <Box
+        component="form"
+        onSubmit={submit}
+        sx={{
+          padding: '24px 40px',
+          border: '1px solid #ccc',
+          maxWidth: '360px',
+          borderRadius: '8px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          position: 'relative',
+        }}
+      >
         <Stack spacing={2}>
           <Logo />
           <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, paddingBottom: '20px' }}>
@@ -60,8 +74,10 @@ export default function LoginPage() {
             required
             fullWidth
           />
-          <StackRowJustEnd >
-            <Link to={`/${lang}/auth/${AUTH_SCREEN.FORGOT_PW}`} replace style={{ fontSize: FONT_SIZE.small }}>Forgot password?</Link>
+          <StackRowJustEnd>
+            <Link to={`/${lang}/auth/${AUTH_SCREEN.FORGOT_PW}`} replace style={{ fontSize: FONT_SIZE.small }}>
+              Forgot password?
+            </Link>
           </StackRowJustEnd>
           <Button type="submit" variant="contained" disabled={busy} sx={{ padding: '10px' }}>
             {busy ? 'Đang xử lý…' : 'Sign in'}

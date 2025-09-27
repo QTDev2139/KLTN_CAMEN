@@ -64,7 +64,7 @@ export default function RequestOtpForgottenPassword({ setMode, setEmail }: Props
         component="form"
         onSubmit={formik.handleSubmit}
         noValidate
-        sx={{ padding: '24px',
+        sx={{ padding: '24px 40px',
           border: '1px solid #ccc',
           borderRadius: '8px',
           display: 'flex',
