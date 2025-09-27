@@ -39,7 +39,7 @@ export default function VerifyOtpForgottenPassword({ setMode, email }: VerifyOtp
   const handleResend = async () => {
     try {
       setLoading(true);
-      const res = await userApi.resendOtpRegister({ email });
+      const res = await userApi.resendForgottenPassword({ email });
       snackbar('success', res);
       setCooldownResend(60);
       setCooldownOtp(120);
@@ -74,7 +74,7 @@ export default function VerifyOtpForgottenPassword({ setMode, email }: VerifyOtp
         component="form"
         onSubmit={submit}
         sx={{
-          padding: '24px',
+          padding: '24px 40px',
           border: '1px solid #ccc',
           borderRadius: '8px',
           display: 'flex',
