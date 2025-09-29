@@ -22,7 +22,7 @@ export const sidebars = [
       title: 'news',
     },
     {
-      to: PATH.SITE_SCREEN.SUPPORT,
+      to: PATH.SITE_SCREEN.CONTACT,
       title: 'contact',
     },
   ] as const;

@@ -80,7 +80,14 @@ export default function RequestOtpSignUp({ setMode, setEmail }: Props) {
         component="form"
         onSubmit={formik.handleSubmit}
         noValidate
-        sx={{ maxWidth: 360, placeItems: 'center', mt: 4 }}
+        sx={{ padding: '24px 40px',
+          border: '1px solid #ccc',
+          borderRadius: '8px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          position: 'relative', }}
       >
         <Logo />
         <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, padding: '20px 0 32px 0' }}>
