@@ -15,7 +15,7 @@ import HomePage from '~/pages/site/screen/home/home.screen';
 import CartPage from '~/pages/site/screen/cart/cart.screen';
 import CategoryPage from '~/pages/site/screen/category/category.screen';
 import ProductPage from '~/pages/site/screen/product/product.screen';
-import SupportPage from '~/pages/site/screen/support';
+import ContactPage from '~/pages/site/screen/contact';
 import BlogPage from '~/pages/site/screen/blog/blog.screen';
 import BlogDetailPage from '~/pages/site/screen/blog-detail/blog-detail.screen';
 import AccountPage from '~/pages/site/screen/account/account.screen';
@@ -104,8 +104,8 @@ export const routes: Route[] = [
         type: RouteType.PUBLIC,
       },
       {
-        path: PATH.SITE_SCREEN.SUPPORT,
-        element: SupportPage,
+        path: PATH.SITE_SCREEN.CONTACT,
+        element: ContactPage,
         type: RouteType.PUBLIC,
       },
       {

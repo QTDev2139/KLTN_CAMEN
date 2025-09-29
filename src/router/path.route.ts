@@ -20,7 +20,7 @@ export const SITE_SCREEN = {
     CATEGORY: 'c/:slug',
     PRODUCT: 'p/:slug',
     CART: 'cart',
-    SUPPORT: 'support',
+    CONTACT: 'contact',
     BLOG: 'blog',
     BLOG_DETAIL: 'blog/:slug',
     ACCOUNT: 'account',
