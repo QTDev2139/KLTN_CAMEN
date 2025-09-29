@@ -25,6 +25,10 @@ export const theme = createTheme({
       disabled: '#606060', 
     },
     divider: '#d6d6d6ff', 
+    background: {
+      default: '#f6f6f6ff', 
+      paper: '#ffffff', 
+    },
   },
   components: {
     MuiButton: {
@@ -67,24 +71,24 @@ export const theme = createTheme({
       fontWeight: 700,
     },
     h2: {
-      fontSize: 22,
+      fontSize: 32,
       fontWeight: 700,
     },
     h3: {
-      fontSize: 22,
+      fontSize: 26,
       fontWeight: 700,
     },
     h4: {
-      fontSize: 18,
+      fontSize: 22,
       fontWeight: 700,
     },
     h5: {
-      fontSize: 18,
-      fontWeight: 700,
+      fontSize: 22,
+      fontWeight: 500,
     },
     h6: {
       fontSize: 18,
-      fontWeight: 700,
+      fontWeight: 500,
     },
     subtitle1: {
       fontSize: 18,
