@@ -11,6 +11,7 @@ import { StackRowAlignCenter } from '~/components/elements/styles/stack.style';
 import { Link, useParams } from 'react-router-dom';
 import { AUTH_SCREEN } from '~/router/path.route';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
+import { BoxForm } from '~/components/elements/forms/box/box-form';
 
 interface Props {
   setMode: (mode: SignUpMode) => void;
@@ -34,7 +35,6 @@ const schema = Yup.object({
 });
 
 export default function RequestOtpSignUp({ setMode, setEmail }: Props) {
-
   const { lang } = useParams();
   const { snackbar } = useSnackbar();
 
@@ -59,7 +59,7 @@ export default function RequestOtpSignUp({ setMode, setEmail }: Props) {
         setMode(SignUpMode.VERIFY);
       } catch (error: any) {
         const message = error?.response?.data?.message || 'Lỗi không xác định';
-        snackbar('error', message)
+        snackbar('error', message);
       } finally {
         setSubmitting(false);
       }
@@ -75,22 +75,10 @@ export default function RequestOtpSignUp({ setMode, setEmail }: Props) {
   const helperText = (path: string): React.ReactNode => (showError(path) ? getIn(formik.errors, path) : ' ');
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
-      <Box
-        component="form"
-        onSubmit={formik.handleSubmit}
-        noValidate
-        sx={{ padding: '24px 40px',
-          border: '1px solid #ccc',
-          borderRadius: '8px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          position: 'relative', }}
-      >
+    <Box component="form" onSubmit={formik.handleSubmit} noValidate>
+      <BoxForm>
         <Logo />
-        <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, padding: '20px 0 32px 0' }}>
+        <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, padding: '20px 0' }}>
           Sign up to CamenFood
         </Typography>
         <TextField
@@ -126,14 +114,14 @@ export default function RequestOtpSignUp({ setMode, setEmail }: Props) {
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
           {formik.isSubmitting ? 'Đang gửi…' : 'Create account'}
         </Button>
-        
+
         <StackRowAlignCenter sx={{ justifyContent: 'center', width: '100%', padding: '20px 0' }}>
           <Typography sx={{ paddingRight: '6px' }}>You have an account?</Typography>
           <Link to={`/${lang}/auth/${AUTH_SCREEN.LOGIN}`} replace>
             Login with an account
           </Link>
         </StackRowAlignCenter>
-      </Box>
+      </BoxForm>
     </Box>
   );
 }

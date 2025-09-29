@@ -1,5 +1,5 @@
 import { Stack, Typography, useTheme } from '@mui/material';
-import ContactForm from '~/components/elements/forms/contact-form';
+import ContactForm from '~/components/elements/forms/contact/contact-form';
 import IconLabel from '~/components/elements/icon-label/icon-label.element';
 import { StackRow } from '~/components/elements/styles/stack.style';
 import { HereMap } from '~/components/map/map';

@@ -1,14 +1,13 @@
 import { Box, Button, Stack, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { userApi } from '~/apis';
 import { FONT_SIZE } from '~/common/constant/style.constant';
 import { StackRow } from '~/components/elements/styles/stack.style';
 import Logo from '~/components/logo/logo';
 import OtpInputComponent from '~/components/otp-input/otp-input';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
-import { AUTH_SCREEN } from '~/router/path.route';
 import { ForgotPasswordMode } from './forgot-password.enum';
+import { BoxForm } from '~/components/elements/forms/box/box-form';
 
 interface VerifyOtpSignUpProps {
   setMode: (mode: ForgotPasswordMode) => void;
@@ -34,7 +33,7 @@ export default function VerifyOtpForgottenPassword({ setMode, email }: VerifyOtp
     if (cooldownOtp <= 0) return;
     const t = setInterval(() => setCooldownOtp((s) => s - 1), 1000);
     return () => clearInterval(t);
-   }, [cooldownOtp]);
+  }, [cooldownOtp]);
 
   const handleResend = async () => {
     try {
@@ -51,7 +50,7 @@ export default function VerifyOtpForgottenPassword({ setMode, email }: VerifyOtp
   };
   const handlePrev = () => {
     setMode(ForgotPasswordMode.REQUEST);
-  }
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,22 +68,14 @@ export default function VerifyOtpForgottenPassword({ setMode, email }: VerifyOtp
   };
 
   return (
-    <Stack sx={{ alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-      <Box
-        component="form"
-        onSubmit={submit}
-        sx={{
-          padding: '24px 40px',
-          border: '1px solid #ccc',
-          borderRadius: '8px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          position: 'relative',
-        }}
-      >
-        <Button style={{ position: 'absolute', top: '10px', left: '20px', color: palette.text.primary}} onClick={handlePrev}>Quay lại</Button>
+    <Box component="form" onSubmit={submit}>
+      <BoxForm>
+        <Button
+          style={{ position: 'absolute', top: '10px', left: '20px', color: palette.text.primary }}
+          onClick={handlePrev}
+        >
+          Quay lại
+        </Button>
         <Logo />
 
         <Typography
@@ -96,7 +87,9 @@ export default function VerifyOtpForgottenPassword({ setMode, email }: VerifyOtp
         <Stack sx={{ padding: '16px 0' }}>
           <OtpInputComponent setOtp={setOtp} otp={otp} />
         </Stack>
-        <Typography variant="subtitle2" style={{ paddingBottom: '10px', color: palette.text.secondary }}>{cooldownOtp > 0 ? `Thời gian còn lại để xác thực: ${cooldownOtp}s` : 'Vui lòng gửi lại email'}</Typography>
+        <Typography variant="subtitle2" style={{ paddingBottom: '10px', color: palette.text.secondary }}>
+          {cooldownOtp > 0 ? `Thời gian còn lại để xác thực: ${cooldownOtp}s` : 'Vui lòng gửi lại email'}
+        </Typography>
         <Button
           type="submit"
           variant="contained"
@@ -125,7 +118,7 @@ export default function VerifyOtpForgottenPassword({ setMode, email }: VerifyOtp
             {cooldownResend > 0 ? `Gửi lại sau ${cooldownResend}s` : 'Gửi lại'}
           </Button>
         </StackRow>
-      </Box>
-    </Stack>
+      </BoxForm>
+    </Box>
   );
 }

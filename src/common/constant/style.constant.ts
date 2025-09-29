@@ -16,7 +16,7 @@ export const PADDING_GAP_ITEM_SMALL = '8px';
 
 //
 
-export const BORDER_RADIUS_ELEMENT_WRAPPER = '8px';
+export const BORDER_RADIUS_ELEMENT_WRAPPER = '16px';
 
 export const BORDER_RADIUS_ELEMENT_SMALL = '6px';
 
