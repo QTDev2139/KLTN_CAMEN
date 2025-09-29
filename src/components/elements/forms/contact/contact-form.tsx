@@ -8,12 +8,11 @@ import {
   Radio,
   RadioGroup,
   TextField,
-  Typography,
   useTheme,
 } from '@mui/material';
 import { getIn } from 'formik';
 
-import { StackRow, StackRowAlignCenter } from '~/components/elements/styles/stack.style';
+import { StackRow } from '~/components/elements/styles/stack.style';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { FormContact } from './contact-type';
 import { ContactSchema } from './contact-schema';

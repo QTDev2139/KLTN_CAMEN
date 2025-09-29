@@ -1,14 +1,14 @@
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import { Box, Button, Divider, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import { getIn } from 'formik';
 import { userApi } from '~/apis';
 import Logo from '~/components/logo/logo';
 import { FONT_SIZE } from '~/common/constant/style.constant';
 
 import { ForgotPasswordMode } from './forgot-password.enum';
-import { useParams } from 'react-router-dom';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
+import { BoxForm } from '~/components/elements/forms/box/box-form';
 
 interface Props {
   setMode: (mode: ForgotPasswordMode) => void;
@@ -24,7 +24,6 @@ const schema = Yup.object({
 });
 
 export default function RequestOtpForgottenPassword({ setMode, setEmail }: Props) {
-
   const { snackbar } = useSnackbar();
 
   const formik = useFormik<FormRegister>({
@@ -43,7 +42,7 @@ export default function RequestOtpForgottenPassword({ setMode, setEmail }: Props
         setMode(ForgotPasswordMode.VERIFY);
       } catch (error: any) {
         const message = error?.response?.data?.message || 'Lỗi không xác định';
-        snackbar('error', message)
+        snackbar('error', message);
       } finally {
         setSubmitting(false);
       }
@@ -59,20 +58,8 @@ export default function RequestOtpForgottenPassword({ setMode, setEmail }: Props
   const helperText = (path: string): React.ReactNode => (showError(path) ? getIn(formik.errors, path) : ' ');
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
-      <Box
-        component="form"
-        onSubmit={formik.handleSubmit}
-        noValidate
-        sx={{ padding: '24px 40px',
-          border: '1px solid #ccc',
-          borderRadius: '8px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          position: 'relative', }}
-      >
+    <Box component="form" onSubmit={formik.handleSubmit} noValidate>
+      <BoxForm>
         <Logo />
         <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, padding: '10px' }}>
           Forgot Password to CamenFood
@@ -87,9 +74,7 @@ export default function RequestOtpForgottenPassword({ setMode, setEmail }: Props
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
           {formik.isSubmitting ? 'Đang gửi…' : 'Xác nhận'}
         </Button>
-        
-        
-      </Box>
+      </BoxForm>
     </Box>
   );
 }

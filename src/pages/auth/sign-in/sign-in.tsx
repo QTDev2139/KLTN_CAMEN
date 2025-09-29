@@ -1,101 +1,108 @@
-import React, { useState } from 'react';
-import { Box, Button, Stack, TextField, Typography, Alert, Divider } from '@mui/material';
-import { useAuth } from '~/common/auth/auth.context';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { AUTH_SCREEN, DASHBOARD_SCREEN, PAGE, SITE_SCREEN } from '~/router/path.route';
-import { authApi } from '~/apis/auth/auth.api';
-import { FONT_SIZE } from '~/common/constant/style.constant';
+import * as Yup from 'yup';
+import { useFormik } from 'formik';
+import { Box, Button, Divider, TextField, Typography } from '@mui/material';
+import { getIn } from 'formik';
 import Logo from '~/components/logo/logo';
-import { StackRowAlignCenter, StackRowJustEnd } from '~/components/elements/styles/stack.style';
+import { FONT_SIZE } from '~/common/constant/style.constant';
+
+import { StackRowAlignCenter } from '~/components/elements/styles/stack.style';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { AUTH_SCREEN, DASHBOARD_SCREEN, SITE_SCREEN } from '~/router/path.route';
+import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
+import { BoxForm } from '~/components/elements/forms/box/box-form';
+import { useAuth } from '~/common/auth/auth.context';
+import { authApi } from '~/apis/auth/auth.api';
+
+export interface FormRegister {
+  email: string;
+  password: string;
+}
+
+const schema = Yup.object({
+  email: Yup.string().email('Email không hợp lệ').required('Vui lòng nhập email'),
+  password: Yup.string().required('Vui lòng mật khẩu'),
+});
 
 export default function LoginPage() {
-  const { lang } = useParams();
   const { login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [err, setErr] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const { lang } = useParams();
+  const { snackbar } = useSnackbar();
   const navigate = useNavigate();
-  
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErr(null);
-    setBusy(true);
-    try {
-      await login(email, password);
-      const me = await authApi.profile(); // lấy user mới nhất từ BE
-      if (me.role_id === 4) {
-        navigate(`/vi/${SITE_SCREEN.HOME}`, { replace: true });
-      } else {
-        navigate('/dashboard/' + DASHBOARD_SCREEN.OVERVIEW, { replace: true });
+
+  const formik = useFormik<FormRegister>({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: schema,
+    onSubmit: async (values, { setSubmitting }) => {
+      // setSubmitting: formik.isSubmitting sẽ được đặt thành true
+      try {
+        setSubmitting(true);
+        console.log(values);
+        await login(values.email, values.password);
+        const me = await authApi.profile(); // lấy user mới nhất từ BE
+        if (me.role_id === 4) {
+          navigate(`/vi/${SITE_SCREEN.HOME}`, { replace: true });
+        } else {
+          navigate('/dashboard/' + DASHBOARD_SCREEN.OVERVIEW, { replace: true });
+        }
+      } catch (error: any) {
+        const message = error?.response?.data?.message || 'Tài khoản mật khẩu không chính xác';
+        snackbar('error', message);
+      } finally {
+        setSubmitting(false);
       }
-    } catch (ex: any) {
-      setErr(ex?.response?.data?.error ?? 'Đăng nhập thất bại');
-    } finally {
-      setBusy(false);
-    }
+    },
+  });
+
+  /** Field helpers cho nested path */
+  const showError = (path: string) => {
+    const touched = getIn(formik.touched, path);
+    const error = getIn(formik.errors, path);
+    return (touched || formik.submitCount > 0) && Boolean(error);
   };
+  const helperText = (path: string): React.ReactNode => (showError(path) ? getIn(formik.errors, path) : ' ');
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
-      <Box
-        component="form"
-        onSubmit={submit}
-        sx={{
-          padding: '24px 40px',
-          border: '1px solid #ccc',
-          maxWidth: '360px',
-          borderRadius: '8px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          position: 'relative',
-        }}
-      >
-        <Stack spacing={2}>
-          <Logo />
-          <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, paddingBottom: '20px' }}>
-            Sign in to CamenFood
-          </Typography>
-          {err && <Alert severity="error">{err}</Alert>}
-          <TextField
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            fullWidth
-          />
-          <TextField
-            label="Mật khẩu"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            fullWidth
-          />
-          <StackRowJustEnd>
-            <Link to={`/${lang}/auth/${AUTH_SCREEN.FORGOT_PW}`} replace style={{ fontSize: FONT_SIZE.small }}>
-              Forgot password?
-            </Link>
-          </StackRowJustEnd>
-          <Button type="submit" variant="contained" disabled={busy} sx={{ padding: '10px' }}>
-            {busy ? 'Đang xử lý…' : 'Sign in'}
-          </Button>
-          <StackRowAlignCenter sx={{ my: 3 }}>
-            <Divider sx={{ flex: 1 }} />
-            <Typography sx={{ padding: '10px' }}>or</Typography>
-            <Divider sx={{ flex: 1 }} />
-          </StackRowAlignCenter>
-          <StackRowAlignCenter sx={{ justifyContent: 'center' }}>
-            <Typography sx={{ paddingRight: '6px' }}>New to CamenFood?</Typography>
-            <Link to={`/${lang}/auth/${AUTH_SCREEN.SIGN_UP}`} replace>
-              Create an account
-            </Link>
-          </StackRowAlignCenter>
-        </Stack>
-      </Box>
+    <Box component="form" onSubmit={formik.handleSubmit} noValidate>
+      <BoxForm>
+        <Logo />
+        <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, padding: '20px 0' }}>
+          Sign in to CamenFood
+        </Typography>
+
+        <TextField
+          label="Email"
+          fullWidth
+          {...formik.getFieldProps('email')}
+          error={showError('email')}
+          helperText={helperText('email')}
+        />
+        <TextField
+          label="Password"
+          type="password"
+          fullWidth
+          {...formik.getFieldProps('password')}
+          error={showError('password')}
+          helperText={helperText('password')}
+        />
+
+        <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
+          {formik.isSubmitting ? 'Đang gửi…' : 'Sign in'}
+        </Button>
+        <StackRowAlignCenter sx={{ width: '100%' }}>
+          <Divider sx={{ flex: 1 }} />
+          <Typography sx={{ padding: '10px' }}>or</Typography>
+          <Divider sx={{ flex: 1 }} />
+        </StackRowAlignCenter>
+        <StackRowAlignCenter sx={{ justifyContent: 'center' }}>
+          <Typography sx={{ paddingRight: '6px' }}>New to CamenFood?</Typography>
+          <Link to={`/${lang}/auth/${AUTH_SCREEN.SIGN_UP}`} replace>
+            Create an account
+          </Link>
+        </StackRowAlignCenter>
+      </BoxForm>
     </Box>
   );
 }

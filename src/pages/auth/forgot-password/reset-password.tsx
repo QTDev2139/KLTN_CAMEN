@@ -9,7 +9,7 @@ import { FONT_SIZE } from '~/common/constant/style.constant';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AUTH_SCREEN } from '~/router/path.route';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
-
+import { BoxForm } from '~/components/elements/forms/box/box-form';
 
 export interface FormResetPw {
   password: string;
@@ -24,10 +24,9 @@ const schema = Yup.object({
 });
 
 export default function ResetPassword() {
-
   const { lang } = useParams();
   const { snackbar } = useSnackbar();
-  const navigate  = useNavigate();
+  const navigate = useNavigate();
 
   const formik = useFormik<FormResetPw>({
     initialValues: {
@@ -48,7 +47,7 @@ export default function ResetPassword() {
         navigate(`/${lang}/auth/${AUTH_SCREEN.LOGIN}`);
       } catch (error: any) {
         const message = error?.response?.data?.message || 'Lỗi không xác định';
-        snackbar('error', message)
+        snackbar('error', message);
       } finally {
         localStorage.removeItem('resetToken');
         setSubmitting(false);
@@ -65,22 +64,8 @@ export default function ResetPassword() {
   const helperText = (path: string): React.ReactNode => (showError(path) ? getIn(formik.errors, path) : ' ');
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
-      <Box
-        component="form"
-        onSubmit={formik.handleSubmit}
-        noValidate
-        sx={{
-          padding: '24px',
-          border: '1px solid #ccc',
-          borderRadius: '8px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          position: 'relative',
-        }}
-      >
+    <Box component="form" onSubmit={formik.handleSubmit} noValidate>
+      <BoxForm>
         <Logo />
         <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, padding: '20px 0 32px 0' }}>
           Update Password to CamenFood
@@ -104,9 +89,7 @@ export default function ResetPassword() {
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
           {formik.isSubmitting ? 'Đang gửi…' : 'Update password'}
         </Button>
-        
-        
-      </Box>
+      </BoxForm>
     </Box>
   );
 }
