@@ -1,13 +1,11 @@
 import { Box, Button, Stack, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { userApi } from '~/apis';
 import { FONT_SIZE } from '~/common/constant/style.constant';
 import { StackRow } from '~/components/elements/styles/stack.style';
 import Logo from '~/components/logo/logo';
 import OtpInputComponent from '~/components/otp-input/otp-input';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
-import { AUTH_SCREEN } from '~/router/path.route';
 import { ForgotPasswordMode } from './forgot-password.enum';
 import { BoxForm } from '~/components/elements/forms/box/box-form';
 
