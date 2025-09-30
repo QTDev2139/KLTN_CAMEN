@@ -39,7 +39,6 @@ export default function LoginPage() {
       // setSubmitting: formik.isSubmitting sẽ được đặt thành true
       try {
         setSubmitting(true);
-        console.log(values);
         await login(values.email, values.password);
         const me = await authApi.profile(); // lấy user mới nhất từ BE
         if (me.role_id === 4) {
