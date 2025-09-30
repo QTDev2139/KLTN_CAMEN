@@ -2,11 +2,6 @@ import { useFormik } from 'formik';
 import {
   Box,
   Button,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
   TextField,
   useTheme,
 } from '@mui/material';
@@ -38,6 +33,7 @@ export default function ContactForm() {
         // const { confirm_password, ...dataToSend } = values;
         // const res = await userApi.createRegister(dataToSend);
 
+        console.log('123');
         console.log(values);
         // snackbar('success', res);
       } catch (error: any) {
@@ -110,19 +106,7 @@ export default function ContactForm() {
         error={showError('content')}
         helperText={helperText('content')}
       />
-      <FormControl>
-        <FormLabel id="demo-row-radio-buttons-group-label">Vai trò</FormLabel>
-        <RadioGroup
-          row
-          aria-labelledby="demo-row-radio-buttons-group-label"
-          name="row-radio-buttons-group"
-          value={formik.values.gender} // 👈 lấy value từ Formik
-          onChange={formik.handleChange}
-        >
-          <FormControlLabel value="Đại lý" control={<Radio />} label="Đại lý" />
-          <FormControlLabel value="Thành viên" control={<Radio />} label="Thành viên" />
-        </RadioGroup>
-      </FormControl>
+      
 
       <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
         {formik.isSubmitting ? 'Đang gửi…' : 'Gửi liên hệ'}
