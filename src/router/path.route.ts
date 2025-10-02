@@ -18,7 +18,8 @@ export const AUTH_SCREEN = {
 export const SITE_SCREEN = {
     HOME: 'home',
     CATEGORY: 'c/:slug',
-    PRODUCT: 'p/:slug',
+    PRODUCT: 'product',
+    PRODUCT_DETAIL: 'product/:slug',
     CART: 'cart',
     CONTACT: 'contact',
     BLOG: 'blog',
