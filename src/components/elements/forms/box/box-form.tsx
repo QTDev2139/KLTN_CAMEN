@@ -2,21 +2,25 @@ import { Stack } from '@mui/material';
 import React from 'react';
 import { BORDER_RADIUS_ELEMENT_WRAPPER } from '~/common/constant/style.constant';
 
+import type { SxProps } from '@mui/material';
+
 interface BoxFormProps {
   children: React.ReactNode;
+  sx?: SxProps;
 }
 
-export const BoxForm: React.FC<BoxFormProps> = ({ children }) => {
+export const BoxForm: React.FC<BoxFormProps> = ({ children, sx }) => {
   return (
     <Stack
       sx={{
         position: 'relative',
         minHeight: '100vh',
+        margin: '10px',
+        ...sx
       }}
     >
       <Stack
         sx={{
-          placeItems: 'center',
           padding: `${BORDER_RADIUS_ELEMENT_WRAPPER} 40px`,
           border: '1px solid #ccc',
           minWidth: '360px',

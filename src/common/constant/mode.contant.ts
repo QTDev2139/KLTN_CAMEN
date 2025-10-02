@@ -67,12 +67,12 @@ export const theme = createTheme({
   },
   typography: {
     h1: {
-      fontSize: 22,
+      fontSize: 32,
       fontWeight: 700,
     },
     h2: {
       fontSize: 32,
-      fontWeight: 700,
+      fontWeight: 500,
     },
     h3: {
       fontSize: 26,

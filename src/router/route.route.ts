@@ -15,6 +15,7 @@ import HomePage from '~/pages/site/screen/home/home.screen';
 import CartPage from '~/pages/site/screen/cart/cart.screen';
 import CategoryPage from '~/pages/site/screen/category/category.screen';
 import ProductPage from '~/pages/site/screen/product/product.screen';
+import ProductDetailPage from '~/pages/site/screen/product-detail/product-detail.screen';
 import ContactPage from '~/pages/site/screen/contact';
 import BlogPage from '~/pages/site/screen/blog/blog.screen';
 import BlogDetailPage from '~/pages/site/screen/blog-detail/blog-detail.screen';
@@ -30,7 +31,6 @@ import CustomersScreen from '~/pages/dashboard/screen/customers/customers.screen
 import BlogScreen from '~/pages/dashboard/screen/blog/blog.screen';
 import CouponScreen from '~/pages/dashboard/screen/coupon/coupon.screen';
 import ReviewsScreen from '~/pages/dashboard/screen/reviews/reviews.screen';
-
 
 export type Route = {
   path: string;
@@ -73,7 +73,7 @@ export const routes: Route[] = [
         element: ForgotPasswordPage,
         type: RouteType.PUBLIC,
       },
-    ]
+    ],
   },
 
   // SITE
@@ -96,6 +96,11 @@ export const routes: Route[] = [
       {
         path: PATH.SITE_SCREEN.PRODUCT,
         element: ProductPage,
+        type: RouteType.PUBLIC,
+      },
+      {
+        path: PATH.SITE_SCREEN.PRODUCT_DETAIL,
+        element: ProductDetailPage,
         type: RouteType.PUBLIC,
       },
       {
