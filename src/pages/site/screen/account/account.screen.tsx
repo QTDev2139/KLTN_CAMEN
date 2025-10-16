@@ -1,3 +1,4 @@
-export default function AccountScreen() {
-    return <>Account Screen</>
-}
+const AccountPage: React.FC = () => {
+  return <>Account Screen</>;
+};
+export default AccountPage;

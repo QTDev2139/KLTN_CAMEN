@@ -1,10 +1,11 @@
 import { useTheme } from '@mui/material';
 
-export default function HomeScreen() {
+const HomePage:React.FC = () => {
   const { palette } = useTheme();
   return (
     <>
-      <p style={{ color: palette.primary.main }}>Home Page</p>
+      <span style={{ color: palette.primary.main }}>Home Page</span>
     </>
   );
 }
+export default HomePage;

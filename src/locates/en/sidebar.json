@@ -4,5 +4,7 @@
     "process": "Manufacturing Process",
     "dossier": "Publication Dossier",
     "news": "News",
-    "contact": "Contact"
+    "contact": "Contact",
+    "products-domestic": "Products Domestic",
+    "products-export": "Products Export"
 }
