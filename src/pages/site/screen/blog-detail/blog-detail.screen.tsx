@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { blogApi } from '~/apis';
 import { Post } from '~/apis/blog/blog.api.interface';
 
-export default function BlogDetailScreen() {
+const BlogDetailPage: React.FC = () => {
   const [key_t, setKey_t] = useState<string | null>();
   const { lang, slug } = useParams();
   const [blogDetail, setBlogDetail] = useState<Post | null>();
@@ -15,7 +15,7 @@ export default function BlogDetailScreen() {
       const resultKey = await blogApi.getKey(slug || '');
       setKey_t(resultKey);
     })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function BlogDetailScreen() {
       };
       fetchApi();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang, key_t]);
 
   return (
@@ -43,4 +43,5 @@ export default function BlogDetailScreen() {
       <Typography>{blogDetail?.content}</Typography>
     </Stack>
   );
-}
+};
+export default BlogDetailPage;

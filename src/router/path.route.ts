@@ -18,7 +18,12 @@ export const AUTH_SCREEN = {
 export const SITE_SCREEN = {
     HOME: 'home',
     CATEGORY: 'c/:slug',
-    PRODUCT: 'product',
+    PRODUCT: {
+        ROOT: 'product',
+        DOMESTIC: 'product/domestic',
+        EXPORT: 'product/export',    
+        DETAIL: 'product/:slug',
+    },
     PRODUCT_DETAIL: 'product/:slug',
     CART: 'cart',
     CONTACT: 'contact',

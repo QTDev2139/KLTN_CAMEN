@@ -15,8 +15,10 @@ import HomePage from '~/pages/site/screen/home/home.screen';
 import CartPage from '~/pages/site/screen/cart/cart.screen';
 import CategoryPage from '~/pages/site/screen/category/category.screen';
 import ProductPage from '~/pages/site/screen/product/product.screen';
+import ProductDomesticPage from '~/pages/site/screen/product-domestic/product-domestic.screen';
+import ProductExportPage from '~/pages/site/screen/product-export/product-export.screen';
 import ProductDetailPage from '~/pages/site/screen/product-detail/product-detail.screen';
-import ContactPage from '~/pages/site/screen/contact';
+import ContactPage from '~/pages/site/screen/contact/contact.screen';
 import BlogPage from '~/pages/site/screen/blog/blog.screen';
 import BlogDetailPage from '~/pages/site/screen/blog-detail/blog-detail.screen';
 import AccountPage from '~/pages/site/screen/account/account.screen';
@@ -94,8 +96,13 @@ export const routes: Route[] = [
         type: RouteType.PUBLIC,
       },
       {
-        path: PATH.SITE_SCREEN.PRODUCT,
-        element: ProductPage,
+        path: PATH.SITE_SCREEN.PRODUCT.DOMESTIC,
+        element: ProductDomesticPage,
+        type: RouteType.PUBLIC,
+      },
+      {
+        path: PATH.SITE_SCREEN.PRODUCT.EXPORT,
+        element: ProductExportPage,
         type: RouteType.PUBLIC,
       },
       {

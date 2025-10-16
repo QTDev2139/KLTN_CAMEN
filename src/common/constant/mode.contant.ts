@@ -26,8 +26,8 @@ export const theme = createTheme({
     },
     divider: '#d6d6d6ff', 
     background: {
-      default: '#f6f6f6ff', 
-      paper: '#ffffff', 
+      default: '#fff', 
+      paper: '#f5f5f5', 
     },
   },
   components: {

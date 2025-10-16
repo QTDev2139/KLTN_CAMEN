@@ -1,3 +1,4 @@
-export default function CategoryScreen() {
-    return <>Category Screen</>
-}
+const CategoryPage: React.FC = () => {
+  return <>Category Screen</>;
+};
+export default CategoryPage;

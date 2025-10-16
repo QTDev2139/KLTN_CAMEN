@@ -4,7 +4,7 @@ import IconLabel from '~/components/elements/icon-label/icon-label.element';
 import { StackRow } from '~/components/elements/styles/stack.style';
 import { HereMap } from '~/components/map/map';
 
-export default function ContactScreen() {
+const ContactPage: React.FC = () => {
   const { palette } = useTheme();
   return (
     <Stack>
@@ -32,3 +32,4 @@ export default function ContactScreen() {
     </Stack>
   );
 }
+export default ContactPage;

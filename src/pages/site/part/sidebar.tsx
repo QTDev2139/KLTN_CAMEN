@@ -6,8 +6,18 @@ export const sidebars = [
       title: 'intro',
     },
     {
-      to: PATH.SITE_SCREEN.PRODUCT,
+      to: PATH.SITE_SCREEN.PRODUCT.ROOT,
       title: 'products',
+      children: [
+        {
+          to: PATH.SITE_SCREEN.PRODUCT.DOMESTIC,
+          title: 'products-domestic'
+        },
+        {
+          to: PATH.SITE_SCREEN.PRODUCT.EXPORT,
+          title: 'products-export'
+        }
+      ]
     },
     {
       to: PATH.SITE_SCREEN.CHECKOUT,
@@ -26,3 +36,6 @@ export const sidebars = [
       title: 'contact',
     },
   ] as const;
+
+
+  
