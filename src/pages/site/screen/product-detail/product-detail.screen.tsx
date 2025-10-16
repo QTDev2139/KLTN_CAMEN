@@ -2,7 +2,7 @@ import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { BoxForm } from '~/components/elements/forms/box/box-form';
 import { StackRow } from '~/components/elements/styles/stack.style';
 import ProductImg from '~/assets/images/product-mien.png';
-import { BORDER_RADIUS_ELEMENT_WRAPPER } from '~/common/constant/style.constant';
+import { BORDER_RADIUS_ELEMENT_WRAPPER, PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import React from 'react';
 import ModalImage from '~/components/elements/modal-image/modal-image.element';
 import { SpeciaList } from '~/components/elements/specia-list/specia-list.element';
@@ -25,7 +25,7 @@ export default function ProductDetailPage() {
   ]
 
   return (
-    <Stack>
+    <Stack sx={{ backgroundColor: palette.background.default }}>
       <StackRow sx={{ display: 'grid', gridTemplateColumns: '5fr 7fr', gap: 4, marginBottom: '40px' }}>
         <Stack>
           <BoxForm sx={{ minHeight: 'auto' }}>

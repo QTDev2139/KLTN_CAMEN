@@ -1,3 +1,3 @@
-export default function ProductScreen() {
+export default function ProductPage() {
     return <>Product Screen</>
 }
