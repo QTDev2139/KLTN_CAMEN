@@ -5,6 +5,7 @@ import ProductChao from '~/assets/images/product-chao.png';
 import ProductMien from '~/assets/images/product-mien.png';
 import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 import { useState } from 'react';
+import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 
 type CartItem = {
   id: string;
@@ -14,9 +15,7 @@ type CartItem = {
   qty: number;
 };
 
-export const FormatPrice = (number: number) => {
-  return number.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-};
+
 
 const CartPage: React.FC = () => {
   const { palette } = useTheme();

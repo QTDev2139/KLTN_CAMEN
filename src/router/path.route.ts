@@ -20,8 +20,9 @@ export const SITE_SCREEN = {
     CATEGORY: 'c/:slug',
     PRODUCT: {
         ROOT: 'product',
-        DOMESTIC: 'product/domestic',
-        EXPORT: 'product/export',    
+        DOMESTIC: 'product-domestic',
+        DOMESTIC_DETAIL: 'product-domestic/:slug',
+        EXPORT: 'product-export',    
         DETAIL: 'product/:slug',
     },
     PRODUCT_DETAIL: 'product/:slug',
