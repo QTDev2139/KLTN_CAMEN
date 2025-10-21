@@ -71,17 +71,21 @@ export default function Header() {
 
                   <Menu id="basic-menu" anchorEl={anchorEl} open={open} onClose={handleClose} onClick={handleClose}>
                     {sidebar.children.map((item) => (
-                      <NavLink
-                        key={item.to}
-                        to={`/${lang}/${item.to}`}
-                        style={({ isActive }: { isActive: boolean }) => ({
-                          padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
-                          color: isActive ? palette.primary.main : palette.text.primary,
-                          textDecoration: 'none',
-                        })}
-                      >
-                        <Button sx={{ justifyContent: 'flex-start', width: '100%' }}>{t(item.title)}</Button>
-                      </NavLink>
+                      <Stack>
+                        <NavLink
+                          key={item.to}
+                          to={`/${lang}/${item.to}`}
+                          style={({ isActive }: { isActive: boolean }) => ({
+                            padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
+                            color: isActive ? palette.primary.main : palette.text.primary,
+                            textDecoration: 'none',
+                          })}
+                        >
+                          <TypographyHover variant="subtitle1" sx={{ justifyContent: 'flex-start' }}>
+                            {t(item.title)}
+                          </TypographyHover>
+                        </NavLink>
+                      </Stack>
                     ))}
                   </Menu>
                 </Stack>
@@ -98,10 +102,7 @@ export default function Header() {
                   textDecoration: 'none',
                 })}
               >
-                <TypographyHover
-                  variant="subtitle1"
-                  style={{ paddingBottom: `${STYLE.PADDING_GAP_ITEM}`, color: palette.text.primary }}
-                >
+                <TypographyHover variant="subtitle1" style={{ paddingBottom: `${STYLE.PADDING_GAP_ITEM}` }}>
                   {t(sidebar.title)}
                 </TypographyHover>
               </NavLink>

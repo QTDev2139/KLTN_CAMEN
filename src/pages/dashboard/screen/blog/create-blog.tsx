@@ -89,27 +89,7 @@ export default function CreateBlogMultiLang() {
     validationSchema: schema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        const fd = new FormData();
-
-        // vi
-        fd.append('translations[0][languages_id]', String(values.vi.language_id));
-        fd.append('translations[0][title]', values.vi.title);
-        if (values.vi.slug) fd.append('translations[0][slug]', values.vi.slug);
-        if (values.vi.content) fd.append('translations[0][content]', values.vi.content);
-        if (values.vi.meta_title) fd.append('translations[0][meta_title]', values.vi.meta_title);
-        if (values.vi.meta_description) fd.append('translations[0][meta_description]', values.vi.meta_description);
-        if (values.thumbnail) fd.append('translations[0][thumbnail]', values.thumbnail);
-        fd.append('translations[0][translation_key]', values.translation_key);
-
-        // en
-        fd.append('translations[1][languages_id]', String(values.en.language_id));
-        fd.append('translations[1][title]', values.en.title);
-        if (values.en.slug) fd.append('translations[1][slug]', values.en.slug);
-        if (values.en.content) fd.append('translations[1][content]', values.en.content);
-        if (values.en.meta_title) fd.append('translations[1][meta_title]', values.en.meta_title);
-        if (values.en.meta_description) fd.append('translations[1][meta_description]', values.en.meta_description);
-        if (values.thumbnail) fd.append('translations[1][thumbnail]', values.thumbnail);
-        fd.append('translations[1][translation_key]', values.translation_key);
+        // const fd = new FormData();
 
         console.log('SUBMIT ->', values);
       } catch (error) {

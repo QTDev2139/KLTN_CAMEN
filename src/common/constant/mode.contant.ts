@@ -4,7 +4,7 @@ export const theme = createTheme({
   palette: {
     primary: {
       main: '#f44336',
-      light: '#ffc3c2ff',
+      light: '#fff8f6',
       dark: '#e53935',
     },
     // secondary: {
@@ -88,7 +88,7 @@ export const theme = createTheme({
     },
     h6: {
       fontSize: 18,
-      fontWeight: 500,
+      fontWeight: 700,
     },
     subtitle1: {
       fontSize: 18,
