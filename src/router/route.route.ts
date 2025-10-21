@@ -101,6 +101,11 @@ export const routes: Route[] = [
         type: RouteType.PUBLIC,
       },
       {
+        path: PATH.SITE_SCREEN.PRODUCT.DOMESTIC_DETAIL,
+        element: ProductDomesticPage,
+        type: RouteType.PUBLIC,
+      },
+      {
         path: PATH.SITE_SCREEN.PRODUCT.EXPORT,
         element: ProductExportPage,
         type: RouteType.PUBLIC,
