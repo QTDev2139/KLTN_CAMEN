@@ -29,7 +29,7 @@ const ProductDomesticPage: React.FC = () => {
   }, [lang]);
   useEffect(() => {
     const fetchApi = async () => {
-      const result = await productApi.getProductToCategory(slug, lang);
+      const result = await productApi.getProductByCategory(slug, lang);
       setProduct(result);
       console.log(result)
 

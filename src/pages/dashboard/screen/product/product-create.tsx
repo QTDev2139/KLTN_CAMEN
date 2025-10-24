@@ -1,12 +1,12 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Box, Paper, Typography, Stack, Divider, Tabs, Tab, Button, TextField, MenuItem, Chip } from '@mui/material';
 import { useFormik, getIn } from 'formik';
-import * as Yup from 'yup';
 import CloseIcon from '@mui/icons-material/Close';
 import { ProductDetail } from '~/apis/product/product.interface.api';
 import { schema } from './product.schema';
 import { productApi } from '~/apis';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
+import { RichEditor } from '~/components/rick-text-editor/rick-text-editor';
 
 // type code cho tab
 type LocaleCode = 'vi' | 'en';
@@ -20,7 +20,6 @@ const slugify = (s: string) =>
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-');
 
-// === Component chính ===
 export default function CreateProduct(props: {
   initial?: Partial<ProductDetail>; // dùng cho edit
   onSubmit: (values: ProductDetail) => Promise<void> | void;
@@ -31,8 +30,6 @@ export default function CreateProduct(props: {
   // Tab ngôn ngữ
   const [tab, setTab] = useState<LocaleCode>('vi');
 
-  // Preview thumbnail chính và gallery local (File[])
-
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
 
@@ -41,6 +38,7 @@ export default function CreateProduct(props: {
     validationSchema: schema,
     enableReinitialize: true,
     initialValues: {
+      ...initial,
       price: 0,
       compare_at_price: 0,
       stock_quantity: 0,
@@ -75,7 +73,6 @@ export default function CreateProduct(props: {
     },
     onSubmit: async (values, helpers) => {
       try {
-        // giả sử bạn đang có:
         const fd = new FormData();
 
         // --------- fields đơn giản ----------
@@ -101,16 +98,14 @@ export default function CreateProduct(props: {
 
         // --------- product_images (file + sort_order) ----------
         galleryFiles.forEach((file, i) => {
-          fd.append(`product_images[${i}][image]`, file); 
+          fd.append(`product_images[${i}][image]`, file);
           fd.append(`product_images[${i}][sort_order]`, String(i)); // hoặc lấy sort từ UI nếu có
         });
-
 
         fd.forEach((v, k) => console.log(k, v));
 
         const result = await productApi.createProduct(fd);
-        snackbar('success', result.message || "Thêm sản phẩm thành công :_");
-      
+        snackbar('success', result.message || 'Thêm sản phẩm thành công :_');
       } finally {
         helpers.setSubmitting(false);
       }
@@ -169,13 +164,12 @@ export default function CreateProduct(props: {
   const ci = idxOf(current);
 
   return (
-    <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ maxWidth: 1200, mx: 'auto', mt: 4 }}>
+    <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ maxWidth: 1500, mx: 'auto', mt: 4 }}>
       {/* ---- Thông tin chung ---- */}
       <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
           Thông tin chung
         </Typography>
-
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mt: 2 }}>
           <TextField
             label="Giá bán"
@@ -303,7 +297,7 @@ export default function CreateProduct(props: {
           {/* name + slug */}
           <Stack spacing={2}>
             <TextField
-              label={`Name (${current.toUpperCase()})`}
+              label={`Name `}
               fullWidth
               value={formik.values.product_translations[ci].name}
               onChange={handleNameChange(current)}
@@ -314,7 +308,7 @@ export default function CreateProduct(props: {
             />
 
             <TextField
-              label={`Slug (${current.toUpperCase()})`}
+              label={`Slug `}
               fullWidth
               name={`product_translations.${ci}.slug`}
               value={formik.values.product_translations[ci].slug}
@@ -325,7 +319,7 @@ export default function CreateProduct(props: {
             />
 
             <TextField
-              label={`Description (${current.toUpperCase()})`}
+              label={`Description `}
               fullWidth
               multiline
               minRows={3}
@@ -337,54 +331,32 @@ export default function CreateProduct(props: {
               helperText={helperText(`product_translations.${ci}.description`)}
             />
 
-            <TextField
-              label={`Ingredient (${current.toUpperCase()})`}
-              fullWidth
-              multiline
-              minRows={2}
-              name={`product_translations.${ci}.ingredient`}
-              value={formik.values.product_translations[ci].ingredient}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={showError(`product_translations.${ci}.ingredient`)}
-              helperText={helperText(`product_translations.${ci}.ingredient`)}
-            />
-
-            <TextField
-              label={`Nutrition info (${current.toUpperCase()})`}
-              fullWidth
-              multiline
-              minRows={2}
-              name={`product_translations.${ci}.nutrition_info`}
+            <RichEditor
               value={formik.values.product_translations[ci].nutrition_info}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              onChange={(val) => formik.setFieldValue(`product_translations.${ci}.nutrition_info`, val)}
+              onBlur={() => formik.setFieldTouched(`product_translations.${ci}.nutrition_info`, true)}
+              placeholder={`Enter nutrition info `}
+              height={300}
               error={showError(`product_translations.${ci}.nutrition_info`)}
               helperText={helperText(`product_translations.${ci}.nutrition_info`)}
             />
 
-            <TextField
-              label={`Usage instruction (${current.toUpperCase()})`}
-              fullWidth
-              multiline
-              minRows={2}
-              name={`product_translations.${ci}.usage_instruction`}
+            <RichEditor
               value={formik.values.product_translations[ci].usage_instruction}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              onChange={(val) => formik.setFieldValue(`product_translations.${ci}.usage_instruction`, val)}
+              onBlur={() => formik.setFieldTouched(`product_translations.${ci}.usage_instruction`, true)}
+              placeholder={`Enter usage instruction `}
+              height={300}
               error={showError(`product_translations.${ci}.usage_instruction`)}
               helperText={helperText(`product_translations.${ci}.usage_instruction`)}
             />
 
-            <TextField
-              label={`Reason to choose (${current.toUpperCase()})`}
-              fullWidth
-              multiline
-              minRows={2}
-              name={`product_translations.${ci}.reason_to_choose`}
+            <RichEditor
               value={formik.values.product_translations[ci].reason_to_choose}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              onChange={(val) => formik.setFieldValue(`product_translations.${ci}.reason_to_choose`, val)}
+              onBlur={() => formik.setFieldTouched(`product_translations.${ci}.reason_to_choose`, true)}
+              placeholder={`Enter reason to choose `}
+              height={300}
               error={showError(`product_translations.${ci}.reason_to_choose`)}
               helperText={helperText(`product_translations.${ci}.reason_to_choose`)}
             />
@@ -408,7 +380,7 @@ export default function CreateProduct(props: {
             console.log('errors:', errors);
           }}
         >
-          {formik.isSubmitting ? 'Đang lưu…' : 'Lưu sản phẩm'}
+          {formik.isSubmitting ? 'Đang lưu' : 'Lưu sản phẩm'}
         </Button>
       </Stack>
     </Box>

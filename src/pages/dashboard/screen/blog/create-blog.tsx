@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useFormik, getIn } from 'formik';
 import * as Yup from 'yup';
 import { Box, Stack, TextField, Button, Typography, Tabs, Tab, Divider, Paper } from '@mui/material';
-import RichTextEditor from '~/components/rick-text-editor/rick-text-editor';
+import { RichEditor } from '~/components/rick-text-editor/rick-text-editor';
 // import axios from 'axios'; // <- Bật nếu bạn dùng axios trực tiếp
 // import { axiosApi } from '~/apis'; // <- Hoặc client axios riêng của bạn
 
@@ -15,7 +15,7 @@ type LocalePayload = {
   language_id: 1 | 2; // hoặc language_id nếu BE yêu cầu
   title: string;
   slug: string;
-  content: string; // HTML từ RichTextEditor
+  content: string; // HTML từ RichEditor
   meta_title: string;
   meta_description: string;
 };
@@ -225,7 +225,7 @@ export default function CreateBlogMultiLang() {
                 helperText={helperText('vi.meta_description')}
               />
 
-              <RichTextEditor
+              <RichEditor
                 value={formik.values.vi.content}
                 onChange={(html) => formik.setFieldValue('vi.content', html)}
                 placeholder="Nội dung (VI)"
@@ -285,7 +285,7 @@ export default function CreateBlogMultiLang() {
                 helperText={helperText('en.meta_description')}
               />
 
-              <RichTextEditor
+              <RichEditor
                 value={formik.values.en.content}
                 onChange={(html) => formik.setFieldValue('en.content', html)}
                 placeholder="Content (EN)"

@@ -5,7 +5,7 @@ const translateSchema = Yup.array().of(
     language_id: Yup.string().required('Bắt buộc'),
     name: Yup.string().required('Bắt buộc'),
     slug: Yup.string().required('Bắt buộc'),
-    ingredient: Yup.string().required('Bắt buộc'), // thay đổi thành chi tiết sản phẩm or bỏ
+    description: Yup.string().required('Bắt buộc'), // thay đổi thành chi tiết sản phẩm or bỏ
     nutrition_info: Yup.string().required('Bắt buộc'),
     usage_instruction: Yup.string().required('Bắt buộc'),
     reason_to_choose: Yup.string().notRequired(),

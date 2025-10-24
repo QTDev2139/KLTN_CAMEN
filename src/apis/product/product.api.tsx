@@ -6,13 +6,17 @@ export const getProduct = async (lang: 'vi' | 'en'): Promise<Product[]> => {
     return res.data.post;
 }
 
-export const getProductToCategory = async (slug: string, lang: 'vi' | 'en'): Promise<Product[]> => {
+export const getProductByCategory = async (slug: string, lang: 'vi' | 'en'): Promise<Product[]> => {
     const res = await axiosApi.get(`product/slug/${slug}/lang/${lang}`);
     return res.data.post;
 }
 
 export const getDetailProduct = async (slug: string, lang: 'vi' | 'en'): Promise<ProductDetail> => {
     const res = await axiosApi.get(`product/${slug}/lang/${lang}`);
+    return res.data.post;
+}
+export const getDetailProductById = async (id: number): Promise<ProductDetail> => {
+    const res = await axiosApi.get(`product/id/${id}`);
     return res.data.post;
 }
 
