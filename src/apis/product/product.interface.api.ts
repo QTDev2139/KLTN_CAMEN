@@ -29,6 +29,7 @@ export interface Product {
 }
 
 export interface ProductDetail {
+  id?: number;
   price: number;
   compare_at_price: number;
   stock_quantity: number;

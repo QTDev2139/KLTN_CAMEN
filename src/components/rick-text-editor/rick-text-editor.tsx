@@ -1,138 +1,66 @@
-// src/components/RichTextEditor.tsx
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import {
-  ClassicEditor,
-  Essentials,
-  Paragraph,
-  Bold,
-  Italic,
-  Heading,
-  Link,
-  List,
-  ListProperties,
+import React from 'react';
+import { Editor } from '@tinymce/tinymce-react';
+import { FormHelperText } from '@mui/material';
 
-  // ⬇️ HÌNH ẢNH
-  Image,
-  ImageToolbar,
-  ImageCaption,
-  ImageStyle,
-  ImageUpload,
-  ImageInsert,
-
-  // ⬇️ CĂN LỀ & FONT
-  Alignment,
-  Font,
-  Base64UploadAdapter,
-} from 'ckeditor5';
-
-import 'ckeditor5/ckeditor5.css';
-
-type Props = {
-  value: string;
-  onChange: (html: string) => void;
+interface RichEditorProps {
+  value?: string;
+  onChange?: (content: string) => void;
+  onBlur?: () => void;
+  height?: number;
   placeholder?: string;
-};
-
-export default function RichTextEditor({ value, onChange, placeholder }: Props) {
-  return (
-    <CKEditor
-      editor={ClassicEditor}
-      data={value}
-      onChange={(_, editor) => onChange(editor.getData())}
-      config={{
-        licenseKey: 'GPL',
-        plugins: [
-          Essentials,
-          Paragraph,
-          Bold,
-          Italic,
-          Heading,
-          Link,
-          List,
-          ListProperties,
-          Image,
-          ImageToolbar,
-          ImageCaption,
-          ImageStyle,
-          ImageUpload,
-          ImageInsert,
-          Alignment,
-          Font,
-          Base64UploadAdapter,
-        ],
-        toolbar: [
-          'undo',
-          'redo',
-          '|',
-          'heading',
-          '|',
-          'bold',
-          'italic',
-          'link',
-          '|',
-          'bulletedList',
-          'numberedList',
-          '|',
-          'alignment', // 👈 nút căn lề văn bản
-          'fontFamily',
-          'fontSize', // 👈 chọn font & cỡ chữ
-          '|',
-          'insertImage',
-        ],
-
-        // Heading
-        heading: {
-          options: [
-            { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-            { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-            { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-            { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
-          ],
-        },
-
-        // Link
-        link: {
-          addTargetToExternalLinks: true,
-          defaultProtocol: 'https://',
-        },
-
-        // List
-        list: {
-          properties: { styles: true, startIndex: true, reversed: true },
-        },
-
-
-        // Ảnh (thanh công cụ & style)
-        image: {
-          toolbar: [
-            'toggleImageCaption',
-            'imageTextAlternative',
-            '|',
-            // style cho khối/inline/side
-            'imageStyle:inline',
-            'imageStyle:block',
-            'imageStyle:side',
-            '|',
-            // style căn lề ảnh
-            'imageStyle:alignLeft',
-            'imageStyle:alignCenter',
-            'imageStyle:alignRight',
-          ],
-          styles: {
-            options: [
-              'inline',
-              'block',
-              'side',
-              'alignLeft',
-              'alignCenter',
-              'alignRight', // 👈 căn lề ảnh
-            ],
-          },
-          insert: { type: 'auto' },
-        },
-
-        placeholder,
-      }}
-    />
-  );
+  error?: boolean;
+  helperText?: string;
 }
+
+export const RichEditor: React.FC<RichEditorProps> = ({
+  value = '',
+  onChange,
+  onBlur,
+  height = 300,
+  placeholder = '',
+  error = false,
+  helperText = ' ',
+}) => {
+  return (
+    <div>
+      <Editor
+        apiKey="zfenvlpuaf2bwnctqh6qu5bpcdyc9v0pgx8un1gx3sl5pc1i"
+        value={value}
+        onEditorChange={(newValue) => onChange?.(newValue)}
+        onBlur={() => onBlur?.()}
+        init={{
+          height,
+          placeholder,
+          menubar: true,
+          branding: false,
+          promotion: false,
+          plugins: [
+            'advlist',
+            'autolink',
+            'lists',
+            'link',
+            'image',
+            'charmap',
+            'preview',
+            'anchor',
+            'searchreplace',
+            'visualblocks',
+            'code',
+            'fullscreen',
+            'insertdatetime',
+            'media',
+            'table',
+            'help',
+            'wordcount',
+          ],
+          toolbar:
+            'undo redo | blocks | bold italic underline forecolor | ' +
+            'alignleft aligncenter alignright alignjustify | bullist numlist ' +
+            'outdent indent | removeformat | image link media table | code preview fullscreen | help',
+          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+        }}
+      />
+      <FormHelperText error={!!error}>{helperText || ' '}</FormHelperText>
+    </div>
+  );
+};

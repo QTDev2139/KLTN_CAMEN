@@ -27,7 +27,7 @@ export const theme = createTheme({
     divider: '#d6d6d6ff', 
     background: {
       default: '#fff', 
-      paper: '#f5f5f5', 
+      paper: '#f7f7f7ff', 
     },
   },
   components: {
