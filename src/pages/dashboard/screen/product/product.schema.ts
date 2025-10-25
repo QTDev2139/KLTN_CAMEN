@@ -1,32 +1,24 @@
 import * as Yup from 'yup';
 
-const translateSchema = Yup.array().of(
-  Yup.object({
-    language_id: Yup.string().required('Bắt buộc'),
-    name: Yup.string().required('Bắt buộc'),
-    slug: Yup.string().required('Bắt buộc'),
-    description: Yup.string().required('Bắt buộc'), // thay đổi thành chi tiết sản phẩm or bỏ
-    nutrition_info: Yup.string().required('Bắt buộc'),
-    usage_instruction: Yup.string().required('Bắt buộc'),
-    reason_to_choose: Yup.string().notRequired(),
-  })
-);
-
-const imageSchema = Yup.array().of(
-  Yup.object({ 
-    image_url: Yup.mixed<File>()
-      .required('Vui lòng chọn ảnh thumbnail!')
-      .test('fileType', 'File phải là ảnh', (f) => !f || (f && f.type.startsWith('image/'))),
-  })
-);
-
-export const schema = Yup.object({
-  price: Yup.number().required('Bắt buộc'),
-  compare_at_price: Yup.number().required('Bắt buộc'),
-  stock_quantity: Yup.number().required('Bắt buộc'),
-  origin: Yup.string().required('Bắt buộc'),
-  quantity_per_pack: Yup.number().required('Bắt buộc'),
-  shipping_from: Yup.string().required('Bắt buộc'),
-  product_translations: translateSchema,
-  product_images: imageSchema,
+export const schema = Yup.object().shape({
+  price: Yup.number().required('Giá bán là bắt buộc').min(0, 'Giá phải lớn hơn 0'),
+  compare_at_price: Yup.number().nullable().min(0, 'Giá phải lớn hơn 0'),
+  stock_quantity: Yup.number().required('Tồn kho là bắt buộc').min(0, 'Tồn kho phải lớn hơn 0'),
+  origin: Yup.string().required('Xuất xứ là bắt buộc'),
+  quantity_per_pack: Yup.number().required('Số lượng/combo là bắt buộc').min(1, 'Số lượng phải lớn hơn 0'),
+  shipping_from: Yup.string().required('Nơi giao hàng là bắt buộc'),
+  category_id: Yup.number().required('Danh mục là bắt buộc'),
+  type: Yup.string().required('Loại sản phẩm là bắt buộc'),
+  product_translations: Yup.array().of(
+    Yup.object().shape({
+      language_id: Yup.number().required(),
+      name: Yup.string().required('Tên sản phẩm là bắt buộc'),
+      slug: Yup.string().required('Slug là bắt buộc'),
+      description: Yup.string().nullable().default(''),
+      ingredient: Yup.string().nullable().default(''),
+      nutrition_info: Yup.string().nullable().default(''),
+      usage_instruction: Yup.string().nullable().default(''),
+      reason_to_choose: Yup.string().nullable().default(''),
+    })
+  ),
 });

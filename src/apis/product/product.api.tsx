@@ -25,6 +25,14 @@ export const createProduct = async (fd: FormData) => {
     return res.data;
 }
 
+export const updateProduct = async (id: number, fd: FormData) => {
+    fd.append('_method', 'PUT'); // method override for Laravel
+    const res = await axiosApi.post(`product/${id}`, fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data;
+}
+
 export const deleteProduct = async (id: number) => {
     const res = await axiosApi.delete(`product/${id}`)
     return res.data
