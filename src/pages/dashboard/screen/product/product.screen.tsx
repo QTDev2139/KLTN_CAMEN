@@ -4,15 +4,34 @@ import { ProductMode } from "./product.enum";
 import { useState } from "react";
 import ListProduct from "./product-list";
 import CreateProduct from "./product-create";
-import UpdateProduct from "./product-update";
+import { ProductDetail } from "~/apis/product/product.interface.api";
 
 const ProductScreen: React.FC = () => {
-    const { palette } = useTheme();
+  const { palette } = useTheme();
   const [mode, setMode] = useState<ProductMode>(ProductMode.LIST);
+  const [editingProduct, setEditingProduct] = useState<ProductDetail | undefined>(undefined);
 
-  const goList = () => setMode(ProductMode.LIST);
-  const goCreate = () => setMode(ProductMode.CREATE);
-  const goUpdate = () => setMode(ProductMode.UPDATE);
+  const goList = () => {
+    setEditingProduct(undefined);
+    setMode(ProductMode.LIST);
+  };
+  
+  const goCreate = () => {
+    setEditingProduct(undefined);
+    setMode(ProductMode.CREATE);
+  };
+  
+  const goUpdate = (product: ProductDetail) => {
+    setEditingProduct(product);
+    setMode(ProductMode.UPDATE);
+  };
+
+  // const handleSubmit = async (values: ProductDetail) => {
+  //   // Xử lý submit cho cả create và update
+  //   console.log('Submit values:', values);
+  //   // TODO: Gọi API tương ứng
+  //   goList();
+  // };
 
   return (
     <Stack spacing={2}>
@@ -28,12 +47,12 @@ const ProductScreen: React.FC = () => {
             <Typography variant="subtitle2">Quay Lại</Typography>
           </Button>
         )}
-        
       </StackRowAlignCenter>
       <Divider sx={{ color: palette.divider }} />
-      {mode === ProductMode.LIST && <ListProduct onUpdate={goUpdate} />}
-      {mode === ProductMode.CREATE && <CreateProduct onSubmit={() => {}} />}
-      {mode === ProductMode.UPDATE && <UpdateProduct />}
+      
+      {mode === ProductMode.LIST && <ListProduct onEdit={goUpdate} />}
+      {mode === ProductMode.CREATE && <CreateProduct />}
+      {mode === ProductMode.UPDATE && <CreateProduct initial={editingProduct} />}
     </Stack>
   );
 }

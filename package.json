@@ -12,6 +12,7 @@
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
+    "@tinymce/tinymce-react": "^6.3.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.126",
     "@types/react": "^19.1.9",
@@ -29,6 +30,7 @@
     "react-scripts": "5.0.1",
     "react-slick": "^0.31.0",
     "slick-carousel": "^1.8.1",
+    "tinymce": "^8.1.2",
     "web-vitals": "^2.1.4",
     "yup": "^1.7.0"
   },

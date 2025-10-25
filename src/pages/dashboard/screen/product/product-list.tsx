@@ -2,20 +2,22 @@ import { DeleteOutline, ModeEditOutlineOutlined } from '@mui/icons-material';
 import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { productApi } from '~/apis';
-import { Product } from '~/apis/product/product.interface.api';
+import { Product, ProductDetail } from '~/apis/product/product.interface.api';
 import { StackRowJustCenter } from '~/components/elements/styles/stack.style';
 import TableElement from '~/components/elements/table-element/table-element';
 import { ModalConfirm } from '~/components/modal-confirm/modal-confirm';
+import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 
 type ListProductProps = {
-  onUpdate: (product: Product) => void;
+  onEdit: (product: ProductDetail) => void;
 };
 
-const ListProduct: React.FC<ListProductProps> = ({ onUpdate }) => {
+const ListProduct: React.FC<ListProductProps> = ({ onEdit }) => {
   const [listProduct, setListProduct] = useState<Product[]>([]);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const { snackbar } = useSnackbar();
 
   const handleOpenConfirm = (product: Product) => {
     setSelectedProduct(product);
@@ -30,10 +32,20 @@ const ListProduct: React.FC<ListProductProps> = ({ onUpdate }) => {
       setListProduct((prev) => prev.filter((p) => p.id !== selectedProduct.id));
     } catch (error) {
       console.error(error);
-      alert('Xóa thất bại!');
+      snackbar('error', "Xóa sản phẩm thất bại");
     } finally {
       setLoadingDelete(false);
       setOpenConfirm(false);
+    }
+  };
+
+  const handleEditClick = async (id: number) => {
+    try {
+      const detail = await productApi.getDetailProductById(id);
+      onEdit(detail);
+    } catch (e) {
+      console.error(e);
+      snackbar('error', "Không tải được chi tiết sản phẩm");
     }
   };
 
@@ -69,13 +81,13 @@ const ListProduct: React.FC<ListProductProps> = ({ onUpdate }) => {
             <TableCell>
               <StackRowJustCenter sx={{ width: '100%', cursor: 'pointer' }}>
                 <Tooltip title="Sửa">
-                  <IconButton>
-                    <ModeEditOutlineOutlined onClick={() => onUpdate(product)} />
+                  <IconButton onClick={() => handleEditClick(product.id)}>
+                    <ModeEditOutlineOutlined />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Xóa">
-                  <IconButton>
-                    <DeleteOutline onClick={() => handleOpenConfirm(product)} />
+                  <IconButton onClick={() => handleOpenConfirm(product)}>
+                    <DeleteOutline />
                   </IconButton>
                 </Tooltip>
               </StackRowJustCenter>
