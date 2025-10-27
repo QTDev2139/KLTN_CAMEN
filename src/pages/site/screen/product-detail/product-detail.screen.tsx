@@ -8,21 +8,24 @@ import { SliderProduct, SliderProductItems } from '~/components/elements/slider/
 import ProductChao from '~/assets/images/product-chao.png';
 import ProductMien from '~/assets/images/product-mien.png';
 import { useNavigate, useParams } from 'react-router-dom';
-import { productApi } from '~/apis';
+import { productApi, cartApi } from '~/apis';
 import { ProductDetail } from '~/apis/product/product.interface.api';
 import { PATH } from '~/router';
 import { BoxContent } from '~/components/elements/forms/box/box-content';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 import { ShoppingCartOutlined } from '@mui/icons-material';
+import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 
 export default function ProductDetailPage() {
   const { palette } = useTheme();
+  const { snackbar } = useSnackbar();
   const [open, setOpen] = React.useState(false);
   const { lang, slug } = useParams<{ lang: 'vi' | 'en'; slug: string }>();
   const [productDetail, setProductDetail] = useState<ProductDetail | null>();
   const [qty, setQty] = useState(1);
   const [mainImage, setMainImage] = useState(productDetail?.product_images[0].image_url);
   const [modalSrc, setModalSrc] = useState('');
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -43,13 +46,32 @@ export default function ProductDetailPage() {
     }
   }, [productDetail]);
 
-  console.log('product: ', mainImage);
-
   const handlePrev = () => {
-    setQty(qty - 1);
+    if (qty > 1) {
+      setQty(qty - 1);
+    }
   };
+
   const handlePlus = () => {
     setQty(qty + 1);
+  };
+
+  const handleAddToCart = async () => {
+    if (!productDetail || !productDetail.id) return;
+    setIsAddingToCart(true);
+    try {
+      const result = await cartApi.createCart({
+        product_id: productDetail.id,
+        qty: qty,
+      });
+      snackbar('success', result.message || 'Đã thêm sản phẩm vào giỏ hàng');
+      // Reset số lượng về 1 sau khi thêm thành công (tùy chọn)
+      // setQty(1);
+    } catch (error: any) {
+      snackbar('error', error?.response?.data?.message || 'Không thể thêm vào giỏ hàng');
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   const items: SliderProductItems[] = [
@@ -59,6 +81,7 @@ export default function ProductDetailPage() {
     { src: ProductMien, title: 'Cháo tôm thịt' },
     { src: ProductMien, title: 'Miến cá lóc' },
   ];
+  
 
   return (
     <Stack sx={{ backgroundColor: palette.background.default }}>
@@ -104,7 +127,7 @@ export default function ProductDetailPage() {
           </StackRow>
           <ModalImage open={open} onClose={() => setOpen(false)} src={modalSrc} alt="Sản phẩm" />
         </Stack>
-        <Stack sx={{ position: 'relative', top: '-40%', transform: 'translateY(50%)' }}>
+        <Stack sx={{ position: 'relative', top: '-40%', transform: 'translateY(50%)', gap: 1 }}>
           <Typography variant="h2" sx={{ paddingBottom: '16px' }}>
             {productDetail?.product_translations[0].name}
           </Typography>
@@ -115,30 +138,32 @@ export default function ProductDetailPage() {
           <StackRow sx={{ paddingTop: PADDING_GAP_LAYOUT }} gap={1}>
             <Typography variant="subtitle1">Số lượng: </Typography>
             <ButtonGroup variant="outlined" color="inherit" size="small" sx={{ color: palette.text.primary }}>
-              {/* disable khi qty = 1 để không giảm xuống 0 */}
-              <Button onClick={() => handlePrev()} disabled={qty === 1}>
+              <Button onClick={handlePrev} disabled={qty === 1}>
                 -
               </Button>
               <Button style={{ userSelect: 'text', cursor: 'text' }}>{qty}</Button>
-              <Button onClick={() => handlePlus()}>+</Button>
+              <Button onClick={handlePlus}>+</Button>
             </ButtonGroup>
           </StackRow>
-          <StackRow gap={2} sx={{ paddingTop: PADDING_GAP_LAYOUT }}>
+          <StackRow gap={2} sx={{ paddingTop: 4 }}>
             <Button
               variant="outlined"
               startIcon={<ShoppingCartOutlined />}
+              onClick={handleAddToCart}
+              disabled={isAddingToCart}
               sx={{
                 color: palette.primary.main,
                 borderColor: palette.primary.main,
                 backgroundColor: palette.primary.light,
                 textTransform: 'none',
                 px: 3,
+                py: 1,
                 '&:hover': {
                   opacity: '0.9',
                 },
               }}
             >
-              Thêm Vào Giỏ Hàng
+              {isAddingToCart ? 'Thêm Vào Giỏ Hàng' : 'Thêm Vào Giỏ Hàng'}
             </Button>
 
             {/* Nút Mua ngay */}
@@ -149,6 +174,7 @@ export default function ProductDetailPage() {
                 color: palette.primary.light,
                 textTransform: 'none',
                 px: 4,
+                py: 1,
                 '&:hover': {
                   opacity: '0.9',
                 },
