@@ -11,14 +11,26 @@ interface SiteLayoutProps {
 }
 
 export default function SiteLayout({ children }: SiteLayoutProps) {
-  const {palette} = useTheme();
+  const { palette } = useTheme();
   return (
-    <React.Fragment>
+    <Stack sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Header />
-      <Stack sx={{ backgroundColor: palette.background.paper }}>
-        <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT, backgroundColor: palette.background.default }}>{children}</ContainerWrapper>
+      <Stack
+        sx={{
+          flex: 1,
+          backgroundColor: palette.background.paper,
+        }}
+      >
+        <ContainerWrapper
+          sx={{
+            padding: PADDING_GAP_LAYOUT,
+            backgroundColor: palette.background.default,
+          }}
+        >
+          {children}
+        </ContainerWrapper>
       </Stack>
       <Footer />
-    </React.Fragment>
+    </Stack>
   );
 }
