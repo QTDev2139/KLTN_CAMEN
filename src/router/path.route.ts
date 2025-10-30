@@ -33,6 +33,8 @@ export const SITE_SCREEN = {
     ACCOUNT: 'account',
     // ACCOUNT_ORDERS: 'account_orders',
     CHECKOUT: 'checkout',
+    ORDER: 'order',
+    ORDER_DETAIL: 'order/:id',
 }
 
 export const DASHBOARD_SCREEN = {
