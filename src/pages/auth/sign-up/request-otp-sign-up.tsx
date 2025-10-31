@@ -53,7 +53,6 @@ export default function RequestOtpSignUp({ setMode, setEmail }: Props) {
         const { confirm_password, ...dataToSend } = values;
         const res = await userApi.createRegister(dataToSend);
 
-        console.log(res);
         snackbar('success', res);
         setEmail(dataToSend.email);
         setMode(SignUpMode.VERIFY);

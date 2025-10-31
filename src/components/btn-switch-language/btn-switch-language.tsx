@@ -8,6 +8,7 @@ import { locates } from '~/i18n/i18n';
 import { StackRowAlignCenter, StackRowJustBetweenAlignCenter } from '../elements/styles/stack.style';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FONT_SIZE } from '~/common/constant/style.constant';
+import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 
 export default function BtnSwitchLanguage() {
   const { palette } = useTheme();
@@ -18,9 +19,9 @@ export default function BtnSwitchLanguage() {
     i18n.changeLanguage(lng);
     localStorage.setItem('languages', lng);
 
-    // thay /vi hoặc /en ở đầu path (nếu có), nếu chưa có thì thêm vào
-    const replaced = pathname.replace(/^\/(vi|en)(?=\/|$)/, `/${lng}`);
-    const nextPath = replaced;
+    // Bỏ /vi|/en ở đầu (nếu có), sau đó thêm prefix mới: '' (vi) hoặc '/en'
+    const basePath = pathname.replace(/^\/(vi|en)(?=\/|$)/, '');
+    const nextPath = `${getLangPrefix(lng)}${basePath || '/'}`;
 
     navigate(nextPath, { replace: true });
     handleClose();
@@ -71,20 +72,20 @@ export default function BtnSwitchLanguage() {
               switchLang('vi');
             }}
           >
-            <StackRowJustBetweenAlignCenter sx={{ width: '100px' }}>
+            <StackRowAlignCenter sx={{ width: '100px', gap: 1, justifyContent: 'flex-start' }}>
               <img src={locates.vi.icon} alt="" style={{ width: '20px', height: '16px' }} />
               <span style={{ color: palette.text.primary }}>{locates.vi.label}</span>
-            </StackRowJustBetweenAlignCenter>
+            </StackRowAlignCenter>
           </Button>
           <Button
             onClick={() => {
               switchLang('en');
             }}
           >
-            <StackRowJustBetweenAlignCenter sx={{ width: '100px' }}>
+            <StackRowAlignCenter sx={{ width: '100px', gap: 1, justifyContent: 'flex-start' }}>
               <img src={locates.en.icon} alt="" style={{ width: '20px', height: '16px' }} />
               <span style={{ color: palette.text.primary }}>{locates.en.label}</span>
-            </StackRowJustBetweenAlignCenter>
+            </StackRowAlignCenter>
           </Button>
         </Stack>
       </Menu>

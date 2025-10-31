@@ -1,11 +1,11 @@
 export const PAGE = {
     // Public
-    AUTH: ':lang/auth/',
-    ERROR: ':lang/error',
-    NOT_FOUND: ':lang/*',
+    AUTH: 'auth',
+    ERROR: 'error',
+    NOT_FOUND: '*',
 
     // Private
-    SITE: ':lang/' ,
+    SITE: '', 
     DASHBOARD: 'dashboard',
 }
 
@@ -33,6 +33,8 @@ export const SITE_SCREEN = {
     ACCOUNT: 'account',
     // ACCOUNT_ORDERS: 'account_orders',
     CHECKOUT: 'checkout',
+    ORDER: 'order',
+    ORDER_DETAIL: 'order/:id',
 }
 
 export const DASHBOARD_SCREEN = {

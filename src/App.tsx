@@ -11,6 +11,7 @@ import { SITE_SCREEN } from './router/path.route';
 import { ThemeProvider } from '@emotion/react';
 import { theme } from './common/constant/mode.contant';
 import { SnackbarProvider } from './hooks/use-snackbar/use-snackbar';
+import { getLangPrefix } from './common/constant/get-lang-prefix';
 
 export default function App() {
   const saved = localStorage.getItem('languages');
@@ -22,7 +23,7 @@ export default function App() {
         <AuthProvider>
           <Router>
             <Routes>
-              (<Route path="/" element={<Navigate to={defaultLang + '/' + SITE_SCREEN.HOME} replace />} />
+              (<Route path="/" element={<Navigate to={getLangPrefix(defaultLang) + '/' + SITE_SCREEN.HOME} replace />} />
               {renderRoutes(routes)})
             </Routes>
           </Router>

@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
 import { Box, Container, Divider, IconButton, Stack, Typography, Link as MuiLink, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { Facebook, YouTube, Instagram, LocationOn, Phone, Email } from '@mui/icons-material';
-import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import Logo from '~/components/logo/logo';
-import { StackRow, StackRowAlignCenter, StackRowAlignJustCenter } from '~/components/elements/styles/stack.style';
+import { StackRowAlignCenter, StackRowAlignJustCenter } from '~/components/elements/styles/stack.style';
 
 export default function Footer() {
   const { palette } = useTheme();
@@ -110,7 +108,7 @@ export default function Footer() {
       <Divider />
 
       {/* Copyright */}
-      <Box sx={{ py: 1, textAlign: 'center', color: palette.text.secondary }}>BẢN QUYỀN @ 2025 THUỘC VỀ CÔNG TY CÀ MÈN FOOD VIỆT NAM</Box>
+      <Typography variant='subtitle2' sx={{ py: 1, textAlign: 'center', color: palette.text.secondary }}>BẢN QUYỀN @ 2025 THUỘC VỀ CÔNG TY CÀ MÈN FOOD VIỆT NAM</Typography>
     </Stack>
   );
 }
