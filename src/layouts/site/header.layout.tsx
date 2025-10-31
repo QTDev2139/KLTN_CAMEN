@@ -3,7 +3,7 @@ import { Cabin } from '@mui/icons-material';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { Stack, useTheme, Button, Menu } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { Link, NavLink, useParams } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { STYLE } from '~/common/constant';
 import AuthLink from '~/components/auth/auth-link.element';
 import ContainerWrapper from '~/components/elements/container/container.element';
@@ -13,11 +13,16 @@ import Logo from '~/components/logo/logo';
 import SearchInput from '~/components/search-input/search-input';
 import { sidebars } from '~/pages/site/part/sidebar';
 import { SITE_SCREEN } from '~/router/path.route';
+import { useLang } from '~/hooks/use-lang/use-lang';
+import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 
 export default function Header() {
   const { palette } = useTheme();
   const { t } = useTranslation(['sidebar', 'user']);
-  const { lang } = useParams();
+
+  // Lấy lang từ hook
+  const currentLang = useLang();
+  const prefix = getLangPrefix(currentLang);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -36,7 +41,8 @@ export default function Header() {
           <Logo />
           <SearchInput />
           <StackRowJustCenter sx={{ width: '260px' }}>
-            <Link to={'/' + lang + '/' + SITE_SCREEN.CART}>
+            {/* Cart */}
+            <Link to={`${prefix}/${SITE_SCREEN.CART}`}>
               <Cabin />
             </Link>
           </StackRowJustCenter>
@@ -62,8 +68,8 @@ export default function Header() {
                     }}
                   >
                     <TypographyHover
-                      variant="subtitle1"
-                      style={{ paddingBottom: `${STYLE.PADDING_GAP_ITEM}`, display: 'flex', alignItems: 'center' }}
+                      variant="h6"
+                      style={{ paddingBottom: `${STYLE.PADDING_GAP_ITEM}`, display: 'flex', alignItems: 'center', fontSize: '16px' }}
                     >
                       {t(sidebar.title)} {open ? <ExpandLess /> : <ExpandMore />}
                     </TypographyHover>
@@ -71,17 +77,16 @@ export default function Header() {
 
                   <Menu id="basic-menu" anchorEl={anchorEl} open={open} onClose={handleClose} onClick={handleClose}>
                     {sidebar.children.map((item) => (
-                      <Stack>
+                      <Stack key={item.to}>
                         <NavLink
-                          key={item.to}
-                          to={`/${lang}/${item.to}`}
+                          to={`${prefix}/${item.to}`}
                           style={({ isActive }: { isActive: boolean }) => ({
                             padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
                             color: isActive ? palette.primary.main : palette.text.primary,
                             textDecoration: 'none',
                           })}
                         >
-                          <TypographyHover variant="subtitle1" sx={{ justifyContent: 'flex-start' }}>
+                          <TypographyHover variant="h6" sx={{ justifyContent: 'flex-start', fontSize: '16px' }}>
                             {t(item.title)}
                           </TypographyHover>
                         </NavLink>
@@ -95,14 +100,14 @@ export default function Header() {
             return (
               <NavLink
                 key={sidebar.to ?? index}
-                to={`/${lang}/${sidebar.to}`}
+                to={`${prefix}/${sidebar.to}`}
                 style={({ isActive }: { isActive: boolean }) => ({
                   padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
                   color: isActive ? palette.primary.main : palette.text.primary,
                   textDecoration: 'none',
                 })}
               >
-                <TypographyHover variant="subtitle1" style={{ paddingBottom: `${STYLE.PADDING_GAP_ITEM}` }}>
+                <TypographyHover variant="h6" style={{ paddingBottom: `${STYLE.PADDING_GAP_ITEM}`, fontSize: '16px' }}>
                   {t(sidebar.title)}
                 </TypographyHover>
               </NavLink>

@@ -5,7 +5,6 @@ import { PATH } from '.';
 import { RouteType } from './route.enum';
 import { RoleGuardRoute } from './role-guards';
 import { UserType } from '~/apis/user/user.enum';
-import LangGuard from './lang-guard';
 
 const withGuard = (
   type: RouteType,
@@ -14,7 +13,8 @@ const withGuard = (
 ): React.ReactNode => {
   // dashboard không cho khách hàng vào
   if (path === PATH.PAGE.DASHBOARD) {
-    return <RoleGuardRoute allow={[UserType.ADMIN, UserType.MARKETING, UserType.STAFF]}>{node}</RoleGuardRoute>;
+    // @ts-ignore: allow prop is consumed by RoleGuardRoute at runtime but not declared in its props type
+    return <RoleGuardRoute allow={[UserType.ADMIN, UserType.ROOT, UserType.MANAGER, UserType.EXECUTIVE, UserType.MARKETING, UserType.STAFF]}>{node}</RoleGuardRoute>;
   }
 
   return node;
@@ -33,25 +33,34 @@ export const renderRoutes = (routes: RouteInterface[]) =>
     );
 
     if (path === PATH.PAGE.SITE ) {
+      // Tạo 2 nhánh: VI (gốc) và EN (/en)
       return (
-        <Route key="lang-guard" path=":lang" element={<LangGuard />}>
-          <Route path="" element={guardedElement}>
+        <>
+          <Route key="site-vi" path="" element={guardedElement}>
             {children && renderRoutes(children)}
-
             <Route index element={<Navigate to={PATH.SITE_SCREEN.HOME} replace />} />
           </Route>
-        </Route>
+
+          <Route key="site-en" path="en" element={guardedElement}>
+            {children && renderRoutes(children)}
+            <Route index element={<Navigate to={PATH.SITE_SCREEN.HOME} replace />} />
+          </Route>
+        </>
       );
     }
 
     if (path === PATH.PAGE.AUTH) {
       return (
-        <Route key="lang-guard-auth" path=":lang" element={<LangGuard />}>
+        <>
           <Route path="auth" element={guardedElement}>
             {children && renderRoutes(children)}
             <Route index element={<Navigate to={PATH.AUTH_SCREEN.LOGIN} replace />} />
           </Route>
-        </Route>
+          <Route path="en/auth" element={guardedElement}>
+            {children && renderRoutes(children)}
+            <Route index element={<Navigate to={PATH.AUTH_SCREEN.LOGIN} replace />} />
+          </Route>
+        </>
       );
     }
     

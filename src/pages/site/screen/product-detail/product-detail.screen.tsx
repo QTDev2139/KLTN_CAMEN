@@ -15,12 +15,19 @@ import { BoxContent } from '~/components/elements/forms/box/box-content';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 import { ShoppingCartOutlined } from '@mui/icons-material';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
+import { useLang } from '~/hooks/use-lang/use-lang';
+import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 
 export default function ProductDetailPage() {
   const { palette } = useTheme();
   const { snackbar } = useSnackbar();
   const [open, setOpen] = React.useState(false);
-  const { lang, slug } = useParams<{ lang: 'vi' | 'en'; slug: string }>();
+  const { slug } = useParams<{ slug?: string }>();
+  
+  // Lấy lang từ hook
+  const currentLang = useLang();
+  const prefix = getLangPrefix(currentLang);
+  
   const [productDetail, setProductDetail] = useState<ProductDetail | null>();
   const [qty, setQty] = useState(1);
   const [mainImage, setMainImage] = useState(productDetail?.product_images[0].image_url);
@@ -28,17 +35,18 @@ export default function ProductDetailPage() {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchApi = async () => {
-      if (!slug || !lang) return;
-      const result = await productApi.getDetailProduct(slug, lang);
+      if (!slug) return;
+      const result = await productApi.getDetailProduct(slug, currentLang);
       setProductDetail(result);
       if (result.product_translations[0].slug && result.product_translations[0].slug !== slug) {
-        navigate(`/${lang}/${PATH.SITE_SCREEN.PRODUCT.ROOT}/${result.product_translations[0].slug}`, { replace: true });
+        navigate(`${prefix}/${PATH.SITE_SCREEN.PRODUCT.ROOT}/${result.product_translations[0].slug}`, { replace: true });
       }
     };
     fetchApi();
-  }, [lang]);
+  }, [currentLang, slug, navigate, prefix]);
 
   useEffect(() => {
     if (productDetail?.product_images?.length) {

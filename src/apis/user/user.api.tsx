@@ -60,5 +60,5 @@ export const resetPassword = async ({ password, reset_token }: {  password: stri
 // --------------
 export const getProfile = async () => {
   const res = await axiosApi.get('auth/profile');
-  return res.data;
+  return res.data.post;
 }

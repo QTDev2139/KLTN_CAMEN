@@ -23,6 +23,7 @@ import BlogPage from '~/pages/site/screen/blog/blog.screen';
 import BlogDetailPage from '~/pages/site/screen/blog-detail/blog-detail.screen';
 import AccountPage from '~/pages/site/screen/account/account.screen';
 import CheckoutPage from '~/pages/site/screen/checkout/checkout.screen';
+import OrderPage from '~/pages/site/screen/order/order.screen';
 
 import DashboardLayout from '~/layouts/dashboard/dashboard.layout';
 import DashboardPage from '~/pages/dashboard/dashboard.page';
@@ -33,13 +34,14 @@ import CustomersScreen from '~/pages/dashboard/screen/customers/customers.screen
 import BlogScreen from '~/pages/dashboard/screen/blog/blog.screen';
 import CouponScreen from '~/pages/dashboard/screen/coupon/coupon.screen';
 import ReviewsScreen from '~/pages/dashboard/screen/reviews/reviews.screen';
+import { UserType } from '~/apis/user/user.enum';
 
 export type Route = {
   path: string;
   element: ElementType;
   layout?: ElementType;
   children?: Route[];
-  // allowUserTypes: UserType[];  // Các loại người dùng được phép truy cập (quyền)
+  allowUserTypes: UserType[];  // Các loại người dùng được phép truy cập (quyền)
   type: RouteType;
 };
 
@@ -48,32 +50,38 @@ export const routes: Route[] = [
     path: PATH.PAGE.ERROR,
     element: ErrorPage,
     type: RouteType.PUBLIC,
+    allowUserTypes: [],
   },
   {
     path: PATH.PAGE.NOT_FOUND,
     element: Not_FoundPage,
     type: RouteType.PUBLIC,
+    allowUserTypes: [],
   },
   // Auth
   {
     path: PATH.PAGE.AUTH,
     element: AuthPage,
     type: RouteType.PUBLIC,
+    allowUserTypes: [],
     children: [
       {
         path: PATH.AUTH_SCREEN.LOGIN,
         element: LoginPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
       {
         path: PATH.AUTH_SCREEN.SIGN_UP,
         element: SignupPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
       {
         path: PATH.AUTH_SCREEN.FORGOT_PW,
         element: ForgotPasswordPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
     ],
   },
@@ -84,66 +92,91 @@ export const routes: Route[] = [
     element: SitePage,
     layout: SiteLayout,
     type: RouteType.PROTECTED,
+    allowUserTypes: [],
     children: [
       {
         path: PATH.SITE_SCREEN.HOME,
         element: HomePage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
       {
         path: PATH.SITE_SCREEN.CATEGORY,
         element: CategoryPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
       {
         path: PATH.SITE_SCREEN.PRODUCT.DOMESTIC,
         element: ProductDomesticPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
       {
         path: PATH.SITE_SCREEN.PRODUCT.DOMESTIC_DETAIL,
         element: ProductDomesticPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
       {
         path: PATH.SITE_SCREEN.PRODUCT.EXPORT,
         element: ProductExportPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
       {
         path: PATH.SITE_SCREEN.PRODUCT_DETAIL,
         element: ProductDetailPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
       {
         path: PATH.SITE_SCREEN.CART,
         element: CartPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
       {
         path: PATH.SITE_SCREEN.CONTACT,
         element: ContactPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
       {
         path: PATH.SITE_SCREEN.BLOG,
         element: BlogPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
       {
         path: PATH.SITE_SCREEN.BLOG_DETAIL,
         element: BlogDetailPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
       {
         path: PATH.SITE_SCREEN.ACCOUNT,
         element: AccountPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
       {
         path: PATH.SITE_SCREEN.CHECKOUT,
         element: CheckoutPage,
         type: RouteType.PUBLIC,
+        allowUserTypes: [],
+      },
+      {
+        path: PATH.SITE_SCREEN.ORDER,
+        element: OrderPage,
+        type: RouteType.PUBLIC,
+        allowUserTypes: [],
+      },
+      {
+        path: PATH.SITE_SCREEN.ORDER_DETAIL,
+        element: OrderPage, 
+        type: RouteType.PUBLIC,
+        allowUserTypes: [],
       },
     ],
   },
@@ -154,42 +187,49 @@ export const routes: Route[] = [
     element: DashboardPage,
     layout: DashboardLayout,
     type: RouteType.PROTECTED,
-    // allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.HR],
+    allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE, UserType.MARKETING, UserType.STAFF],
     children: [
       {
         path: PATH.DASHBOARD_SCREEN.OVERVIEW,
         element: OverviewScreen,
         type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
       },
       {
         path: PATH.DASHBOARD_SCREEN.ORDERS,
         element: OrdersScreen,
         type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.MARKETING, UserType.STAFF],
       },
       {
         path: PATH.DASHBOARD_SCREEN.PRODUCT,
         element: ProductScreen,
         type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.MARKETING, UserType.STAFF],
       },
       {
         path: PATH.DASHBOARD_SCREEN.CUSTOMERS,
         element: CustomersScreen,
         type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
       },
       {
         path: PATH.DASHBOARD_SCREEN.BLOG,
         element: BlogScreen,
         type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
       },
       {
         path: PATH.DASHBOARD_SCREEN.COUPON,
         element: CouponScreen,
         type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
       },
       {
         path: PATH.DASHBOARD_SCREEN.REVIEWS,
         element: ReviewsScreen,
         type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
       },
     ],
   },

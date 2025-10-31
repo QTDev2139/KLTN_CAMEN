@@ -11,31 +11,34 @@ import { PATH } from '~/router';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 import { StackRowAlignCenter } from '~/components/elements/styles/stack.style';
 import { LocationOn } from '@mui/icons-material';
+import { useLang } from '~/hooks/use-lang/use-lang';
+import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 
 const ProductDomesticPage: React.FC = () => {
   const [category, setCategory] = useState<Category[]>([]);
   const [product, setProduct] = useState<Product[]>([]);
-  const { lang = 'vi', slug = 'san-pham' } = useParams<{ lang?: 'vi' | 'en'; slug?: string }>();
+  const { slug = 'san-pham' } = useParams<{ slug?: string }>();
+
+  // Lấy lang từ hook thay vì useParams
+  const currentLang = useLang();
+  const prefix = getLangPrefix(currentLang);
   const { palette } = useTheme();
 
   useEffect(() => {
     const fetchApi = async () => {
-      console.log(category); // chưa xong phần route trên đầu
-
-      const result = await categoryApi.getCategory(lang);
+      const result = await categoryApi.getCategory(currentLang);
       setCategory(result);
     };
     fetchApi();
-  }, [lang]);
+  }, [currentLang]);
+
   useEffect(() => {
     const fetchApi = async () => {
-      const result = await productApi.getProductByCategory(slug, lang);
+      const result = await productApi.getProductByCategory(slug, currentLang);
       setProduct(result);
-      console.log(result)
-
     };
     fetchApi();
-  }, [slug, lang]);
+  }, [slug, currentLang]);
 
   return (
     <Grid container spacing={2}>
@@ -46,7 +49,7 @@ const ProductDomesticPage: React.FC = () => {
           {category.map((item) => (
             <NavLink
               key={item.id}
-              to={`/${lang}/${PATH.SITE_SCREEN.PRODUCT.DOMESTIC}/${item.category_translation[0].slug}`}
+              to={`${prefix}/${PATH.SITE_SCREEN.PRODUCT.DOMESTIC}/${item.category_translation[0].slug}`}
               style={({ isActive }: { isActive: boolean }) => ({
                 padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
                 color: isActive ? palette.primary.main : palette.text.primary,
@@ -61,7 +64,7 @@ const ProductDomesticPage: React.FC = () => {
       <Grid container size={{ md: 10 }}>
         {product.map((item, idx) => (
           <Grid key={idx} size={{ md: 4 }}>
-            <Link to={`/${lang}/${PATH.SITE_SCREEN.PRODUCT.ROOT}/${item.product_translations[0].slug}`}>
+            <Link to={`${prefix}/${PATH.SITE_SCREEN.PRODUCT.ROOT}/${item.product_translations[0].slug}`}>
               <Card
                 sx={{
                   maxWidth: 345,
