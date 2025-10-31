@@ -27,14 +27,18 @@ import { orderApi } from '~/apis';
 import { OrderItem } from '~/apis/order/order.api.interface';
 import Autocomplete from '@mui/material/Autocomplete';
 import { vnAddressApi, Province, Ward } from '~/apis/vn-address/vn-address.api';
+import { useLang } from '~/hooks/use-lang/use-lang';
+import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 
 const OrderPage: React.FC = () => {
   const { palette } = useTheme();
   const { snackbar } = useSnackbar();
   const navigate = useNavigate();
-  const { lang } = useParams<{ lang?: string }>();
   const location = useLocation();
-  const currentLang = (lang || 'vi') as 'vi' | 'en';
+  
+  // Lấy lang từ hook
+  const currentLang = useLang();
+  const prefix = getLangPrefix(currentLang);
 
   // Nhận data từ cart page
   const orderData = location.state as {
@@ -76,7 +80,7 @@ const OrderPage: React.FC = () => {
         snackbar('error', 'Không tải được danh sách tỉnh/thành');
       }
     })();
-  }, []);
+  }, [snackbar]);
 
   // Load phường/xã khi chọn tỉnh
   useEffect(() => {
@@ -159,7 +163,7 @@ const OrderPage: React.FC = () => {
       });
 
       snackbar('success', 'Đặt hàng thành công!');
-      navigate(currentLang === 'en' ? `/en/order/${result.id}` : `/order/${result.id}`);
+      navigate(`${prefix}/order/${result.id}`);
     } catch (error: any) {
       snackbar('error', error?.response?.data?.message || 'Đặt hàng thất bại');
     } finally {

@@ -6,8 +6,10 @@ import { useEffect, useRef, useState } from 'react';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 import { Cart } from '~/apis/cart/cart.api.interface';
 import { cartApi } from '~/apis';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
+import { useLang } from '~/hooks/use-lang/use-lang';
+import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 
 const DEBOUNCE_MS = 500;
 
@@ -15,8 +17,10 @@ const CartPage: React.FC = () => {
   const { palette } = useTheme();
   const { snackbar } = useSnackbar();
   const navigate = useNavigate();
-  const { lang } = useParams<{ lang?: string }>();
-  const currentLang = (lang || 'vi') as 'vi' | 'en';
+  
+  // Lấy lang từ hook thay vì useParams
+  const currentLang = useLang();
+  const prefix = getLangPrefix(currentLang);
 
   const [cart, setCart] = useState<Cart | null>(null);
   const [syncing, setSyncing] = useState<Set<number>>(new Set());
@@ -35,7 +39,7 @@ const CartPage: React.FC = () => {
 
   useEffect(() => {
     fetchCart();
-  }, [lang]);
+  }, [currentLang]);
 
   useEffect(() => {
     return () => {
@@ -132,18 +136,12 @@ const CartPage: React.FC = () => {
       return;
     }
 
-    navigate(currentLang === 'en' ? '/en/order' : '/vi/order', {
+    navigate(`${prefix}/order`, {
       state: {
         items: cartItems,
         totalAmount: totalAmount,
       },
     });
-    console.log('Checkout', currentLang === 'en' ? '/en/order/' : '/vi/order/', {
-      state: {
-        items: cartItems,
-        totalAmount: totalAmount,
-      },
-    })
   };
 
   return (

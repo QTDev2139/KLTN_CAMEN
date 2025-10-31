@@ -1,11 +1,11 @@
 export const PAGE = {
     // Public
-    AUTH: ':lang/auth/',
-    ERROR: ':lang/error',
-    NOT_FOUND: ':lang/*',
+    AUTH: 'auth',
+    ERROR: 'error',
+    NOT_FOUND: '*',
 
     // Private
-    SITE: ':lang/' ,
+    SITE: '', 
     DASHBOARD: 'dashboard',
 }
 
