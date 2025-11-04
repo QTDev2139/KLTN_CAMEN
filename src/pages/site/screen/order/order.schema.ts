@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 
-export const schema = Yup.object().shape({
+export const orderSchema = Yup.object().shape({
     name: Yup.string().required('Tên khách hàng là bắt buộc'),
     phone: Yup.string().required('Số điện thoại là bắt buộc'),
     email: Yup.string().required('Email là bắt buộc').email('Email không hợp lệ').nullable(),

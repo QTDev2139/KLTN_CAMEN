@@ -1,11 +1,12 @@
 // AuthContext (quản lý trạng thái đăng nhập)
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { authApi, Profile } from '~/apis/auth/auth.api';
+import { authApi } from '~/apis/auth/auth.api';
 import { tokenStore } from '~/apis/auth/axios';
+import { User } from '~/apis/user/user.api.interfaces';
 
 type AuthState = {
-  user: Profile | null;
+  user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -15,7 +16,7 @@ const AuthCtx = createContext<AuthState>({} as any);
 export const useAuth = () => useContext(AuthCtx);
 
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [user, setUser] = useState<Profile | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Khởi động: nếu có token -> lấy profile

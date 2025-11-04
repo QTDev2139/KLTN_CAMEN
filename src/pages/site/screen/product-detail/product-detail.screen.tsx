@@ -73,10 +73,9 @@ export default function ProductDetailPage() {
         qty: qty,
       });
       snackbar('success', result.message || 'Đã thêm sản phẩm vào giỏ hàng');
-      // Reset số lượng về 1 sau khi thêm thành công (tùy chọn)
-      // setQty(1);
     } catch (error: any) {
-      snackbar('error', error?.response?.data?.message || 'Không thể thêm vào giỏ hàng');
+      const errorMessage = error?.response?.data?.message || error?.message || 'Không thể thêm vào giỏ hàng';
+      snackbar('error', errorMessage);
     } finally {
       setIsAddingToCart(false);
     }
