@@ -4,3 +4,5 @@ export * as categoryApi from './category/category.api';
 export * as productApi from './product/product.api';
 export * as cartApi from './cart/cart.api';
 export * as orderApi from './order/order.api';
+export * as couponApi from './coupon/coupon.api';
+export * as paymentApi from './payment/payment.api';

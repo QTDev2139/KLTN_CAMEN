@@ -11,13 +11,17 @@ export interface CreateOrder {
   items: OrderItem[];
   total_amount: number;
   shipping_address?: string;
-  payment_method?: string;
+  payment_method?: 'cod' | 'vnpay' | 'momo';
+  payment_status?: 'unpaid' | 'paid' | 'failed' | 'refunded';
+  transaction_code?: string; 
   note?: string;
+  coupon_code?: string;
+  discount_amount?: number;
 }
 
 export interface Order extends CreateOrder {
   id: number;
   order_code: string;
-  status: string;
+  status: 'pending' | 'paid' | 'processing' | 'shipped' | 'completed' | 'cancelled';
   created_at: string;
 }

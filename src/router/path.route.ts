@@ -35,6 +35,7 @@ export const SITE_SCREEN = {
     CHECKOUT: 'checkout',
     ORDER: 'order',
     ORDER_DETAIL: 'order/:id',
+    PAYMENT_CALLBACK: 'payment-callback',
 }
 
 export const DASHBOARD_SCREEN = {

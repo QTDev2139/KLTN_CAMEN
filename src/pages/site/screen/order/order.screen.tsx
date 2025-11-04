@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -16,31 +16,46 @@ import {
   FormControlLabel,
   Radio,
   Grid,
-  InputAdornment,
-  IconButton,
+  Chip,
+  Autocomplete,
 } from '@mui/material';
-import { Check as CheckIcon } from '@mui/icons-material';
+import { LocalOffer as CouponIcon } from '@mui/icons-material';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
-import { orderApi } from '~/apis';
+import { orderApi, couponApi, userApi, paymentApi } from '~/apis';
 import { OrderItem } from '~/apis/order/order.api.interface';
-import Autocomplete from '@mui/material/Autocomplete';
+import { Coupon } from '~/apis/coupon/coupon.api.interface';
 import { vnAddressApi, Province, Ward } from '~/apis/vn-address/vn-address.api';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
+
+// ✅ Validation schema
+const orderSchema = Yup.object({
+  customerName: Yup.string().required('Vui lòng nhập tên khách hàng'),
+  phone: Yup.string()
+    .required('Vui lòng nhập số điện thoại')
+    .matches(/^[0-9]{10}$/, 'Số điện thoại phải có 10 chữ số'),
+  email: Yup.string().email('Email không hợp lệ').nullable(),
+  gender: Yup.string().oneOf(['male', 'female'], 'Vui lòng chọn giới tính'),
+  province: Yup.object().nullable().required('Vui lòng chọn tỉnh/thành phố'),
+  ward: Yup.object().nullable().required('Vui lòng chọn phường/xã'),
+  street: Yup.string().required('Vui lòng nhập số nhà, đường'),
+  note: Yup.string().nullable(),
+  paymentMethod: Yup.string().oneOf(['cod', 'vnpay', 'momo'], 'Vui lòng chọn phương thức thanh toán'),
+});
 
 const OrderPage: React.FC = () => {
   const { palette } = useTheme();
   const { snackbar } = useSnackbar();
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // Lấy lang từ hook
+
   const currentLang = useLang();
   const prefix = getLangPrefix(currentLang);
 
-  // Nhận data từ cart page
   const orderData = location.state as {
     items: OrderItem[];
     totalAmount: number;
@@ -48,29 +63,101 @@ const OrderPage: React.FC = () => {
 
   const [items, setItems] = useState<OrderItem[]>([]);
   const [totalAmount, setTotalAmount] = useState(0);
-  const [paymentMethod, setPaymentMethod] = useState('cod');
-  const [note, setNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Coupon/Discount states
-  const [couponCode, setCouponCode] = useState('');
+  // Coupon states
+  const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [discount, setDiscount] = useState(0);
-  const [isCouponApplied, setIsCouponApplied] = useState(false);
 
-  // Customer info
-  const [customerName, setCustomerName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [gender, setGender] = useState('male');
-
-  // Address states (theo API v2: province -> wards)
+  // Address states
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
-  const [province, setProvince] = useState<Province | null>(null);
-  const [ward, setWard] = useState<Ward | null>(null);
-  const [street, setStreet] = useState('');
 
-  // Load danh sách tỉnh
+  // Formik setup
+  const formik = useFormik({
+    initialValues: {
+      customerName: '',
+      phone: '',
+      email: '',
+      gender: 'male',
+      province: null as Province | null,
+      ward: null as Ward | null,
+      street: '',
+      note: '',
+      paymentMethod: 'cod',
+    },
+    validationSchema: orderSchema,
+    onSubmit: async (values) => {
+      const fullAddress = [values.street, values.ward?.name, values.province?.name].join(', ');
+
+      setIsSubmitting(true);
+      try {
+        // Tạo đơn hàng
+        const order = await orderApi.createOrder({
+          items,
+          total_amount: finalAmount,
+          shipping_address: fullAddress,
+          payment_method: values.paymentMethod as 'cod' | 'vnpay' | 'momo',
+          note: values.note,
+          coupon_code: selectedCoupon?.code,
+          discount_amount: discount,
+        });
+
+        snackbar('success', 'Tạo đơn hàng thành công!');
+        if (values.paymentMethod === 'vnpay') {
+          const result = await paymentApi.createPayment({
+            amount: finalAmount,
+            order_id: order.data?.code,
+            order_info: `Thanh toán đơn hàng #${order.data?.code}`,
+            bank_code: 'NCB',
+            return_url: `${window.location.origin}${prefix}/payment`, // ✅ Frontend URL
+          });
+          snackbar('success', 'Chuyển đến trang thanh toán!');
+
+          // Redirect đến VNPay 
+          window.location.href = result.data?.payment_url;
+         }
+      } catch (error: any) {
+        snackbar('error', error?.response?.data?.message || 'Đặt hàng thất bại');
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+  });
+
+  // Load user profile để điền sẵn thông tin
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      try {
+        const user = await userApi.getProfile();
+        formik.setValues({
+          ...formik.values,
+          customerName: user.name || '',
+          phone: user.phone || '',
+          email: user.email || '',
+        });
+      } catch (error) {
+        // User chưa đăng nhập hoặc lỗi
+      }
+    };
+    loadUserProfile();
+  }, []);
+
+  // Load active coupons
+  useEffect(() => {
+    const fetchActiveCoupons = async () => {
+      try {
+        const coupons = await couponApi.getActiveCoupons();
+        setAvailableCoupons(coupons);
+      } catch (error) {
+        console.error('Không thể tải danh sách mã giảm giá:', error);
+      }
+    };
+    fetchActiveCoupons();
+  }, []);
+
+  // Load provinces
   useEffect(() => {
     (async () => {
       try {
@@ -82,96 +169,68 @@ const OrderPage: React.FC = () => {
     })();
   }, [snackbar]);
 
-  // Load phường/xã khi chọn tỉnh
+  // Load wards khi chọn province
   useEffect(() => {
-    if (!province) {
+    if (!formik.values.province) {
       setWards([]);
-      setWard(null);
+      formik.setFieldValue('ward', null);
       return;
     }
     (async () => {
       try {
-        const result = await vnAddressApi.getWardsByProvince(province.code);
-        setWards(result);
-        setWard(null);
+        if (formik.values.province) {
+          const result = await vnAddressApi.getWardsByProvince(formik.values.province.code);
+          setWards(result);
+        }
+        formik.setFieldValue('ward', null);
       } catch {
         snackbar('error', 'Không tải được phường/xã');
       }
     })();
-  }, [province]);
+  }, [formik.values.province]);
 
   // Nhận data từ Cart
   useEffect(() => {
     if (!orderData || !orderData.items || orderData.items.length === 0) {
       snackbar('error', 'Không có sản phẩm nào được chọn');
-      navigate(currentLang === 'en' ? '/en/cart' : '/cart');
+      navigate(`${prefix}/cart`);
       return;
     }
     setItems(orderData.items);
     setTotalAmount(orderData.totalAmount);
-  }, [orderData, currentLang, navigate, snackbar]);
+  }, [orderData, prefix, navigate, snackbar]);
 
-  // Apply coupon
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) {
-      snackbar('error', 'Vui lòng nhập mã giảm giá');
+  // Tính discount khi chọn coupon
+  useEffect(() => {
+    if (!selectedCoupon) {
+      setDiscount(0);
       return;
     }
 
-    try {
-      // TODO: Gọi API kiểm tra mã giảm giá
-      // const result = await couponApi.validateCoupon(couponCode);
-      // setDiscount(result.discount_amount);
-      
-      // Mock: giả sử mã giảm 10%
-      const discountAmount = totalAmount * 0.1;
-      setDiscount(discountAmount);
-      setIsCouponApplied(true);
-      snackbar('success', `Áp dụng mã giảm giá thành công! Giảm ${FormatPrice(discountAmount)}`);
-    } catch (error: any) {
-      snackbar('error', error?.response?.data?.message || 'Mã giảm giá không hợp lệ');
+    const minOrder = parseFloat(selectedCoupon.min_order_amount);
+    if (totalAmount < minOrder) {
+      snackbar('warning', `Đơn hàng tối thiểu ${FormatPrice(minOrder)} để sử dụng mã này`);
+      setSelectedCoupon(null);
+      setDiscount(0);
+      return;
     }
-  };
+
+    let discountAmount = 0;
+    if (selectedCoupon.discount_type === 'percentage') {
+      discountAmount = totalAmount * (parseFloat(selectedCoupon.discount_value) / 100);
+    } else {
+      discountAmount = parseFloat(selectedCoupon.discount_value);
+    }
+
+    setDiscount(discountAmount);
+    snackbar('success', `Áp dụng mã giảm giá thành công! Giảm ${FormatPrice(discountAmount)}`);
+  }, [selectedCoupon, totalAmount]);
 
   const finalAmount = totalAmount - discount;
 
-  const handleSubmitOrder = async () => {
-    // Validate customer info
-    if (!customerName.trim() || !phone.trim()) {
-      snackbar('error', 'Vui lòng nhập đầy đủ thông tin khách hàng');
-      return;
-    }
-
-    // Validate address
-    if (!province || !ward || !street.trim()) {
-      snackbar('error', 'Vui lòng nhập đầy đủ địa chỉ giao hàng');
-      return;
-    }
-
-    const fullAddress = [street, ward.name, province.name].join(', ');
-
-    setIsSubmitting(true);
-    try {
-      const result = await orderApi.createOrder({
-        items,
-        total_amount: finalAmount,
-        shipping_address: fullAddress,
-        payment_method: paymentMethod,
-        note,
-        // coupon_code: isCouponApplied ? couponCode : undefined,
-        // discount_amount: discount,
-      });
-
-      snackbar('success', 'Đặt hàng thành công!');
-      navigate(`${prefix}/order/${result.id}`);
-    } catch (error: any) {
-      snackbar('error', error?.response?.data?.message || 'Đặt hàng thất bại');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   if (!orderData) return null;
+
+  
 
   return (
     <Container maxWidth="lg" sx={{ py: PADDING_GAP_LAYOUT }}>
@@ -179,222 +238,287 @@ const OrderPage: React.FC = () => {
         Đặt hàng
       </Typography>
 
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-        {/* Left: Items + Shipping */}
-        <Paper sx={{ p: 3, flex: 1 }}>
-          {/* Customer Info */}
-          <Typography variant="h6" sx={{ mb: 2, fontSize: 20, fontWeight: 600 }}>
-            Thông tin khách hàng
-          </Typography>
-          <RadioGroup
-            aria-labelledby="demo-radio-buttons-group-label"
-            defaultValue="male"
-            name="radio-buttons-group"
-            sx={{ display: 'flex', flexDirection: 'row' }}
-          >
-            <FormControlLabel value="male" control={<Radio />} label="Anh" />
-            <FormControlLabel value="female" control={<Radio />} label="Chị" />
-          </RadioGroup>
+      <form onSubmit={formik.handleSubmit}>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+          {/* Left: Customer Info + Shipping */}
+          <Paper sx={{ p: 3, flex: 1 }}>
+            <Typography variant="h6" sx={{ mb: 2, fontSize: 20, fontWeight: 600 }}>
+              Thông tin khách hàng
+            </Typography>
 
-          <Stack spacing={2}>
-            <TextField
-              fullWidth
-              label="Tên khách hàng"
-              placeholder="Ví dụ: Nguyễn Văn A"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              required
-            />
-            
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  fullWidth
-                  label="Số điện thoại"
-                  placeholder="Ví dụ: 0123456789"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  required
-                />
-              </Grid>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  fullWidth
-                  label="Email"
-                  placeholder="Ví dụ: camenfood@gmail.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, md: 6, lg: 6 }}>
-                {/* Tỉnh/Thành */}
-                <Autocomplete
-                  options={provinces}
-                  value={province}
-                  getOptionLabel={(o) => o?.name ?? ''}
-                  onChange={(_, v) => setProvince(v)}
-                  renderInput={(params) => <TextField {...params} label="Tỉnh/Thành phố" required />}
-                />
-              </Grid>
-              <Grid size={{ xs: 12, md: 6, lg: 6 }}>
-                {/* Phường/Xã */}
-                <Autocomplete
-                  options={wards}
-                  value={ward}
-                  getOptionLabel={(o) => o?.name ?? ''}
-                  onChange={(_, v) => setWard(v)}
-                  renderInput={(params) => <TextField {...params} label="Phường/Xã" required />}
-                  disabled={!province}
-                />
-              </Grid>
-            </Grid>
+            <RadioGroup
+              name="gender"
+              value={formik.values.gender}
+              onChange={formik.handleChange}
+              sx={{ display: 'flex', flexDirection: 'row', mb: 2 }}
+            >
+              <FormControlLabel value="male" control={<Radio />} label="Anh" />
+              <FormControlLabel value="female" control={<Radio />} label="Chị" />
+            </RadioGroup>
 
-            <TextField
-              fullWidth
-              label="Số nhà, đường"
-              placeholder="Ví dụ: 123 Lê Lợi"
-              value={street}
-              onChange={(e) => setStreet(e.target.value)}
-              required
-            />
+            <Stack spacing={2}>
+              <TextField
+                fullWidth
+                name="customerName"
+                label="Tên khách hàng"
+                placeholder="Ví dụ: Nguyễn Văn A"
+                value={formik.values.customerName}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.customerName && Boolean(formik.errors.customerName)}
+                helperText={formik.touched.customerName && formik.errors.customerName}
+                required
+              />
+
+              <Grid container spacing={2} sx={{ width: '100%' }}>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    name="phone"
+                    label="Số điện thoại"
+                    placeholder="Ví dụ: 0123456789"
+                    value={formik.values.phone}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.phone && Boolean(formik.errors.phone)}
+                    helperText={formik.touched.phone && formik.errors.phone}
+                    required
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    name="email"
+                    label="Email"
+                    placeholder="Ví dụ: camenfood@gmail.com"
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.email && Boolean(formik.errors.email)}
+                    helperText={formik.touched.email && formik.errors.email}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <Autocomplete
+                    options={provinces}
+                    value={formik.values.province}
+                    getOptionLabel={(o) => o?.name ?? ''}
+                    onChange={(_, v) => formik.setFieldValue('province', v)}
+                    onBlur={() => formik.setFieldTouched('province', true)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Tỉnh/Thành phố"
+                        error={formik.touched.province && Boolean(formik.errors.province)}
+                        helperText={formik.touched.province && formik.errors.province}
+                        required
+                        fullWidth
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <Autocomplete
+                    options={wards}
+                    value={formik.values.ward}
+                    getOptionLabel={(o) => o?.name ?? ''}
+                    onChange={(_, v) => formik.setFieldValue('ward', v)}
+                    onBlur={() => formik.setFieldTouched('ward', true)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Phường/Xã"
+                        error={formik.touched.ward && Boolean(formik.errors.ward)}
+                        helperText={formik.touched.ward && formik.errors.ward}
+                        required
+                      />
+                    )}
+                    disabled={!formik.values.province}
+                  />
+                </Grid>
+              </Grid>
+
+              <TextField
+                fullWidth
+                name="street"
+                label="Số nhà, đường"
+                placeholder="Ví dụ: 123 Lê Lợi"
+                value={formik.values.street}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.street && Boolean(formik.errors.street)}
+                helperText={formik.touched.street && formik.errors.street}
+                required
+              />
+
+              <Divider sx={{ my: 2 }} />
+
+              <TextField
+                fullWidth
+                name="note"
+                label="Ghi chú"
+                placeholder="Ghi chú cho đơn hàng (tùy chọn)"
+                value={formik.values.note}
+                onChange={formik.handleChange}
+                multiline
+                rows={3}
+              />
+
+              {/* Phương thức thanh toán */}
+              <FormControl>
+                <FormLabel>Phương thức thanh toán</FormLabel>
+                <RadioGroup name="paymentMethod" value={formik.values.paymentMethod} onChange={formik.handleChange}>
+                  <FormControlLabel value="cod" control={<Radio />} label="Thanh toán khi nhận hàng (COD)" />
+                  <FormControlLabel value="vnpay" control={<Radio />} label="Thanh toán qua VNPay" />
+                  <FormControlLabel value="momo" control={<Radio />} label="Ví MoMo" />
+                </RadioGroup>
+              </FormControl>
+            </Stack>
+          </Paper>
+
+          {/* Right: Summary */}
+          <Paper sx={{ p: 3, width: { md: 380, xs: '100%' }, flexShrink: 0, position: 'sticky', top: 20 }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+              Tóm tắt đơn hàng
+            </Typography>
+            <Divider sx={{ mb: 2 }} />
+
+            {items.map((item) => (
+              <Stack key={item.product_id} direction="row" spacing={2} sx={{ mb: 2, alignItems: 'center' }}>
+                <img
+                  src={item.product_image}
+                  alt={item.product_name}
+                  style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8 }}
+                />
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="subtitle1">{item.product_name}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Số lượng: {item.qty}
+                  </Typography>
+                </Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                  {FormatPrice(parseFloat(item.subtotal))}
+                </Typography>
+              </Stack>
+            ))}
 
             <Divider sx={{ my: 2 }} />
 
-            <TextField
-              fullWidth
-              label="Ghi chú"
-              placeholder="Ghi chú cho đơn hàng (tùy chọn)"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              multiline
-              rows={3}
+            {/* Coupon Autocomplete */}
+            <Autocomplete
+              options={availableCoupons}
+              value={selectedCoupon}
+              onChange={(_, newValue) => {
+                if (typeof newValue === 'object' && newValue !== null) {
+                  setSelectedCoupon(newValue);
+                } else {
+                  setSelectedCoupon(null);
+                }
+              }}
+              getOptionLabel={(option) => (typeof option === 'string' ? option : option.code)}
+              renderOption={(props, option) => (
+                <Box
+                  component="li"
+                  {...props}
+                  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', py: 1.5 }}
+                >
+                  <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%', mb: 0.5 }}>
+                    <CouponIcon sx={{ fontSize: 18, color: palette.primary.main }} />
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                      {option.code}
+                    </Typography>
+                    <Chip
+                      label={
+                        option.discount_type === 'percentage'
+                          ? `${option.discount_value}%`
+                          : FormatPrice(parseFloat(option.discount_value))
+                      }
+                      size="small"
+                      color="primary"
+                      sx={{ ml: 'auto' }}
+                    />
+                  </Stack>
+                  <Typography variant="caption" color="text.secondary">
+                    Đơn tối thiểu: {FormatPrice(parseFloat(option.min_order_amount))}
+                  </Typography>
+                  {option.usage_limit && (
+                    <Typography variant="caption" color="text.secondary">
+                      Còn lại: {option.usage_limit - option.used_count}/{option.usage_limit}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+              renderInput={(params) => (
+                <TextField {...params} label="Mã giảm giá" placeholder="Chọn hoặc nhập mã giảm giá" />
+              )}
+              freeSolo
+              sx={{ mb: 2 }}
             />
-            {/* Phương thức thanh toán */}
-            <FormControl>
-              <FormLabel>Phương thức thanh toán</FormLabel>
-              <RadioGroup value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
-                <FormControlLabel value="cod" control={<Radio />} label="Thanh toán khi nhận hàng (COD)" />
-                <FormControlLabel value="bank" control={<Radio />} label="Chuyển khoản ngân hàng" />
-                <FormControlLabel value="momo" control={<Radio />} label="Ví MoMo" />
-              </RadioGroup>
-            </FormControl>
-          </Stack>
-        </Paper>
 
-        {/* Right: Summary */}
-        <Paper sx={{ p: 3, width: { md: 380, xs: '100%' }, flexShrink: 0, position: 'sticky', top: 20 }}>
-          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-            Tóm tắt đơn hàng
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
-
-          {items.map((item) => (
-            <Stack key={item.product_id} direction="row" spacing={2} sx={{ mb: 2, alignItems: 'center' }}>
-              <img
-                src={item.product_image}
-                alt={item.product_name}
-                style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8 }}
-              />
-              <Box sx={{ flex: 1 }}>
-                <Typography variant="subtitle1">{item.product_name}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Số lượng: {item.qty}
-                </Typography>
-              </Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                {FormatPrice(parseFloat(item.subtotal))}
-              </Typography>
-            </Stack>
-          ))}
-
-          <Divider sx={{ my: 2 }} />
-
-          {/* Coupon Input */}
-          <TextField
-            fullWidth
-            label="Mã giảm giá"
-            placeholder="Nhập mã giảm giá"
-            value={couponCode}
-            onChange={(e) => setCouponCode(e.target.value)}
-            disabled={isCouponApplied}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={handleApplyCoupon}
-                    disabled={isCouponApplied}
-                    color={isCouponApplied ? 'success' : 'primary'}
-                  >
-                    {isCouponApplied ? <CheckIcon /> : <Typography variant="caption">Áp dụng</Typography>}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            sx={{ mb: 2 }}
-          />
-
-          <Stack spacing={1.5}>
-            <Stack direction="row" justifyContent="space-between">
-              <Typography variant="body2" color="text.secondary">
-                Tạm tính
-              </Typography>
-              <Typography variant="body2">{FormatPrice(totalAmount)}</Typography>
-            </Stack>
-
-            {discount > 0 && (
+            <Stack spacing={1.5}>
               <Stack direction="row" justifyContent="space-between">
-                <Typography variant="body2" color="success.main">
-                  Giảm giá
+                <Typography variant="body2" color="text.secondary">
+                  Tạm tính
                 </Typography>
-                <Typography variant="body2" color="success.main">
-                  -{FormatPrice(discount)}
+                <Typography variant="body2">{FormatPrice(totalAmount)}</Typography>
+              </Stack>
+
+              {discount > 0 && (
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="body2" color="success.main">
+                    Giảm giá ({selectedCoupon?.code})
+                  </Typography>
+                  <Typography variant="body2" color="success.main">
+                    -{FormatPrice(discount)}
+                  </Typography>
+                </Stack>
+              )}
+
+              <Stack direction="row" justifyContent="space-between">
+                <Typography variant="body2" color="text.secondary">
+                  Phí vận chuyển
+                </Typography>
+                <Typography variant="body2">Miễn phí</Typography>
+              </Stack>
+
+              <Divider />
+
+              <Stack direction="row" justifyContent="space-between">
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  Tổng cộng
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 600, color: palette.primary.main }}>
+                  {FormatPrice(finalAmount)}
                 </Typography>
               </Stack>
-            )}
-
-            <Stack direction="row" justifyContent="space-between">
-              <Typography variant="body2" color="text.secondary">
-                Phí vận chuyển
-              </Typography>
-              <Typography variant="body2">Thanh toán khi nhận hàng</Typography>
             </Stack>
 
-            <Divider />
+            <Button
+              fullWidth
+              variant="contained"
+              size="large"
+              sx={{ mt: 3 }}
+              type="submit"
+              disabled={isSubmitting || !formik.isValid}
+            >
+              {isSubmitting ? 'Đặt hàng' : 'Đặt hàng'}
+            </Button>
 
-            <Stack direction="row" justifyContent="space-between">
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Tổng cộng
-              </Typography>
-              <Typography variant="h6" sx={{ fontWeight: 600, color: palette.primary.main }}>
-                {FormatPrice(finalAmount)}
-              </Typography>
-            </Stack>
-          </Stack>
-
-          <Button
-            fullWidth
-            variant="contained"
-            size="large"
-            sx={{ mt: 3 }}
-            onClick={handleSubmitOrder}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Đặt hàng' : 'Đặt hàng'}
-          </Button>
-
-          <Button
-            fullWidth
-            variant="outlined"
-            sx={{ mt: 2 }}
-            onClick={() => navigate('/vi/cart')}
-            disabled={isSubmitting}
-          >
-            Quay lại giỏ hàng
-          </Button>
-        </Paper>
-      </Stack>
+            <Button
+              fullWidth
+              variant="outlined"
+              sx={{ mt: 2 }}
+              onClick={() => navigate(`${prefix}/cart`)}
+              disabled={isSubmitting}
+            >
+              Quay lại giỏ hàng
+            </Button>
+          </Paper>
+        </Stack>
+      </form>
     </Container>
   );
 };

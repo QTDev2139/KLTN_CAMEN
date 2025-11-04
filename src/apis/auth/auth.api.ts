@@ -1,5 +1,6 @@
 import { axiosApi } from '~/common/until/request.until';
 import { tokenStore } from './axios';
+import { User } from '../user/user.api.interfaces';
 
 export interface LoginPayload { email: string; password: string; }
 export interface LoginResponse {
@@ -8,10 +9,9 @@ export interface LoginResponse {
   token_type: 'bearer';
   expires_in: number;
 }
-export interface Profile { id: number; name: string; email: string; role_id: number; }
 
 export const authApi = {
-  login: async (payload: LoginPayload): Promise<Profile> => {
+  login: async (payload: LoginPayload): Promise<User> => {
     const { data } = await axiosApi.post<LoginResponse>('/auth/login', payload);
     tokenStore.setAccess(data.access_token);
     tokenStore.setRefresh(data.refresh_token);
@@ -19,8 +19,8 @@ export const authApi = {
     return me;
   },
 
-  profile: async (): Promise<Profile> => {
-    const { data } = await axiosApi.get<Profile>('/auth/profile');
+  profile: async (): Promise<User> => {
+    const { data } = await axiosApi.get<User>('/auth/profile');
     return data;
   },
 

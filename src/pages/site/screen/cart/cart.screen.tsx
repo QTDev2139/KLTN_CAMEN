@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
+import { AxiosError } from 'axios';
 
 const DEBOUNCE_MS = 500;
 
@@ -17,7 +18,7 @@ const CartPage: React.FC = () => {
   const { palette } = useTheme();
   const { snackbar } = useSnackbar();
   const navigate = useNavigate();
-  
+
   // Lấy lang từ hook thay vì useParams
   const currentLang = useLang();
   const prefix = getLangPrefix(currentLang);
@@ -31,9 +32,10 @@ const CartPage: React.FC = () => {
     try {
       const result = await cartApi.getCart(currentLang);
       setCart(result);
-    } catch (error) {
-      console.error('Error fetching cart:', error);
-      snackbar('error', 'Không thể tải giỏ hàng');
+    } catch (err) {
+      const e = err as AxiosError<{ message?: string }>;
+      const msg = e.response?.data?.message ?? e.message ?? 'Không thể tải giỏ hàng';
+      snackbar('error', msg);
     }
   };
 

@@ -19,16 +19,15 @@ export const vnAddressApi = {
   },
 
   // (tuỳ chọn) Lấy 1 tỉnh + kèm wards bằng depth=2
-  // => response KHÔNG phải mảng, mà là object { code, name, ..., wards: Ward[] }
   async getProvinceWithWards(province_code: number | string) {
     const { data } = await http.get(`/p/${province_code}`, { params: { depth: 2 } });
     return data; // data.wards là mảng phường/xã
   },
 
-  // Lấy phường/xã THEO TỈNH (đúng theo docs v2)
+  // Lấy phường/xã THEO TỈNH 
   async getWardsByProvince(province_code: number | string): Promise<Ward[]> {
     const { data } = await http.get<Ward[]>("/w/", {
-      params: { province: province_code }, // << quan trọng: province=
+      params: { province: province_code }, 
     });
     return data ?? [];
   },
