@@ -14,7 +14,7 @@ const withGuard = (
   // dashboard không cho khách hàng vào
   if (path === PATH.PAGE.DASHBOARD) {
     // @ts-ignore: allow prop is consumed by RoleGuardRoute at runtime but not declared in its props type
-    return <RoleGuardRoute allow={[UserType.ADMIN, UserType.ROOT, UserType.MANAGER, UserType.EXECUTIVE, UserType.MARKETING, UserType.STAFF]}>{node}</RoleGuardRoute>;
+    return <RoleGuardRoute allowedRoles={[UserType.ADMIN, UserType.ROOT, UserType.MANAGER, UserType.EXECUTIVE, UserType.MARKETING, UserType.STAFF]}>{node}</RoleGuardRoute>;
   }
 
   return node;

@@ -12,6 +12,8 @@ import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { BoxForm } from '~/components/elements/forms/box/box-form';
 import { useAuth } from '~/common/auth/auth.context';
 import { authApi } from '~/apis/auth/auth.api';
+import { useLang } from '~/hooks/use-lang/use-lang';
+import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 
 export interface FormRegister {
   email: string;
@@ -25,9 +27,12 @@ const schema = Yup.object({
 
 export default function LoginPage() {
   const { login } = useAuth();
-  const { lang } = useParams();
   const { snackbar } = useSnackbar();
   const navigate = useNavigate();
+
+  // Lấy lang từ hook
+  const currentLang = useLang();
+  const prefix = getLangPrefix(currentLang);
 
   const formik = useFormik<FormRegister>({
     initialValues: {
@@ -41,8 +46,9 @@ export default function LoginPage() {
         setSubmitting(true);
         await login(values.email, values.password);
         const me = await authApi.profile(); // lấy user mới nhất từ BE
-        if (me.role_id === 4) {
-          navigate(`/vi/${SITE_SCREEN.HOME}`, { replace: true });
+        console.log('Logged in user:', me);
+        if (me.role?.name === 'customer') {
+          navigate(`/${prefix}/${SITE_SCREEN.HOME}`, { replace: true });
         } else {
           navigate('/dashboard/' + DASHBOARD_SCREEN.OVERVIEW, { replace: true });
         }
@@ -97,7 +103,7 @@ export default function LoginPage() {
         </StackRowAlignCenter>
         <StackRowAlignCenter sx={{ justifyContent: 'center' }}>
           <Typography sx={{ paddingRight: '6px' }}>New to CamenFood?</Typography>
-          <Link to={`/${lang}/auth/${AUTH_SCREEN.SIGN_UP}`} replace>
+          <Link to={`/${prefix}/auth/${AUTH_SCREEN.SIGN_UP}`} replace>
             Create an account
           </Link>
         </StackRowAlignCenter>
