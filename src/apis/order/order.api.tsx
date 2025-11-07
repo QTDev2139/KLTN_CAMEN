@@ -1,5 +1,5 @@
 import { axiosApi } from "~/common/until/request.until";
-import { CreateOrder } from "./order.api.interface";
+import { CreateOrder } from "./order.interface.api";
 
 export const createOrder = async (data: CreateOrder) => {
   const res = await axiosApi.post('orders', data);

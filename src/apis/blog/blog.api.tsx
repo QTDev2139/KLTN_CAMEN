@@ -1,5 +1,5 @@
 import { axiosApi } from '~/common/until/request.until';
-import { CreatePostDto, Post } from './blog.api.interface';
+import { CreatePostDto, Post } from './blog.interface.api';
 
 export const getListBlog = async () => {
   try {

@@ -13,7 +13,7 @@ import {
   Button,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { Coupon } from '~/apis/coupon/coupon.api.interface';
+import { Coupon } from '~/apis/coupon/coupon.interface.api';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 import { formatDate } from '~/common/until/date-format.until';
 

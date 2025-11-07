@@ -1,5 +1,5 @@
 import { axiosApi } from "~/common/until/request.until";
-import { Coupon } from "./coupon.api.interface";
+import { Coupon } from "./coupon.interface.api";
 
 export const getCoupons = async () => {
     const res = await axiosApi.get('coupon');

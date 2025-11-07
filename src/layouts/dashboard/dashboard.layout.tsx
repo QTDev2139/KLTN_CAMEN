@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   return (
-    <StackRow sx={{ minHeight: '100vh' }}>
+    <StackRow sx={{ minHeight: '100vh', gap: 4, backgroundColor: 'background.paper' }}>
       <Stack 
         sx={{ 
           borderRight: `1px solid ${palette.divider}`, 
@@ -44,6 +44,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           left: 0,
           overflowY: 'auto',
           width: '300px',
+          backgroundColor: 'background.default',
         }}
       >
         <Logo />
@@ -66,7 +67,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </NavLink>
         ))}
       </Stack>
-      <Stack sx={{ padding: `80px ${PADDING_GAP_LAYOUT}`, maxWidth: 'calc(100% - 300px)' }}>{children}</Stack>
+      <Stack sx={{ padding: `80px ${PADDING_GAP_LAYOUT}`, maxWidth: 'calc(100% - 300px)', backgroundColor: 'background.default' }}>{children}</Stack>
     </StackRow>
   );
 }

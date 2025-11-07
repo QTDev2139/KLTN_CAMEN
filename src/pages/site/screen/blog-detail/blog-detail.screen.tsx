@@ -2,7 +2,7 @@ import { Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { blogApi } from '~/apis';
-import { Post } from '~/apis/blog/blog.api.interface';
+import { Post } from '~/apis/blog/blog.interface.api';
 
 const BlogDetailPage: React.FC = () => {
   const [key_t, setKey_t] = useState<string | null>();

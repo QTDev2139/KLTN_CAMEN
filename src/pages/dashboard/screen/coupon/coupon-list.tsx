@@ -2,7 +2,7 @@ import { DeleteOutline, ModeEditOutlineOutlined } from '@mui/icons-material';
 import { IconButton, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { couponApi } from '~/apis';
-import { Coupon } from '~/apis/coupon/coupon.api.interface';
+import { Coupon } from '~/apis/coupon/coupon.interface.api';
 import { formatDate } from '~/common/until/date-format.until';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 import { StackRowJustCenter } from '~/components/elements/styles/stack.style';
@@ -19,24 +19,22 @@ type ListCouponProps = {
 
 const getStateTagType = (state: string): TagType => {
   const stateMap: Record<string, TagType> = {
-    pending: 'warning',      // Chờ xử lý - màu vàng
-    paid: 'info',           // Đã thanh toán - màu xanh dương
-    processing: 'primary',   // Đang xử lý - màu primary
-    shipped: 'secondary',    // Đã gửi hàng - màu tím/xám
-    completed: 'success',    // Hoàn thành - màu xanh lá
-    cancelled: 'error',      // Đã hủy - màu đỏ
+    pending: 'warning',      // Chờ duyệt - màu vàng
+    approved: 'success',     // Đã duyệt - màu xanh lá
+    rejected: 'error',       // Từ chối - màu đỏ
+    expired: 'secondary',    // Hết hạn - màu xám
+    disabled: 'secondary',   // Vô hiệu hóa - xám
   };
   return stateMap[state] || 'info';
 };
 
 const getStateLabel = (state: string): string => {
   const labelMap: Record<string, string> = {
-    pending: 'Chờ xử lý',
-    paid: 'Đã thanh toán',
-    processing: 'Đang xử lý',
-    shipped: 'Đã gửi hàng',
-    completed: 'Hoàn thành',
-    cancelled: 'Đã hủy',
+    pending: 'Chờ duyệt',
+    approved: 'Đã duyệt',
+    rejected: 'Từ chối',
+    expired: 'Hết hạn',
+    disabled: 'Vô hiệu hóa',
   };
   return labelMap[state] || state;
 };
@@ -149,17 +147,17 @@ const ListCoupon: React.FC<ListCouponProps> = ({ onEdit }) => {
               <TagElement 
                 type={getStateTagType(coupon.state)} 
                 content={getStateLabel(coupon.state)} 
-                width={120}
+                width={100}
               />
             </TableCell>
             <TableCell sx={{ textAlign: 'center' }}>
               <TagElement 
                 type={coupon.is_active ? 'success' : 'error'} 
                 content={coupon.is_active ? 'Hoạt động' : 'Không hoạt động'} 
-                width={120}
+                width={200}
               />
             </TableCell>
-            <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.paper' }}>
+            <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
               <StackRowJustCenter sx={{ width: '100%', cursor: 'pointer' }}>
                 <Tooltip title="Xem">
                   <IconButton onClick={() => handleViewClick(coupon.id)}>
