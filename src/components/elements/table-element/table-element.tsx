@@ -21,15 +21,24 @@ export default function TableElement<T>({ title, columns, rows, renderRow }: Tab
           {title}
         </Typography>
       )}
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }}>
+      <TableContainer component={Paper} sx={{ maxWidth: '100%', overflowX: 'auto' }}>
+        <Table sx={{ minWidth: 650, width: '100%' }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              {columns.map((col) => (
-                <TableCell key={col.id}>
-                  <Typography variant="h6" sx={{ textAlign: 'center' }}>{col.label}</Typography>
-                </TableCell>
-              ))}
+              {columns.map((col) => {
+                if (col.id === 'action') {
+                  return (
+                    <TableCell key={col.id} sx={{ position: 'sticky', right: 0, backgroundColor: 'background.paper' }}>
+                      <Typography variant="h6" sx={{ textAlign: 'center' }}>{col.label}</Typography>
+                    </TableCell>
+                  );
+                }
+                return (
+                  <TableCell key={col.id}>
+                    <Typography variant="h6" sx={{ textAlign: 'center' }}>{col.label}</Typography>
+                  </TableCell>
+                );
+              })}
             </TableRow>
           </TableHead>
           <TableBody>{rows.map(renderRow)}</TableBody>

@@ -1,4 +1,6 @@
 
+export const BORDER_RADIUS_ELEMENT_TAG = '12px';
+
 //
 export const TRANSITION_TIME = '0.25s';
 

@@ -5,7 +5,7 @@ import React from 'react';
 import ViIcon from '~/assets/images/vi_icon.png';
 import EnIcon from '~/assets/images/en_icon.png';
 import { locates } from '~/i18n/i18n';
-import { StackRowAlignCenter, StackRowJustBetweenAlignCenter } from '../elements/styles/stack.style';
+import { StackRowAlignCenter } from '../elements/styles/stack.style';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FONT_SIZE } from '~/common/constant/style.constant';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';

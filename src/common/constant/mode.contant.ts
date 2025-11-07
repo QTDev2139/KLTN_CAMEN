@@ -15,6 +15,8 @@ export const theme = createTheme({
     
     info: {
       main: '#2196f3',
+      light: '#e3f2fd',
+      dark: '#1e88e5',
     },
     action: {
       disabledBackground: '#e0e0e0', 
