@@ -6,6 +6,11 @@ export const getCoupons = async () => {
     return res.data;
 }
 
+export const getCouponById = async (id: number): Promise<Coupon> => {
+    const res = await axiosApi.get(`coupon/${id}`);
+    return res.data;
+}
+
 export const getActiveCoupons = async () => {
     const res = await axiosApi.get('coupon/active-coupons');
     return res.data;

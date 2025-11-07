@@ -2,7 +2,7 @@ import { Box, Button, ButtonGroup, Grid, Stack, Typography, useTheme } from '@mu
 import { StackRow } from '~/components/elements/styles/stack.style';
 import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import React, { useEffect, useState } from 'react';
-import ModalImage from '~/components/elements/modal-image/modal-image.element';
+import ModalImage from '~/components/modal/modal-image/modal-image.element';
 import { SliderProduct, SliderProductItems } from '~/components/elements/slider/slider.element';
 
 import ProductChao from '~/assets/images/product-chao.png';

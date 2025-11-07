@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Box, Paper, Typography, Stack, Divider, Tabs, Tab, Button, TextField, MenuItem, Chip, IconButton } from '@mui/material';
 import { useFormik, getIn } from 'formik';
-import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ProductDetail } from '~/apis/product/product.interface.api';
 import { schema } from './product.schema';

@@ -8,6 +8,7 @@ export interface Coupon {
   used_count: number;
   start_date: string;
   end_date: string;
+  state: 'pending' | 'approved' | 'rejected' | 'expired' | 'disabled';
   is_active: boolean;
   user: {
     name: string;

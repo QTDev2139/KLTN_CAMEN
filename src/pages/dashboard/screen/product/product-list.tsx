@@ -5,7 +5,7 @@ import { productApi } from '~/apis';
 import { Product, ProductDetail } from '~/apis/product/product.interface.api';
 import { StackRowJustCenter } from '~/components/elements/styles/stack.style';
 import TableElement from '~/components/elements/table-element/table-element';
-import { ModalConfirm } from '~/components/modal-confirm/modal-confirm';
+import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 
 type ListProductProps = {

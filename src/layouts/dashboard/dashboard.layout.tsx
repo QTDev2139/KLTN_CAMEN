@@ -34,8 +34,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   return (
-    <StackRow sx={{ display: 'grid', gridTemplateColumns: '1fr 5fr' }}>
-      <Stack sx={{ borderRight: `1px solid ${palette.divider}`, minHeight: '100vh' }}>
+    <StackRow sx={{ minHeight: '100vh' }}>
+      <Stack 
+        sx={{ 
+          borderRight: `1px solid ${palette.divider}`, 
+          height: '100vh',
+          position: 'sticky', 
+          top: 0,
+          left: 0,
+          overflowY: 'auto',
+          width: '300px',
+        }}
+      >
         <Logo />
         <Divider sx={{ color: palette.divider }} />
         {/* ✅ Chỉ hiển thị sidebar user có quyền */}
@@ -56,7 +66,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </NavLink>
         ))}
       </Stack>
-      <Stack sx={{ padding: `80px ${PADDING_GAP_LAYOUT}` }}>{children}</Stack>
+      <Stack sx={{ padding: `80px ${PADDING_GAP_LAYOUT}`, maxWidth: 'calc(100% - 300px)' }}>{children}</Stack>
     </StackRow>
   );
 }

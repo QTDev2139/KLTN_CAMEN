@@ -19,6 +19,7 @@
     "@types/react-dom": "^19.1.7",
     "axios": "^1.11.0",
     "ckeditor5": "^46.1.1",
+    "dayjs": "^1.11.19",
     "formik": "^2.4.6",
     "i18next": "^23.16.8",
     "normalize.css": "^8.0.1",
