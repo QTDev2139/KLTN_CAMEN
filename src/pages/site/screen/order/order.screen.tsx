@@ -19,7 +19,7 @@ import {
   Chip,
   Autocomplete,
 } from '@mui/material';
-import { LocalOffer as CouponIcon } from '@mui/icons-material';
+import { LocalOffer as CouponIcon, Phone } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
@@ -31,6 +31,7 @@ import { Coupon } from '~/apis/coupon/coupon.interface.api';
 import { vnAddressApi, Province, Ward } from '~/apis/vn-address/vn-address.api';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
+import { CartItem } from '~/apis/cart/cart.interface.api';
 
 // ✅ Validation schema
 const orderSchema = Yup.object({
@@ -39,7 +40,7 @@ const orderSchema = Yup.object({
     .required('Vui lòng nhập số điện thoại')
     .matches(/^[0-9]{10}$/, 'Số điện thoại phải có 10 chữ số'),
   email: Yup.string().email('Email không hợp lệ').nullable(),
-  gender: Yup.string().oneOf(['male', 'female'], 'Vui lòng chọn giới tính'),
+  gender: Yup.string().oneOf(['Nam', 'Nữ'], 'Vui lòng chọn giới tính'),
   province: Yup.object().nullable().required('Vui lòng chọn tỉnh/thành phố'),
   ward: Yup.object().nullable().required('Vui lòng chọn phường/xã'),
   street: Yup.string().required('Vui lòng nhập số nhà, đường'),
@@ -57,11 +58,11 @@ const OrderPage: React.FC = () => {
   const prefix = getLangPrefix(currentLang);
 
   const orderData = location.state as {
-    items: OrderItem[];
+    items: CartItem[];
     totalAmount: number;
   } | null;
 
-  const [items, setItems] = useState<OrderItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -80,7 +81,7 @@ const OrderPage: React.FC = () => {
       customerName: '',
       phone: '',
       email: '',
-      gender: 'male',
+      gender: 'nam',
       province: null as Province | null,
       ward: null as Ward | null,
       street: '',
@@ -89,8 +90,15 @@ const OrderPage: React.FC = () => {
     },
     validationSchema: orderSchema,
     onSubmit: async (values) => {
-      const fullAddress = [values.street, values.ward?.name, values.province?.name].join(', ');
-
+      const fullAddress = {
+        gender: values.gender,
+        name: values.customerName,
+        phone: values.phone,
+        email: values.email,
+        street: values.street,
+        ward: values.ward?.name,
+        province: values.province?.name,
+      };
       setIsSubmitting(true);
       try {
         // Tạo đơn hàng
@@ -115,7 +123,7 @@ const OrderPage: React.FC = () => {
           });
           snackbar('success', 'Chuyển đến trang thanh toán!');
 
-          // Redirect đến VNPay 
+          // Redirect đến VNPay
           window.location.href = result.data?.payment_url;
          }
       } catch (error: any) {
@@ -230,8 +238,6 @@ const OrderPage: React.FC = () => {
 
   if (!orderData) return null;
 
-  
-
   return (
     <Container maxWidth="lg" sx={{ py: PADDING_GAP_LAYOUT }}>
       <Typography variant="h4" sx={{ mb: 3, fontWeight: 700 }}>
@@ -252,8 +258,8 @@ const OrderPage: React.FC = () => {
               onChange={formik.handleChange}
               sx={{ display: 'flex', flexDirection: 'row', mb: 2 }}
             >
-              <FormControlLabel value="male" control={<Radio />} label="Anh" />
-              <FormControlLabel value="female" control={<Radio />} label="Chị" />
+              <FormControlLabel value="Nam" control={<Radio />} label="Anh" />
+              <FormControlLabel value="Nữ" control={<Radio />} label="Chị" />
             </RadioGroup>
 
             <Stack spacing={2}>

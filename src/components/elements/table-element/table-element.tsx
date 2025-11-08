@@ -23,7 +23,7 @@ export default function TableElement<T>({ title, columns, rows, renderRow }: Tab
       )}
       <TableContainer component={Paper} sx={{ maxWidth: '100%', overflowX: 'auto' }}>
         <Table sx={{ minWidth: 650, width: '100%',  }} aria-label="simple table">
-          <TableHead sx={{ backgroundColor: 'background.paper' }}>
+          <TableHead sx={{ backgroundColor: 'background.paper', border: '1px solid #eee', borderColor: 'divider', }}>
             <TableRow>
               {columns.map((col) => {
                 if (col.id === 'action') {
@@ -41,7 +41,7 @@ export default function TableElement<T>({ title, columns, rows, renderRow }: Tab
               })}
             </TableRow>
           </TableHead>
-          <TableBody sx={{ backgroundColor: 'background.default', borderTop: '1px solid', borderColor: 'divider', }}>{rows.map(renderRow)}</TableBody>
+          <TableBody sx={{ backgroundColor: 'background.default', border: '1px solid #eee', borderColor: 'divider', }}>{rows.map(renderRow)}</TableBody>
         </Table>
       </TableContainer>
     </React.Fragment>

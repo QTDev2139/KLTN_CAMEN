@@ -23,7 +23,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     return sidebarsDashboard.filter((sidebar: SidebarItem) => hasAccess(sidebar.allowUserTypes));
   }, [userRole, hasAccess]);
 
-  console.log('visibleSidebars', visibleSidebars);
 
   if (loading) {
     return (
@@ -43,7 +42,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           top: 0,
           left: 0,
           overflowY: 'auto',
-          width: '300px',
+          width: '250px',
+          maxWidth: '250px',
           backgroundColor: 'background.default',
         }}
       >
@@ -67,7 +67,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </NavLink>
         ))}
       </Stack>
-      <Stack sx={{ padding: `80px ${PADDING_GAP_LAYOUT}`, maxWidth: 'calc(100% - 300px)', backgroundColor: 'background.default' }}>{children}</Stack>
+      <Stack sx={{ padding: `20px ${PADDING_GAP_LAYOUT}`, width: 'calc(100% - 250px)', backgroundColor: 'background.default' }}>{children}</Stack>
     </StackRow>
   );
 }

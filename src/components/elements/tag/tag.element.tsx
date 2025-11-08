@@ -3,7 +3,7 @@ import React from 'react';
 import { STYLE } from '../../../common/constant';
 import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 
-export type TagType = 'success' | 'warning' | 'info' | 'secondary' | 'primary' | 'error';
+export type TagType = |'success' | 'warning' | 'info' | 'secondary' | 'primary' | 'error';
 
 export interface TagElementProps {
   type: TagType;

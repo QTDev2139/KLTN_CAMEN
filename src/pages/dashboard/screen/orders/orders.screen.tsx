@@ -2,8 +2,8 @@ import { Button, Divider, Stack, Typography, useTheme } from "@mui/material";
 import { StackRowAlignCenter } from "~/components/elements/styles/stack.style";
 import { OrderMode } from "./order.enum";
 import { useState } from "react";
-import ListOrder from "./order-list";
-import CreateOrder from "./order-create";
+import ListOrder from "./view/order-list";
+import CreateOrder from "./view/order-create";
 import { Order } from "~/apis/order/order.interface.api";
 
 const OrderScreen: React.FC = () => {
@@ -30,10 +30,10 @@ const OrderScreen: React.FC = () => {
   return (
     <Stack spacing={2}>
       <StackRowAlignCenter sx={{ justifyContent: 'space-between' }}>
-        <Typography variant="h3">Quản lý sản phẩm</Typography>
+        <Typography variant="h3">Quản lý đơn hàng</Typography>
         {mode === OrderMode.LIST && (
           <Button onClick={goCreate}>
-            <Typography variant="subtitle2">Thêm sản phẩm mới</Typography>
+            <Typography variant="subtitle2">Thêm đơn hàng mới</Typography>
           </Button>
         )}
         {(mode === OrderMode.CREATE || mode === OrderMode.UPDATE) && (
@@ -44,7 +44,7 @@ const OrderScreen: React.FC = () => {
       </StackRowAlignCenter>
       <Divider sx={{ color: palette.divider }} />
       
-      {mode === OrderMode.LIST && <ListOrder onEdit={goUpdate} />}
+      {mode === OrderMode.LIST && <ListOrder />}
       {mode === OrderMode.CREATE && <CreateOrder />}
       {/* {mode === OrderMode.UPDATE && <CreateOrder initial={editingOrder} />} */}
     </Stack>

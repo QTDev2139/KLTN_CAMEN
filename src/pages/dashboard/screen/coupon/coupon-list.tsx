@@ -124,24 +124,24 @@ const ListCoupon: React.FC<ListCouponProps> = ({ onEdit }) => {
               <Typography>{coupon.code}</Typography>
             </TableCell>
             <TableCell sx={{ textAlign: 'right' }}>
-              <Typography sx={{ width: '110px' }}>
+              <Typography sx={{ width: '120px' }}>
                 {coupon.discount_type === 'percentage' ? `${coupon.discount_value}%` : FormatPrice(coupon.discount_value)}
               </Typography>
             </TableCell>
             <TableCell sx={{ textAlign: 'right' }}>
-              <Typography sx={{ width: '165px' }}>{FormatPrice(coupon.min_order_amount)}</Typography>
+              <Typography sx={{ width: '180px' }}>{FormatPrice(coupon.min_order_amount)}</Typography>
             </TableCell>
             <TableCell sx={{ textAlign: 'center' }}>
-              <Typography sx={{ width: '165px' }}>{coupon.usage_limit}</Typography>
+              <Typography sx={{ width: '180px' }}>{coupon.usage_limit}</Typography>
             </TableCell>
             <TableCell sx={{ textAlign: 'center' }}>
-              <Typography sx={{ width: '105px' }}>{coupon.used_count}</Typography>
+              <Typography sx={{ width: '120px' }}>{coupon.used_count}</Typography>
             </TableCell>
             <TableCell>
-              <Typography sx={{ width: '125px' }}>{formatDate(coupon.start_date)}</Typography>
+              <Typography sx={{ width: '135px' }}>{formatDate(coupon.start_date)}</Typography>
             </TableCell>
             <TableCell>
-              <Typography sx={{ width: '125px' }}>{formatDate(coupon.end_date)}</Typography>
+              <Typography sx={{ width: '140px' }}>{formatDate(coupon.end_date)}</Typography>
             </TableCell>
             <TableCell>
               <TagElement 
