@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardMedia, Grid } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { blogApi } from '~/apis';
-import { Post } from '~/apis/blog/blog.api.interface';
+import { Post } from '~/apis/blog/blog.interface.api';
 import { SITE_SCREEN } from '~/router/path.route';
 
 const BlogPage: React.FC = () => {

@@ -33,7 +33,6 @@ export default function ContactForm() {
         // const { confirm_password, ...dataToSend } = values;
         // const res = await userApi.createRegister(dataToSend);
 
-        console.log('123');
         console.log(values);
         // snackbar('success', res);
       } catch (error: any) {

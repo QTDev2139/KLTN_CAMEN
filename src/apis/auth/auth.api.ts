@@ -1,6 +1,6 @@
 import { axiosApi } from '~/common/until/request.until';
 import { tokenStore } from './axios';
-import { User } from '../user/user.api.interfaces';
+import { User } from '../user/user.interfaces.api';
 
 export interface LoginPayload { email: string; password: string; }
 export interface LoginResponse {

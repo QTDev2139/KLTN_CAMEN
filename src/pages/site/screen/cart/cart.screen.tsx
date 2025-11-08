@@ -4,13 +4,14 @@ import { StackRow } from '~/components/elements/styles/stack.style';
 import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 import { useEffect, useRef, useState } from 'react';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
-import { Cart } from '~/apis/cart/cart.api.interface';
+import { Cart } from '~/apis/cart/cart.interface.api';
 import { cartApi } from '~/apis';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import { AxiosError } from 'axios';
+import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
 
 const DEBOUNCE_MS = 500;
 
@@ -19,12 +20,14 @@ const CartPage: React.FC = () => {
   const { snackbar } = useSnackbar();
   const navigate = useNavigate();
 
-  // Lấy lang từ hook thay vì useParams
   const currentLang = useLang();
   const prefix = getLangPrefix(currentLang);
 
   const [cart, setCart] = useState<Cart | null>(null);
   const [syncing, setSyncing] = useState<Set<number>>(new Set());
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
   const debounceTimers = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
 
@@ -107,23 +110,31 @@ const CartPage: React.FC = () => {
     scheduleSync(id, item.qty + 1);
   };
 
-  const removeOne = async (itemId: number) => {
-    if (syncing.has(itemId)) return;
-    if (!window.confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
+  const handleOpenConfirm = (itemId: number) => {
+    setSelectedItemId(itemId);
+    setOpenConfirm(true);
+  };
 
+  const handleConfirmDelete = async () => {
+    if (selectedItemId === null) return;
+    
+    setLoadingDelete(true);
     try {
-      setSyncing((prev) => new Set(prev).add(itemId));
-      await cartApi.deleteCart(itemId);
+      setSyncing((prev) => new Set(prev).add(selectedItemId));
+      await cartApi.deleteCart(selectedItemId);
       await fetchCart();
       snackbar('success', 'Xóa sản phẩm thành công');
     } catch (error: any) {
       snackbar('error', error?.response?.data?.message || 'Không thể xóa sản phẩm');
     } finally {
+      setLoadingDelete(false);
+      setOpenConfirm(false);
       setSyncing((prev) => {
         const next = new Set(prev);
-        next.delete(itemId);
+        next.delete(selectedItemId);
         return next;
       });
+      setSelectedItemId(null);
     }
   };
 
@@ -145,6 +156,8 @@ const CartPage: React.FC = () => {
       },
     });
   };
+
+  const selectedItem = cartItems.find((item) => item.id === selectedItemId);
 
   return (
     <Stack spacing={2} sx={{ paddingTop: PADDING_GAP_LAYOUT }}>
@@ -238,7 +251,7 @@ const CartPage: React.FC = () => {
                       cursor: isItemSyncing ? 'default' : 'pointer',
                       pointerEvents: isItemSyncing ? 'none' : 'auto',
                     }}
-                    onClick={() => removeOne(item.id)}
+                    onClick={() => handleOpenConfirm(item.id)}
                   >
                     Xóa
                   </Typography>
@@ -277,6 +290,16 @@ const CartPage: React.FC = () => {
           </Grid>
         </Grid>
       )}
+
+      {/* Modal Confirm Delete */}
+      <ModalConfirm
+        open={openConfirm}
+        title="Xác nhận xóa sản phẩm"
+        message={selectedItem ? `Bạn có chắc muốn xóa sản phẩm "${selectedItem.product_name}" khỏi giỏ hàng?` : ''}
+        onClose={() => setOpenConfirm(false)}
+        onConfirm={handleConfirmDelete}
+        loading={loadingDelete}
+      />
     </Stack>
   );
 };

@@ -1,5 +1,5 @@
 import { axiosApi } from '~/common/until/request.until';
-import { Payment } from './payment.api.interface';
+import { Payment } from './payment.interface.api';
 
 export const createPayment = async (
   data: Payment,

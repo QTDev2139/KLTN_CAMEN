@@ -11,7 +11,6 @@ export const useUserRole = () => {
       try {
         const user = await userApi.getProfile();
         setUserRole(user.role.name as UserType);
-        console.log('User role fetched:', user.role.name);
       } catch (error) {
         setUserRole(null);
       } finally {

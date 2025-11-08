@@ -26,12 +26,6 @@ const ProductScreen: React.FC = () => {
     setMode(ProductMode.UPDATE);
   };
 
-  // const handleSubmit = async (values: ProductDetail) => {
-  //   // Xử lý submit cho cả create và update
-  //   console.log('Submit values:', values);
-  //   // TODO: Gọi API tương ứng
-  //   goList();
-  // };
 
   return (
     <Stack spacing={2}>

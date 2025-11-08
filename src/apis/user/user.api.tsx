@@ -1,5 +1,5 @@
 import { axiosApi } from '~/common/until/request.until';
-import { User } from './user.api.interfaces';
+import { User } from './user.interfaces.api';
 
 // ----------------------------------- REGISTER ----------------------------------
 export const createRegister = async ({ name, email, password }: User) => {
