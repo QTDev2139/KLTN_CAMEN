@@ -4,7 +4,7 @@ import { CouponMode } from "./coupon.enum";
 import { useState } from "react";
 import ListCoupon from "./coupon-list";
 import CreateCoupon from "./coupon-create";
-import { Coupon } from "~/apis/coupon/coupon.api.interface";
+import { Coupon } from "~/apis/coupon/coupon.interface.api";
 
 const CouponScreen: React.FC = () => {
   const { palette } = useTheme();

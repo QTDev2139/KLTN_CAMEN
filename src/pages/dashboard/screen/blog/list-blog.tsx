@@ -2,7 +2,7 @@ import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 import TableElement from '~/components/elements/table-element/table-element';
 import { useEffect, useState } from 'react';
 import { blogApi } from '~/apis';
-import { Post } from '~/apis/blog/blog.api.interface';
+import { Post } from '~/apis/blog/blog.interface.api';
 import { DeleteOutline, ModeEditOutlineOutlined } from '@mui/icons-material';
 import { StackRowJustCenter } from '~/components/elements/styles/stack.style';
 

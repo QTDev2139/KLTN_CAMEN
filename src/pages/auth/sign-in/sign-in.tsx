@@ -46,7 +46,6 @@ export default function LoginPage() {
         setSubmitting(true);
         await login(values.email, values.password);
         const me = await authApi.profile(); // lấy user mới nhất từ BE
-        console.log('Logged in user:', me);
         if (me.role?.name === 'customer') {
           navigate(`/${prefix}/${SITE_SCREEN.HOME}`, { replace: true });
         } else {

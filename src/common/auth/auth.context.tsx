@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { authApi } from '~/apis/auth/auth.api';
 import { tokenStore } from '~/apis/auth/axios';
-import { User } from '~/apis/user/user.api.interfaces';
+import { User } from '~/apis/user/user.interfaces.api';
 
 type AuthState = {
   user: User | null;

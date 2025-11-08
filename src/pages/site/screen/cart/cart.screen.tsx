@@ -4,7 +4,7 @@ import { StackRow } from '~/components/elements/styles/stack.style';
 import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 import { useEffect, useRef, useState } from 'react';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
-import { Cart } from '~/apis/cart/cart.api.interface';
+import { Cart } from '~/apis/cart/cart.interface.api';
 import { cartApi } from '~/apis';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';

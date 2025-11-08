@@ -14,7 +14,7 @@ import {
 import { useFormik, getIn } from 'formik';
 import { schema } from './coupon.schema';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
-import { Coupon } from '~/apis/coupon/coupon.api.interface';
+import { Coupon } from '~/apis/coupon/coupon.interface.api';
 
 type CouponFormValues = Partial<Coupon>;
 

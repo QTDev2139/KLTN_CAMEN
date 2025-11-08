@@ -23,7 +23,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     return sidebarsDashboard.filter((sidebar: SidebarItem) => hasAccess(sidebar.allowUserTypes));
   }, [userRole, hasAccess]);
 
-  console.log('visibleSidebars', visibleSidebars);
 
   if (loading) {
     return (
@@ -34,7 +33,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   return (
-    <StackRow sx={{ minHeight: '100vh' }}>
+    <StackRow sx={{ minHeight: '100vh', gap: 4, backgroundColor: 'background.paper' }}>
       <Stack 
         sx={{ 
           borderRight: `1px solid ${palette.divider}`, 
@@ -43,7 +42,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           top: 0,
           left: 0,
           overflowY: 'auto',
-          width: '300px',
+          width: '250px',
+          maxWidth: '250px',
+          backgroundColor: 'background.default',
         }}
       >
         <Logo />
@@ -66,7 +67,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </NavLink>
         ))}
       </Stack>
-      <Stack sx={{ padding: `80px ${PADDING_GAP_LAYOUT}`, maxWidth: 'calc(100% - 300px)' }}>{children}</Stack>
+      <Stack sx={{ padding: `20px ${PADDING_GAP_LAYOUT}`, width: 'calc(100% - 250px)', backgroundColor: 'background.default' }}>{children}</Stack>
     </StackRow>
   );
 }
