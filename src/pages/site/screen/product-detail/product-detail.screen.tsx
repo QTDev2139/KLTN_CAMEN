@@ -1,7 +1,7 @@
-import { Box, Button, ButtonGroup, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Badge, Box, Button, ButtonGroup, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { StackRow } from '~/components/elements/styles/stack.style';
 import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import ModalImage from '~/components/modal/modal-image/modal-image.element';
 import { SliderProduct, SliderProductItems } from '~/components/elements/slider/slider.element';
 
@@ -23,17 +23,18 @@ export default function ProductDetailPage() {
   const { snackbar } = useSnackbar();
   const [open, setOpen] = React.useState(false);
   const { slug } = useParams<{ slug?: string }>();
-  
+
   // Lấy lang từ hook
   const currentLang = useLang();
   const prefix = getLangPrefix(currentLang);
-  
+
   const [productDetail, setProductDetail] = useState<ProductDetail | null>();
   const [qty, setQty] = useState(1);
   const [mainImage, setMainImage] = useState(productDetail?.product_images[0].image_url);
   const [modalSrc, setModalSrc] = useState('');
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-
+  const [activeFilter, setActiveFilter] = useState<string | number>('all');
+  console.log('productDetail', productDetail);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,7 +43,9 @@ export default function ProductDetailPage() {
       const result = await productApi.getDetailProduct(slug, currentLang);
       setProductDetail(result);
       if (result.product_translations[0].slug && result.product_translations[0].slug !== slug) {
-        navigate(`${prefix}/${PATH.SITE_SCREEN.PRODUCT.ROOT}/${result.product_translations[0].slug}`, { replace: true });
+        navigate(`${prefix}/${PATH.SITE_SCREEN.PRODUCT.ROOT}/${result.product_translations[0].slug}`, {
+          replace: true,
+        });
       }
     };
     fetchApi();
@@ -88,10 +91,34 @@ export default function ProductDetailPage() {
     { src: ProductMien, title: 'Cháo tôm thịt' },
     { src: ProductMien, title: 'Miến cá lóc' },
   ];
-  
+
+  const Rated = [
+    { label: 'Tất cả', value: 'all' },
+    { label: '5 sao', value: 5 },
+    { label: '4 sao', value: 4 },
+    { label: '3 sao', value: 3 },
+    { label: '2 sao', value: 2 },
+    { label: '1 sao', value: 1 },
+  ];
+  const filteredRate = useMemo(
+    () =>
+      activeFilter === 'all'
+        ? productDetail?.reviews ?? []
+        : (productDetail?.reviews ?? []).filter((o) => o.rating === Number(activeFilter)),
+    [productDetail?.reviews, activeFilter],
+  );
+  const filterCounts = useMemo(() => {
+    const ratedCount: Record<string | number, number> = { all: productDetail?.reviews?.length || 0 };
+    Rated.forEach((rate) => {
+      if (rate.value === 'all') return;
+      const count = productDetail?.reviews?.filter((rev) => rev.rating === rate.value).length || 0;
+      ratedCount[rate.value] = count;
+    });
+    return ratedCount;
+  }, [productDetail?.reviews]);
 
   return (
-    <Stack sx={{ backgroundColor: palette.background.default }}>
+    <Stack spacing={2} sx={{ backgroundColor: palette.background.default }}>
       <StackRow sx={{ display: 'grid', gridTemplateColumns: '5fr 7fr', gap: 4, marginBottom: '40px' }}>
         <Stack>
           <BoxContent>
@@ -201,7 +228,40 @@ export default function ProductDetailPage() {
           <BoxContent title="Hướng dẫn sử dụng" content={productDetail?.product_translations[0].usage_instruction} />
         </Grid>
       </Grid>
-      <Typography variant="h2" sx={{ padding: `${PADDING_GAP_LAYOUT} 0`, color: palette.primary.main }}>
+      <Box sx={{ borderRadius: PADDING_GAP_LAYOUT, boxShadow: '0 2px 8px rgba(0,0,0,0.2)', p: 3, flex: 1 }}>
+        <Typography variant="h2" sx={{ paddingBottom: PADDING_GAP_LAYOUT, color: palette.primary.main }}>
+          Đánh giá sản phẩm
+        </Typography>
+        <StackRow>
+          {Rated.map((rate) => {
+            const active = activeFilter === rate.value;
+            return (
+              <Box
+                key={rate.value}
+                onClick={() => setActiveFilter(rate.value)}
+                sx={{
+                  px: 2,
+                  py: 0.75,
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                  color: active ? 'primary.main' : 'text.primary',
+                  border: active ? `1px solid ${palette.primary.main}` : '1px solid transparent',
+                  position: 'relative',
+                  '&:hover': { color: 'primary.main' },
+                }}
+              >
+                <Typography variant="subtitle2" sx={{ minWidth: 80, textAlign: 'center' }}>
+                  {rate.label}
+                  {rate.value !== 'all' && (
+                    <span> ({filterCounts[rate.value] ?? 0})</span>
+                  )}
+                </Typography>
+              </Box>
+            );
+          })}
+        </StackRow>
+      </Box>
+      <Typography variant="subtitle2" sx={{ padding: `${PADDING_GAP_LAYOUT} 0`, color: palette.primary.main }}>
         Sản phẩm tương tự
       </Typography>
       <SliderProduct items={items} />

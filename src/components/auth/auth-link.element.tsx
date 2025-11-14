@@ -10,7 +10,6 @@ import { userApi } from '~/apis';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import LogoutIcon from '@mui/icons-material/Logout';
 
@@ -57,7 +56,7 @@ export default function AuthLink() {
 
   const handleOrders = () => {
     setAnchorEl(null);
-    navigate(`${prefix}/${SITE_SCREEN.ORDER}`);
+    navigate(`${prefix}/${SITE_SCREEN.PURCHASE}`);
   };
 
   return (

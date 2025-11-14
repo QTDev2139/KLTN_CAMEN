@@ -56,7 +56,7 @@ export const ModalConfirm: React.FC<ModalConfirmProps> = ({
           variant="contained"
           disabled={loading}
         >
-          {loading ? 'Đang xóa' : 'Xác nhận'}
+          {loading ? 'Xác nhận' : 'Xác nhận'}
         </Button>
       </DialogActions>
     </Dialog>
