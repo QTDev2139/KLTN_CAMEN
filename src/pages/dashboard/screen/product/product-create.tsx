@@ -138,9 +138,9 @@ export default function CreateProduct(props: {
             }
           });
         }
-        console.log('FormData to submit:', fd);
+        // console.log('FormData to submit:', fd);
         // before calling API
-        console.log('values.id',values.id);
+        // console.log('values.id',values.id);
         Array.from(fd.entries()).forEach(([k, v]) => {
           console.log(k, v);
         });

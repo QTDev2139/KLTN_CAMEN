@@ -169,9 +169,7 @@ const ListOrder: React.FC = () => {
 
       <Box
         sx={{
-          // Giữ không gian scrollbar để tránh xô lệch ngang khi số dòng ít
           scrollbarGutter: 'stable',
-          // Fallback nếu browser chưa hỗ trợ:
           '&:has(table)': { overflowY: 'auto' },
         }}
       >

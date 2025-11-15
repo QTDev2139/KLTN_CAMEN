@@ -1,3 +1,5 @@
+import { Review } from "../review/review.interface.api";
+
 export interface ProductTranslation {
   language_id: number;
   name: string;
@@ -41,5 +43,5 @@ export interface ProductDetail {
 
   product_translations: ProductTranslation[];
   product_images: ProductImage[];
-
+  reviews?: Review[];
 }

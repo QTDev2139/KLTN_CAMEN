@@ -40,6 +40,7 @@ export interface OrderItem {
   order_id: number;
   product_id: number;
   product: Product;
+  review?: boolean;
 }
 
 export interface OrderDetail {

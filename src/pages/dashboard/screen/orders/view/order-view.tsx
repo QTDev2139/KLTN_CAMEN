@@ -181,7 +181,7 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
                         </TableCell>
                       </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody> 
                       {order.order_items.map((item, index) => (
                         <TableRow key={index} hover>
                           <TableCell>
