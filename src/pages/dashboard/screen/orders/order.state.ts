@@ -10,8 +10,8 @@ export const statusColorMap: Record<string, TagType> = {
 };
 
 export const statusLabelMap: Record<string, string> = {
-  pending: 'Chờ xử lý',
-  processing: 'Đang xử lý',
+  pending: 'Chờ xác nhận',
+  processing: 'Đang chuẩn bị hàng',
   shipped: 'Đang giao',
   completed: 'Hoàn thành',
   cancelled: 'Đã hủy',

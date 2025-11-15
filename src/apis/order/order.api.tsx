@@ -11,6 +11,13 @@ export const getOrders = async (): Promise<OrderDetail[]> => {
   return res.data; 
 };
 
+export const getUserOrders = async (lang: string): Promise<OrderDetail[]> => {
+  const res = await axiosApi.get(`orders/user/lang/${lang}`);
+  return res.data.post; 
+};
+
+
+
 export const getOrderDetail = async (id: number | string): Promise<OrderDetail[]> => {
   const res = await axiosApi.get(`orders/${id}`);
   return res.data.post; 

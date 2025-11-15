@@ -25,6 +25,7 @@ import AccountPage from '~/pages/site/screen/account/account.screen';
 import CheckoutPage from '~/pages/site/screen/checkout/checkout.screen';
 import OrderPage from '~/pages/site/screen/order/order.screen';
 import PaymentCallbackPage from '~/pages/site/screen/payment/payment-callback.screen';
+import PurchasePage from '~/pages/site/screen/purchase/purchase.screen';
 
 import DashboardLayout from '~/layouts/dashboard/dashboard.layout';
 import DashboardPage from '~/pages/dashboard/dashboard.page';
@@ -185,6 +186,13 @@ export const routes: Route[] = [
         type: RouteType.PUBLIC,
         allowUserTypes: [],
       },
+      {
+        path: PATH.SITE_SCREEN.PURCHASE,
+        element: PurchasePage,
+        type: RouteType.PUBLIC,
+        allowUserTypes: [],
+      },
+
     ],
   },
 

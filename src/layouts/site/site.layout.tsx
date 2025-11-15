@@ -25,6 +25,7 @@ export default function SiteLayout({ children }: SiteLayoutProps) {
           sx={{
             padding: PADDING_GAP_LAYOUT,
             backgroundColor: palette.background.default,
+            minHeight: 'calc(100vh - 160px)',
           }}
         >
           {children}
