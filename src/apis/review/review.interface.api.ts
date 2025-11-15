@@ -4,7 +4,11 @@ export interface CreateReview {
     comment: string;
     images: File[];
 }
-export interface Review extends CreateReview {
-    created_at: string;
+export interface Review {
+    order_item_id: number;
     rating: number;
+    comment: string;
+    created_at: string;
+    user_name: string;
+    images: string[];
 }
