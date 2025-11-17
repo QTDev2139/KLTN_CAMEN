@@ -21,10 +21,7 @@ const CouponScreen: React.FC = () => {
     setMode(CouponMode.CREATE);
   };
   
-  const goUpdate = (Coupon: Coupon) => {
-    setEditingCoupon(Coupon);
-    setMode(CouponMode.UPDATE);
-  };
+
 
 
   return (
@@ -33,7 +30,7 @@ const CouponScreen: React.FC = () => {
         <Typography variant="h3">Quản lý sản phẩm</Typography>
         {mode === CouponMode.LIST && (
           <Button onClick={goCreate}>
-            <Typography variant="subtitle2">Thêm sản phẩm mới</Typography>
+            <Typography variant="subtitle2">Thêm mã giảm giá mới</Typography>
           </Button>
         )}
         {(mode === CouponMode.CREATE || mode === CouponMode.UPDATE) && (
@@ -44,9 +41,8 @@ const CouponScreen: React.FC = () => {
       </StackRowAlignCenter>
       <Divider sx={{ color: palette.divider }} />
       
-      {mode === CouponMode.LIST && <ListCoupon onEdit={goUpdate} />}
-      {mode === CouponMode.CREATE && <CreateCoupon />}
-      {mode === CouponMode.UPDATE && <CreateCoupon initial={editingCoupon} />}
+      {mode === CouponMode.LIST && <ListCoupon />}
+      {mode === CouponMode.CREATE && <CreateCoupon onSubmit={() => goList()} />}
     </Stack>
   );
 }

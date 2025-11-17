@@ -182,10 +182,10 @@ const ListOrder: React.FC = () => {
                 <Typography fontWeight={600}>{order.code}</Typography>
               </TableCell>
               <TableCell sx={{ textAlign: 'right' }}>
-                <Typography fontWeight={600}>{FormatPrice(order.grand_total)}</Typography>
+                <Typography width={100} fontWeight={600}>{FormatPrice(order.grand_total)}</Typography>
               </TableCell>
               <TableCell sx={{ textAlign: 'center' }}>
-                <Typography>{PaymentMethodLabel[order.payment_method]}</Typography>
+                <Typography width={165}>{PaymentMethodLabel[order.payment_method]}</Typography>
               </TableCell>
               <TableCell sx={{ textAlign: 'center' }}>
                 <TagElement
@@ -198,11 +198,11 @@ const ListOrder: React.FC = () => {
                 <TagElement
                   type={statusColorMap[order.status]}
                   content={statusLabelMap[order.status]}
-                  width={120}
+                  width={130}
                 />
               </TableCell>
               <TableCell>
-                <Typography>{formatDate(order.created_at)}</Typography>
+                <Typography width={95}>{formatDate(order.created_at)}</Typography>
               </TableCell>
               <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
                 <StackRowJustCenter sx={{ width: '100%', cursor: 'pointer' }}>

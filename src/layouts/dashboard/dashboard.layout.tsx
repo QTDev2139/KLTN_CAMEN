@@ -67,7 +67,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </NavLink>
         ))}
       </Stack>
-      <Stack sx={{ padding: `20px ${PADDING_GAP_LAYOUT}`, width: 'calc(100% - 250px)', backgroundColor: 'background.default' }}>{children}</Stack>
+      <Stack sx={{ padding: `20px ${PADDING_GAP_LAYOUT}`, width: 'calc(100% - 350px)', backgroundColor: 'background.default' }}>{children}</Stack>
     </StackRow>
   );
 }
