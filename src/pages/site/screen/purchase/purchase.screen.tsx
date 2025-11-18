@@ -35,6 +35,7 @@ const PurchasePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { palette } = useTheme();
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [openConfirmCancel, setOpenConfirmCancel] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderDetail | null>(null);
   const [loadingCancel, setLoadingCancel] = useState(false);
   const [loadingConfirm, setLoadingConfirm] = useState(false);
@@ -71,10 +72,9 @@ const PurchasePage: React.FC = () => {
     });
     return counts;
   }, [orders]);
-  console.log(orders)
   const handleCancelClick = (order: OrderDetail) => {
     setSelectedOrder(order);
-    setOpenConfirm(true);
+    setOpenConfirmCancel(true);
   };
 
   const handleConfirmCancel = async () => {
@@ -84,11 +84,11 @@ const PurchasePage: React.FC = () => {
     try {
       await updateOrder(selectedOrder.id, { status: "cancelled" });
       snackbar('success', `Đã hủy đơn hàng #${selectedOrder.code}`);
-      
+
       // Refresh lại danh sách
       const data = await getUserOrders(lang);
       setOrders(data);
-      setOpenConfirm(false);
+      setOpenConfirmCancel(false);
       setSelectedOrder(null);
     } catch (e) {
       console.error(e);
@@ -103,6 +103,7 @@ const PurchasePage: React.FC = () => {
     setOpenConfirm(true);
   };
 
+  // Xác nhận hoàn thành đơn hàng
   const handleConfirmOrder = async () => {
     if (!selectedOrder) return;
     
@@ -110,7 +111,7 @@ const PurchasePage: React.FC = () => {
     try {
       await updateOrder(selectedOrder.id, { status: statusUpdate[selectedOrder.status] });
       snackbar('success', `Đã xác nhận hoàn thành đơn hàng #${selectedOrder.code}`);
-      
+
       // Refresh lại danh sách
       const data = await getUserOrders(lang);
       setOrders(data);
@@ -349,11 +350,11 @@ const PurchasePage: React.FC = () => {
       />
 
       <ModalConfirm
-        open={openConfirm}
+        open={openConfirmCancel}
         title="Xác nhận hủy đơn hàng"
         message={`Bạn có chắc muốn hủy đơn hàng "${selectedOrder?.code}" không?`}
         onClose={() => {
-          setOpenConfirm(false);
+          setOpenConfirmCancel(false);
           setSelectedOrder(null);
         }}
         onConfirm={handleConfirmCancel}

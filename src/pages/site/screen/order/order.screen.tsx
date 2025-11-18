@@ -19,34 +19,19 @@ import {
   Chip,
   Autocomplete,
 } from '@mui/material';
-import { LocalOffer as CouponIcon, Phone } from '@mui/icons-material';
+import { LocalOffer as CouponIcon } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { orderApi, couponApi, userApi, paymentApi } from '~/apis';
-import { OrderItem } from '~/apis/order/order.interface.api';
 import { Coupon } from '~/apis/coupon/coupon.interface.api';
 import { vnAddressApi, Province, Ward } from '~/apis/vn-address/vn-address.api';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import { CartItem } from '~/apis/cart/cart.interface.api';
-
-// ✅ Validation schema
-const orderSchema = Yup.object({
-  customerName: Yup.string().required('Vui lòng nhập tên khách hàng'),
-  phone: Yup.string()
-    .required('Vui lòng nhập số điện thoại')
-    .matches(/^[0-9]{10}$/, 'Số điện thoại phải có 10 chữ số'),
-  email: Yup.string().email('Email không hợp lệ').nullable(),
-  gender: Yup.string().oneOf(['Nam', 'Nữ'], 'Vui lòng chọn giới tính'),
-  province: Yup.object().nullable().required('Vui lòng chọn tỉnh/thành phố'),
-  ward: Yup.object().nullable().required('Vui lòng chọn phường/xã'),
-  street: Yup.string().required('Vui lòng nhập số nhà, đường'),
-  note: Yup.string().nullable(),
-  paymentMethod: Yup.string().oneOf(['cod', 'vnpay', 'momo'], 'Vui lòng chọn phương thức thanh toán'),
-});
+import { orderSchema } from './order.schema';
 
 const OrderPage: React.FC = () => {
   const { palette } = useTheme();
@@ -81,7 +66,7 @@ const OrderPage: React.FC = () => {
       customerName: '',
       phone: '',
       email: '',
-      gender: 'nam',
+      gender: 'Nam',
       province: null as Province | null,
       ward: null as Ward | null,
       street: '',
@@ -121,11 +106,13 @@ const OrderPage: React.FC = () => {
             bank_code: 'NCB',
             return_url: `${window.location.origin}${prefix}/payment`, // ✅ Frontend URL
           });
-          snackbar('success', 'Chuyển đến trang thanh toán!');
+          // snackbar('success', 'Chuyển đến trang thanh toán!');
 
           // Redirect đến VNPay
           window.location.href = result.data?.payment_url;
-         }
+        } else if (values.paymentMethod === 'cod') { 
+          navigate(`${prefix}/cod-confirmation?status=success&order_id=${order.data?.code}`);
+        }
       } catch (error: any) {
         snackbar('error', error?.response?.data?.message || 'Đặt hàng thất bại');
       } finally {
@@ -197,7 +184,6 @@ const OrderPage: React.FC = () => {
     })();
   }, [formik.values.province]);
 
-  // Nhận data từ Cart
   useEffect(() => {
     if (!orderData || !orderData.items || orderData.items.length === 0) {
       snackbar('error', 'Không có sản phẩm nào được chọn');
