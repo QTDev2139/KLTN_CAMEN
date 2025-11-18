@@ -162,7 +162,7 @@ export default function ProductDetailPage() {
             ))}
           </StackRow>
           {/*  */}
-          <ModalImage open={open} onClose={() => setOpen(false)} src={modalSrc} alt="Sản phẩm" />\
+          <ModalImage open={open} onClose={() => setOpen(false)} src={modalSrc} alt="Sản phẩm" />
           {/*  */}
         </Stack>
         <Stack sx={{ position: 'relative', top: '-40%', transform: 'translateY(50%)', gap: 1 }}>

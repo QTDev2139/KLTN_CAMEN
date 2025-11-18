@@ -1,10 +1,15 @@
 import * as Yup from 'yup';
 
-export const orderSchema = Yup.object().shape({
-    name: Yup.string().required('Tên khách hàng là bắt buộc'),
-    phone: Yup.string().required('Số điện thoại là bắt buộc'),
-    email: Yup.string().required('Email là bắt buộc').email('Email không hợp lệ').nullable(),
-    province: Yup.string().required('Tỉnh/Thành là bắt buộc'),
-    district: Yup.string().required('Quận/Huyện là bắt buộc'),
-    street: Yup.string().required('Số nhà, đường là bắt buộc'), 
-})
+export const orderSchema = Yup.object({
+  customerName: Yup.string().required('Vui lòng nhập tên khách hàng'),
+  phone: Yup.string()
+    .required('Vui lòng nhập số điện thoại')
+    .matches(/^[0-9]{10}$/, 'Số điện thoại phải có 10 chữ số'),
+  email: Yup.string().email('Email không hợp lệ').nullable(),
+  gender: Yup.string().oneOf(['Nam', 'Nữ'], 'Vui lòng chọn giới tính'),
+  province: Yup.object().nullable().required('Vui lòng chọn tỉnh/thành phố'),
+  ward: Yup.object().nullable().required('Vui lòng chọn phường/xã'),
+  street: Yup.string().required('Vui lòng nhập số nhà, đường'),
+  note: Yup.string().nullable(),
+  paymentMethod: Yup.string().oneOf(['cod', 'vnpay', 'momo'], 'Vui lòng chọn phương thức thanh toán'),
+});

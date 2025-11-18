@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -9,29 +10,73 @@ import {
   Box,
   Divider,
   Button,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  FormLabel,
+  TextField,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { updateActiveCoupon, updateStatusCoupon } from '~/apis/coupon/coupon.api';
 import { Coupon } from '~/apis/coupon/coupon.interface.api';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 import { formatDate } from '~/common/until/date-format.until';
 import { TagElement } from '~/components/elements/tag/tag.element';
-import { getValidityStatus, StateLabel, StateTagType } from './coupon.state';
+import { StateLabel, StateTagType } from './coupon.state';
+import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 
 type Props = {
   open: boolean;
   onClose: () => void;
   coupon: Coupon | null;
+  onSubmitted: () => void;
+  role: string;
 };
 
-export default function CouponViewModal({ open, onClose, coupon }: Props) {
-  
-
+const CouponUpdateModal: React.FC<Props> = ({ open, onClose, coupon, onSubmitted, role }) => {
+  const [decision, setDecision] = useState('approve');
+  const [activeStatus, setActiveStatus] = useState<number>(1);
+  const [reasonEnd, setReasonEnd] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const { snackbar } = useSnackbar();
   if (!coupon) return null;
-
   const remaining =
     (coupon.usage_limit || 0) - (coupon.used_count || 0) >= 0
       ? (coupon.usage_limit || 0) - (coupon.used_count || 0)
       : 0;
+
+  const handleUpdateApproval = async () => {
+    setLoading(true);
+    try {
+      const newState = decision === 'approve' ? 'approved' : 'rejected';
+      await updateStatusCoupon(coupon.id, { state: newState });
+      snackbar('success', 'Duyệt thành công');
+      onClose();
+      if (onSubmitted) await onSubmitted();
+    } catch (err) {
+      snackbar('error', 'Duyệt thất bại');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateActiveStatus = async () => {
+    setLoading(true);
+    try {
+      if(activeStatus === 1) {
+        setReasonEnd('');
+      }
+      await updateActiveCoupon(coupon.id, { is_active: activeStatus === 1 ? true : false, reason_end: reasonEnd });
+      snackbar('success', 'Cập nhật thành công');
+      onClose();
+      if (onSubmitted) await onSubmitted();
+    } catch (err) {
+      snackbar('error', 'Cập nhật thất bại');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -54,25 +99,43 @@ export default function CouponViewModal({ open, onClose, coupon }: Props) {
               <Typography variant="h6" fontWeight={700}>
                 {coupon.code}
               </Typography>
+
               <TagElement type={StateTagType[coupon.state]} content={StateLabel[coupon.state]} width={120} />
               <TagElement
                 type={coupon.is_active ? 'success' : 'error'}
                 content={coupon.is_active ? 'Hoạt động' : 'Không hoạt động'}
                 width={120}
               />
-              {/* Hiển thị trạng thái hiệu lực */}
-              {(() => {
-                const validity = getValidityStatus(coupon);
-                return validity.label ? (
-                  <TagElement type={validity.type || 'info'} content={validity.label} width={140} />
-                ) : null;
-              })()}
             </Stack>
-            <Typography variant="body2" color="text.secondary" mt={1}>
-              {coupon.reason_end && `Lý do ngưng hoạt động: ${coupon.reason_end}` || ''}
-            </Typography>
           </Box>
-
+          {/* Thêm radio Duyệt / Từ chối */}
+          <FormControl component="fieldset" sx={{ ml: 2 }}>
+            <FormLabel component="legend" sx={{ fontSize: 12, mb: 0.5 }}>
+              Xử lý
+            </FormLabel>
+            {role === 'root' ? (
+              <RadioGroup row value={decision ?? 'approve'} onChange={(e) => setDecision(e.target.value)}>
+                <FormControlLabel value="approve" control={<Radio />} label="Duyệt" />
+                <FormControlLabel value="reject" control={<Radio />} label="Từ chối" />
+              </RadioGroup>
+            ) : (
+              <Stack>
+                <RadioGroup row value={String(activeStatus)} onChange={(e) => setActiveStatus(Number(e.target.value))}>
+                  <FormControlLabel value="1" control={<Radio />} label="Hoạt động" />
+                  <FormControlLabel value="0" control={<Radio />} label="Ngưng hoạt động" />
+                </RadioGroup>
+                {activeStatus === 0 && (
+                  <TextField 
+                    label="Lý do ngưng hoạt động"
+                    multiline
+                    rows={3}
+                    value={reasonEnd}
+                    onChange={(e) => setReasonEnd(e.target.value)}
+                  />
+                )}
+              </Stack>
+            )}
+          </FormControl>
           <Divider />
 
           <Box>
@@ -151,7 +214,7 @@ export default function CouponViewModal({ open, onClose, coupon }: Props) {
                 <Typography variant="body2" fontWeight={600}>
                   {formatDate(coupon.end_date)}
                 </Typography>
-              </Stack>  
+              </Stack>
             </Stack>
           </Box>
 
@@ -172,7 +235,18 @@ export default function CouponViewModal({ open, onClose, coupon }: Props) {
         <Button onClick={onClose} variant="outlined">
           Đóng
         </Button>
+        {role === 'root' ? (
+          <Button onClick={handleUpdateApproval} variant="contained" disabled={loading}>
+            Lưu
+          </Button>
+        ) : (
+          <Button onClick={handleUpdateActiveStatus} variant="contained" disabled={loading}>
+            Lưu
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
-}
+};
+
+export default CouponUpdateModal;

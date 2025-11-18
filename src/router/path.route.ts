@@ -37,6 +37,7 @@ export const SITE_SCREEN = {
     ORDER_DETAIL: 'order/:id',
     PURCHASE: 'purchase',
     PAYMENT_CALLBACK: 'payment-callback',
+    COD_CONFIRMATION: 'cod-confirmation',
 }
 
 export const DASHBOARD_SCREEN = {

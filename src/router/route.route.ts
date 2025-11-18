@@ -37,6 +37,7 @@ import BlogScreen from '~/pages/dashboard/screen/blog/blog.screen';
 import CouponScreen from '~/pages/dashboard/screen/coupon/coupon.screen';
 import ReviewsScreen from '~/pages/dashboard/screen/reviews/reviews.screen';
 import { UserType } from '~/apis/user/user.enum';
+import CodConfirmationPage from '~/pages/site/screen/payment/cod-confirmation.screen';
 
 export type Route = {
   path: string;
@@ -189,6 +190,12 @@ export const routes: Route[] = [
       {
         path: PATH.SITE_SCREEN.PURCHASE,
         element: PurchasePage,
+        type: RouteType.PUBLIC,
+        allowUserTypes: [],
+      },
+      {
+        path: PATH.SITE_SCREEN.COD_CONFIRMATION,
+        element: CodConfirmationPage,
         type: RouteType.PUBLIC,
         allowUserTypes: [],
       },
