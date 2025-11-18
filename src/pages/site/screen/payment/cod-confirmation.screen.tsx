@@ -7,9 +7,8 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
-import { paymentApi } from '~/apis';
 
-const PaymentCallbackPage: React.FC = () => {
+const CodConfirmationPage: React.FC = () => {
   const { palette } = useTheme();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -22,40 +21,15 @@ const PaymentCallbackPage: React.FC = () => {
   const [orderId, setOrderId] = useState('');
 
   useEffect(() => {
-    const run = async () => {
-      // 1) Đọc query BE đã redirect
-      const status = searchParams.get('status');       // success | failed | error
-      const msg = searchParams.get('message') || '';
-      const code = searchParams.get('code') || '';
-      const oid  = searchParams.get('order_id') || searchParams.get('vnp_TxnRef') || '';
+    // Chỉ đọc query params — không gọi BE
+    const status = searchParams.get('status'); // success | failed | error
+    const msg = searchParams.get('message') || '';
+    const oid = searchParams.get('order_id') || searchParams.get('vnp_TxnRef') || '';
 
-      setOrderId(oid);
-
-      // 2) Nếu muốn confirm với DB (khuyến nghị)
-      try {
-        if (oid) {
-          const db = await paymentApi.getStatus(oid); // /payment/vnpay/status/{oid}
-          // Nếu DB trả 'paid' -> success, ngược lại failed
-          const paid = db?.data?.status === 'paid';
-          setSuccess(status ? status === 'success' : paid);
-          setMessage(
-            msg ||
-            (paid ? 'Thanh toán thành công!' :
-              (status === 'failed' ? `Giao dịch thất bại${code ? ' (code ' + code + ')' : ''}` :
-               'Xác thực thanh toán thất bại'))
-          );
-        } else {
-          setSuccess(false);
-          setMessage(msg || 'Thiếu mã đơn hàng');
-        }
-      } catch (e:any) {
-        setSuccess(false);
-        setMessage(msg || 'Không thể xác minh trạng thái đơn hàng');
-      } finally {
-        setLoading(false);
-      }
-    };
-    run();
+    setOrderId(oid);
+    setSuccess(status === 'success');
+    setMessage(msg || (status === 'success' ? 'Đặt hàng thành công!' : 'Xác minh thanh toán thất bại'));
+    setLoading(false);
   }, [searchParams]);
 
   if (loading) {
@@ -64,7 +38,7 @@ const PaymentCallbackPage: React.FC = () => {
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <CircularProgress size={60} />
           <Typography variant="h6" sx={{ mt: 3 }}>
-            Đang xác thực thanh toán...
+            Đang xác thực đặt hàng...
           </Typography>
         </Paper>
       </Container>
@@ -79,7 +53,7 @@ const PaymentCallbackPage: React.FC = () => {
             <>
               <CheckCircleOutlineIcon sx={{ fontSize: 80, color: palette.success.main }} />
               <Typography variant="h4" sx={{ fontWeight: 700, color: palette.success.main }}>
-                Thanh toán thành công!
+                Đặt hàng thành công!
               </Typography>
               {orderId && (
                 <Typography variant="body2" color="text.secondary">
@@ -120,4 +94,4 @@ const PaymentCallbackPage: React.FC = () => {
   );
 };
 
-export default PaymentCallbackPage;
+export default CodConfirmationPage;

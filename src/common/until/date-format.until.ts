@@ -14,3 +14,11 @@ export const today = dayjs().format('YYYY-MM-DD');
 export const firstDayOfMonth = dayjs().startOf('month').format('YYYY-MM-DD');
 
 export const currentTime = dayjs().format('DD/MM/YYYY HH:mm:ss');
+
+export const getDefaultDates = () => {
+  const now = dayjs(); 
+  const startDate = now.startOf('day').format('YYYY-MM-DDTHH:mm');
+  const endDate = now.endOf('day').format('YYYY-MM-DDTHH:mm');
+
+  return { startDate, endDate };
+};

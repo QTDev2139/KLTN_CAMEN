@@ -1,21 +1,18 @@
 import LogoVi from '~/assets/images/logo-vi.png';
 import LogoEn from '~/assets/images/logo-en.png';
-import { Link, useParams } from 'react-router-dom';
-import { DASHBOARD_SCREEN, SITE_SCREEN } from '~/router/path.route';
+import { Link } from 'react-router-dom';
+import { SITE_SCREEN } from '~/router/path.route';
+import { useLang } from '~/hooks/use-lang/use-lang';
+import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 
 export default function Logo() {
-  const { lang } = useParams();
-  if (lang) {
-    return (
-      <Link to={`/${lang}/${SITE_SCREEN.HOME}`} style={{ display: 'flex', justifyContent: 'center', textAlign: 'center' }}>
-        <img src={lang === 'vi' ? LogoVi : LogoEn} alt="Logo" style={{ width: '157px', height: '67px' }} />
-      </Link>
-    );
-  } else {
-    return (
-      <Link to={DASHBOARD_SCREEN.OVERVIEW} style={{ textAlign: 'center' }}>
-        <img src={LogoVi} alt="Logo" style={{ width: '157px', height: '67px' }} />
-      </Link>
-    );
-  }
+  // Lấy lang từ hook
+  const currentLang = useLang();
+  const prefix = getLangPrefix(currentLang);
+
+  return (
+    <Link to={`${prefix}/${SITE_SCREEN.HOME}`} style={{ display: 'flex', justifyContent: 'center', textAlign: 'center' }}>
+      <img src={prefix === '/en' ? LogoEn : LogoVi} alt="Logo" style={{ width: '157px', height: '67px' }} />
+    </Link>
+  );
 }

@@ -1,65 +1,45 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import {
-  Box,
-  Paper,
-  Typography,
-  Stack,
-  Divider,
-  Button,
-  TextField,
-  MenuItem,
-  FormControlLabel,
-  Switch,
-} from '@mui/material';
+import { Box, Paper, Typography, Stack, Divider, Button, TextField, MenuItem } from '@mui/material';
 import { useFormik, getIn } from 'formik';
 import { schema } from './coupon.schema';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
-import { Coupon } from '~/apis/coupon/coupon.interface.api';
+import { CreateCoupon } from '~/apis/coupon/coupon.interface.api';
+import { getDefaultDates } from '~/common/until/date-format.until';
+import { couponApi } from '~/apis';
 
-type CouponFormValues = Partial<Coupon>;
+type CouponFormValues = Partial<CreateCoupon>;
 
-export default function CouponUpdate(props: {
-  initial?: Partial<Coupon>;
-  onSuccess?: () => void;
-}) {
-  const { initial, onSuccess } = props;
+type CouponCreateProps = {
+  onSubmit?: () => void;
+};
+
+export default function CouponCreate({ onSubmit }: CouponCreateProps) {
   const { snackbar } = useSnackbar();
 
-  const isEditMode = !!(initial && 'id' in initial && initial?.id);
-
-  // ----- Formik -----
+  const { startDate, endDate } = getDefaultDates();
+  // ----- Formik (create only) -----
   const formik = useFormik<CouponFormValues>({
     validationSchema: schema,
     enableReinitialize: true,
     initialValues: {
-      id: initial?.id,
-      code: initial?.code ?? '',
-      discount_type: initial?.discount_type ?? 'fixed',
-      discount_value: initial?.discount_value ?? '',
-      min_order_amount: initial?.min_order_amount ?? '',
-      usage_limit: initial?.usage_limit ?? 0,
-      used_count: initial?.used_count ?? 0,
-      start_date: initial?.start_date ?? '',
-      end_date: initial?.end_date ?? '',
-      state: initial?.state ?? 'pending',
-      is_active: initial?.is_active ?? true,
-      user: initial?.user ?? { name: '' },
+      code: '',
+      discount_type: 'fixed',
+      max_discount_amount: '',
+      discount_value: '',
+      min_order_amount: '',
+      usage_limit: 10,
+      used_count: 0,
+      start_date: startDate,
+      end_date: endDate,
+      state: 'pending',
+      is_active: true,
+      note: '',
     },
     onSubmit: async (values, helpers) => {
       try {
-        // TODO: Call your coupon API here (create/update)
-        // Example:
-        // if (isEditMode && values.id) {
-        //   const res = await couponApi.update(values.id, values);
-        //   snackbar('success', res.message || 'Cập nhật mã giảm giá thành công');
-        // } else {
-        //   const res = await couponApi.create(values);
-        //   snackbar('success', res.message || 'Tạo mã giảm giá thành công');
-        // }
-
-        console.log('Submitting coupon values:', values);
-        snackbar('success', isEditMode ? 'Cập nhật mã giảm giá thành công' : 'Tạo mã giảm giá thành công');
-        onSuccess?.();
+        console.log('Submitting coupon:', values);
+        await couponApi.createCoupon(values as CreateCoupon);
+        snackbar('success', 'Tạo mã giảm giá thành công');
+        if (onSubmit) onSubmit();
       } catch (error: any) {
         snackbar('error', error?.message || 'Có lỗi xảy ra');
       } finally {
@@ -80,14 +60,16 @@ export default function CouponUpdate(props: {
     <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ maxWidth: 900, mx: 'auto', mt: 4 }}>
       <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
-          {isEditMode ? 'Chỉnh sửa mã giảm giá' : 'Tạo mã giảm giá'}
+          Tạo mã giảm giá
         </Typography>
 
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mt: 2 }}>
           <TextField
+
             label="Mã code"
             fullWidth
             {...formik.getFieldProps('code')}
+            onChange={(e) => formik.setFieldValue('code', (e.target.value || '').toUpperCase())}
             error={showError('code')}
             helperText={helperText('code')}
           />
@@ -99,19 +81,28 @@ export default function CouponUpdate(props: {
             error={showError('discount_type')}
             helperText={helperText('discount_type')}
           >
-            <MenuItem value="fixed">Fixed</MenuItem>
-            <MenuItem value="percentage">Percentage</MenuItem>
+            <MenuItem value="fixed">Cố định</MenuItem>
+            <MenuItem value="percentage">Tỷ lệ %</MenuItem>
           </TextField>
         </Stack>
 
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mt: 2 }}>
           <TextField
-            label="Giá trị giảm"
+            label={formik.values.discount_type === 'fixed' ? "Giá trị giảm" : "Tỷ lệ giảm %"}
             type="number"
             fullWidth
             {...formik.getFieldProps('discount_value')}
             error={showError('discount_value')}
             helperText={helperText('discount_value')}
+          />
+          <TextField
+            label="Giảm giá tối đa"
+            type="number"
+            fullWidth
+            {...formik.getFieldProps('max_discount_amount')}
+            error={showError('max_discount_amount')}
+            helperText={helperText('max_discount_amount')}
+            sx={{ display: formik.values.discount_type === 'fixed' ? 'none' : 'block' }}
           />
           <TextField
             label="Đơn hàng tối thiểu"
@@ -172,41 +163,27 @@ export default function CouponUpdate(props: {
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mt: 2 }}>
           <TextField
             label="Trạng thái"
-            select
+            type="text"
             fullWidth
             {...formik.getFieldProps('state')}
             error={showError('state')}
             helperText={helperText('state')}
-          >
-            <MenuItem value="pending">Pending</MenuItem>
-            <MenuItem value="approved">Approved</MenuItem>
-            <MenuItem value="rejected">Rejected</MenuItem>
-            <MenuItem value="expired">Expired</MenuItem>
-            <MenuItem value="disabled">Disabled</MenuItem>
-          </TextField>
-
-          <FormControlLabel
-            sx={{ ml: 1 }}
-            control={
-              <Switch
-                checked={!!formik.values.is_active}
-                onChange={(_, checked) => formik.setFieldValue('is_active', checked)}
-                onBlur={() => formik.setFieldTouched('is_active', true)}
-              />
-            }
-            label="Kích hoạt"
+            disabled
           />
+            
         </Stack>
+          <TextField
+            multiline
+            rows={3}
+            label="note"
+            type="text"
+            fullWidth
+            {...formik.getFieldProps('note')}
+            error={showError('note')}
+            helperText={helperText('note')}
+          />
 
         <Divider sx={{ my: 2 }} />
-
-        <TextField
-          label="Người tạo"
-          fullWidth
-          value={formik.values.user?.name || ''}
-          InputProps={{ readOnly: true }}
-          helperText="Chỉ đọc"
-        />
       </Paper>
 
       <Stack direction="row" justifyContent="flex-end" mt={3} spacing={2}>
@@ -214,7 +191,7 @@ export default function CouponUpdate(props: {
           Reset
         </Button>
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting}>
-          {formik.isSubmitting ? (isEditMode ? 'Đang cập nhật...' : 'Đang lưu...') : isEditMode ? 'Cập nhật' : 'Lưu'}
+          {formik.isSubmitting ? 'Đang lưu...' : 'Lưu'}
         </Button>
       </Stack>
     </Box>

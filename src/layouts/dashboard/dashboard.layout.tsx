@@ -5,9 +5,9 @@ import { STYLE } from '~/common/constant';
 import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import { TypographyHover } from '~/components/elements/styles/link.style';
 import { StackRow } from '~/components/elements/styles/stack.style';
-import Logo from '~/components/logo/logo';
 import { sidebarsDashboard, SidebarItem } from '~/pages/dashboard/path/sidebar-dashboard';
 import { useUserRole } from '~/hooks/use-user-role/use-user-role';
+import LogoDashboard from '~/components/logo/logo-dashboard';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -47,7 +47,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           backgroundColor: 'background.default',
         }}
       >
-        <Logo />
+        <LogoDashboard />
         <Divider sx={{ color: palette.divider }} />
         {/* ✅ Chỉ hiển thị sidebar user có quyền */}
         {visibleSidebars.map((sidebar, index) => (
@@ -67,7 +67,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </NavLink>
         ))}
       </Stack>
-      <Stack sx={{ padding: `20px ${PADDING_GAP_LAYOUT}`, width: 'calc(100% - 250px)', backgroundColor: 'background.default' }}>{children}</Stack>
+      <Stack sx={{ padding: `20px ${PADDING_GAP_LAYOUT}`, width: 'calc(100% - 350px)', backgroundColor: 'background.default' }}>{children}</Stack>
     </StackRow>
   );
 }
