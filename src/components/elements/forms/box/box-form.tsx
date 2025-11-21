@@ -15,7 +15,6 @@ export const BoxForm: React.FC<BoxFormProps> = ({ children, sx }) => {
       sx={{
         position: 'relative',
         minHeight: '100vh',
-        margin: '10px',
         ...sx
       }}
     >

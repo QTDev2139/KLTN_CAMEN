@@ -444,7 +444,7 @@ const OrderPage: React.FC = () => {
                 </Box>
               )}
               renderInput={(params) => (
-                <TextField {...params} label="Mã giảm giá" placeholder="Chọn hoặc nhập mã giảm giá" />
+                <TextField {...params} label="Mã giảm giá" placeholder="Chọn hoặc tìm mã giảm giá" />
               )}
               freeSolo
               sx={{ mb: 2 }}

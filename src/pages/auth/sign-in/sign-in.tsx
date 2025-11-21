@@ -102,7 +102,7 @@ export default function LoginPage() {
         </StackRowAlignCenter>
         <StackRowAlignCenter sx={{ justifyContent: 'center' }}>
           <Typography sx={{ paddingRight: '6px' }}>New to CamenFood?</Typography>
-          <Link to={`/${prefix}/auth/${AUTH_SCREEN.SIGN_UP}`} replace>
+          <Link to={`/${prefix}auth/${AUTH_SCREEN.SIGN_UP}`} replace>
             Create an account
           </Link>
         </StackRowAlignCenter>

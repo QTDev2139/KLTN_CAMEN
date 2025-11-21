@@ -1,4 +1,4 @@
-import { Avatar, Badge, Box, Button, ButtonGroup, Grid, Rating, Stack, Typography, useTheme, Pagination } from '@mui/material';
+import { Avatar, Box, Button, ButtonGroup, Grid, Rating, Stack, Typography, useTheme, Pagination } from '@mui/material';
 import { StackRow, StackRowAlignCenter } from '~/components/elements/styles/stack.style';
 import { FONT_SIZE, PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -31,7 +31,7 @@ export default function ProductDetailPage() {
 
   const [productDetail, setProductDetail] = useState<ProductDetail | null>();
   const [qty, setQty] = useState(1);
-  const [mainImage, setMainImage] = useState(productDetail?.product_images[0].image_url);
+  const [mainImage, setMainImage] = useState<string>(''); 
   const [modalSrc, setModalSrc] = useState('');
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string | number>('all');
@@ -124,7 +124,14 @@ export default function ProductDetailPage() {
       <StackRow sx={{ display: 'grid', gridTemplateColumns: '5fr 7fr', gap: 4, marginBottom: '40px' }}>
         <Stack>
           <BoxContent>
-            <Box sx={{ padding: '10px 0', transition: 'all 0.2s ease-in-out' }} onClick={() => setOpen(true)}>
+            <Box
+              sx={{ padding: '10px 0', transition: 'all 0.2s ease-in-out' }}
+              onClick={() => {
+                const src = mainImage || productDetail?.product_images?.[0]?.image_url || '';
+                setModalSrc(src);
+                setOpen(true);
+              }}
+            >
               <img src={mainImage} alt="Sản phẩm" style={{ display: 'block', maxWidth: '100%' }} />
             </Box>
           </BoxContent>

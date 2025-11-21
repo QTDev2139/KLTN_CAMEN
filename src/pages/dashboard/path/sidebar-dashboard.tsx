@@ -43,4 +43,9 @@ export const sidebarsDashboard: SidebarItem[] = [
     title: 'Quản lý đánh giá',
     allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
   },
+  {
+    to: PATH.DASHBOARD_SCREEN.CHATBOX,
+    title: 'Quản lý tin nhắn',
+    allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.STAFF],
+  },
 ];
