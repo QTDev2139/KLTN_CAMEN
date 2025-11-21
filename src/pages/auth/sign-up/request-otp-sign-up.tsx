@@ -12,6 +12,8 @@ import { Link, useParams } from 'react-router-dom';
 import { AUTH_SCREEN } from '~/router/path.route';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { BoxForm } from '~/components/elements/forms/box/box-form';
+import { useLang } from '~/hooks/use-lang/use-lang';
+import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 
 interface Props {
   setMode: (mode: SignUpMode) => void;
@@ -35,7 +37,9 @@ const schema = Yup.object({
 });
 
 export default function RequestOtpSignUp({ setMode, setEmail }: Props) {
-  const { lang } = useParams();
+  const currentLang = useLang();
+  const prefix = getLangPrefix(currentLang);
+
   const { snackbar } = useSnackbar();
 
   const formik = useFormik<FormRegister>({
@@ -111,12 +115,12 @@ export default function RequestOtpSignUp({ setMode, setEmail }: Props) {
           helperText={helperText('confirm_password')}
         />
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-          {formik.isSubmitting ? 'Đang gửi…' : 'Create account'}
+          {formik.isSubmitting ? 'Create account' : 'Create account'}
         </Button>
 
         <StackRowAlignCenter sx={{ justifyContent: 'center', width: '100%', padding: '20px 0' }}>
           <Typography sx={{ paddingRight: '6px' }}>You have an account?</Typography>
-          <Link to={`/${lang}/auth/${AUTH_SCREEN.LOGIN}`} replace>
+          <Link to={`/${prefix}auth/${AUTH_SCREEN.LOGIN}`} replace>
             Login with an account
           </Link>
         </StackRowAlignCenter>

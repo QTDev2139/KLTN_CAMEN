@@ -1,4 +1,5 @@
-import { Backdrop, Box, Fade, Modal } from '@mui/material';
+import { Backdrop, Box, Fade, Modal, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 type Props = {
   open: boolean;
@@ -33,6 +34,22 @@ export default function ModalImage({ open, onClose, src, alt }: Props) {
             maxHeight: '92vh',
           }}
         >
+          <IconButton
+            aria-label="close"
+            onClick={onClose}
+            size="small"
+            sx={{
+              zIndex: 10,
+              bgcolor: 'rgba(0,0,0,0.4)',
+              '&:hover': { bgcolor: 'rgba(0,0,0,0.5)' },
+              color: '#e4e4e4ff',
+              position: 'absolute',
+              top: 20,
+              right: 20,
+            }}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
           <img
             src={src}
             alt={alt || 'image'}

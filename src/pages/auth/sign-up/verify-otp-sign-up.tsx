@@ -100,7 +100,7 @@ export default function VerifyOtpSignUp({ setMode, email }: VerifyOtpSignUpProps
           color="info"
           sx={{ minWidth: '120px', margin: '0 10px' }}
         >
-          {loading ? 'Đang xử lý ...' : 'Xác thực tài khoản'}
+          {loading ? 'Xác thực tài khoản' : 'Xác thực tài khoản'}
         </Button>
         <StackRow sx={{ padding: '16px 0', gap: 1 }}>
           <Typography variant="subtitle2">Bạn chưa nhận được mã?</Typography>
