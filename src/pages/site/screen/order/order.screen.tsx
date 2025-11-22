@@ -21,7 +21,6 @@ import {
 } from '@mui/material';
 import { LocalOffer as CouponIcon } from '@mui/icons-material';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
@@ -71,10 +70,22 @@ const OrderPage: React.FC = () => {
       ward: null as Ward | null,
       street: '',
       note: '',
-      paymentMethod: 'cod',
+      paymentMethod: 'vnpay',
     },
     validationSchema: orderSchema,
     onSubmit: async (values) => {
+      // Nếu không thuộc IMPORTANT_WARDS -> kiểm tra product_id.quantity_per_pack
+      if (!isInImportantWard) {
+        const hasInvalid = items.some((it) => {
+          const qpp = it.product_id?.quantity_per_pack;
+          return !(qpp && Number(qpp) > 10);
+        });
+        if (hasInvalid) {
+          snackbar('error', 'Ngoại khu vực TP.HCM, tổng sản phẩm phải trên 10 gói.');
+          return;
+        }
+      }
+
       const fullAddress = {
         gender: values.gender,
         name: values.customerName,
@@ -95,6 +106,8 @@ const OrderPage: React.FC = () => {
           note: values.note,
           coupon_code: selectedCoupon?.code,
           discount_amount: discount,
+          // Gửi ship_fee theo interface OrderDetail (string) nếu có phí
+          ship_fee: shippingFee > 0 ? shippingFee : 0,
         });
 
         snackbar('success', 'Tạo đơn hàng thành công!');
@@ -106,11 +119,9 @@ const OrderPage: React.FC = () => {
             bank_code: 'NCB',
             return_url: `${window.location.origin}${prefix}/payment`, // ✅ Frontend URL
           });
-          // snackbar('success', 'Chuyển đến trang thanh toán!');
-
           // Redirect đến VNPay
           window.location.href = result.data?.payment_url;
-        } else if (values.paymentMethod === 'cod') { 
+        } else if (values.paymentMethod === 'cod') {
           navigate(`${prefix}/cod-confirmation?status=success&order_id=${order.data?.code}`);
         }
       } catch (error: any) {
@@ -220,7 +231,36 @@ const OrderPage: React.FC = () => {
     snackbar('success', `Áp dụng mã giảm giá thành công! Giảm ${FormatPrice(discountAmount)}`);
   }, [selectedCoupon, totalAmount]);
 
-  const finalAmount = totalAmount - discount;
+  // - Nếu địa chỉ không thuộc Tỉnh/Thành phố "Thành Phố Hồ Chí Minh" và cũng không thuộc các phường được liệt kê => phí cố định 50.000
+  // - Nếu phường thuộc danh sách đặc biệt => hiển thị "Thanh toán khi nhận hàng" (không tính phí cố định)
+  const IMPORTANT_WARDS = [
+    'Phường Tân Định', 'Phường Sài Gòn', 'Phường Bến Thành', 'Phường Cầu Ông Lãnh', 'Phường Bàn Cờ',
+    'Phường Xuân Hòa', 'Phường Nhiêu Lộc', 'Phường Vĩnh Hội', 'Phường Khánh Hội', 'Phường Xóm Chiếu',
+    'Phường Chợ Quán', 'Phường An Đông', 'Phường Chợ Lớn', 'Phường Bình Tiên', 'Phường Bình Tây',
+    'Phường Phú Lâm', 'Phường Bình Phú', 'Phường Gia Định', 'Phường Bình Thạnh', 'Phường Bình Lợi Trung',
+    'Phường Thạnh Mỹ Tây', 'Phường Bình Quới', 'Phường Hạnh Thông', 'Phường An Nhơn', 'Phường Gò Vấp',
+    'Phường An Hội Tây', 'Phường Thông Tây Hội', 'Phường An Hội Đông', 'Phường Phú Thọ Hòa', 'Phường Tân Phú',
+    'Phường Phú Thạnh', 'Phường Thủ Đức', 'Phường An Khánh', 'Phường Bình Trưng'
+  ];
+
+  const isInImportantWard = Boolean(formik.values.ward && IMPORTANT_WARDS.includes(formik.values.ward.name));
+  // Nếu nằm trong danh sách phường đặc biệt => không tính tiền nhưng hiển thị "Thanh toán khi nhận hàng"
+  // Các địa chỉ khác (bao gồm cả Thành Phố Hồ Chí Minh nhưng không thuộc phường đặc biệt) => phí cố định 50.000
+  const shippingFee = isInImportantWard ? 0 : 50000;
+
+  const finalAmount = totalAmount - discount + shippingFee;
+
+  // Disable coupons that don't meet min order or have exhausted usage
+  const isCouponDisabled = (option: Coupon) =>
+    totalAmount < parseFloat(option.min_order_amount) ||
+    (option.usage_limit ? option.used_count >= option.usage_limit : false);
+
+  // Nếu không thuộc IMPORTANT_WARDS thì ẩn tùy chọn COD và mặc định sang VNPay
+  useEffect(() => {
+    if (!isInImportantWard && formik.values.paymentMethod === 'cod') {
+      formik.setFieldValue('paymentMethod', 'vnpay');
+    }
+  }, [isInImportantWard]); 
 
   if (!orderData) return null;
 
@@ -363,9 +403,18 @@ const OrderPage: React.FC = () => {
               <FormControl>
                 <FormLabel>Phương thức thanh toán</FormLabel>
                 <RadioGroup name="paymentMethod" value={formik.values.paymentMethod} onChange={formik.handleChange}>
-                  <FormControlLabel value="cod" control={<Radio />} label="Thanh toán khi nhận hàng (COD)" />
+                 {/* Hiện COD chỉ khi địa chỉ thuộc IMPORTANT_WARDS */}
+                 {isInImportantWard && (
+                   <FormControlLabel value="cod" control={<Radio />} label="Thanh toán khi nhận hàng (COD)" />
+                 )}
                   <FormControlLabel value="vnpay" control={<Radio />} label="Thanh toán qua VNPay" />
-                  <FormControlLabel value="momo" control={<Radio />} label="Ví MoMo" />
+                  {/* <FormControlLabel value="momo" control={<Radio />} label="Ví MoMo" /> */}
+                  <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                   <span style={{ color: 'red' }}>*</span> Chỉ có thể thanh toán tiền mặt trong nội địa TP.HCM.
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                   <span style={{ color: 'red' }}>*</span> Tổng số lượng sản phẩm phải lớn hơn 10 nếu ngoài nội địa TP.HCM.
+                  </Typography>
                 </RadioGroup>
               </FormControl>
             </Stack>
@@ -379,7 +428,7 @@ const OrderPage: React.FC = () => {
             <Divider sx={{ mb: 2 }} />
 
             {items.map((item) => (
-              <Stack key={item.product_id} direction="row" spacing={2} sx={{ mb: 2, alignItems: 'center' }}>
+              <Stack key={item.product_id.id} direction="row" spacing={2} sx={{ mb: 2, alignItems: 'center' }}>
                 <img
                   src={item.product_image}
                   alt={item.product_name}
@@ -403,19 +452,35 @@ const OrderPage: React.FC = () => {
             <Autocomplete
               options={availableCoupons}
               value={selectedCoupon}
+              // visually and functionally disable invalid coupons
+              getOptionDisabled={(option) => isCouponDisabled(option)}
               onChange={(_, newValue) => {
-                if (typeof newValue === 'object' && newValue !== null) {
-                  setSelectedCoupon(newValue);
-                } else {
+                // allow clearing by user or free text => treat as no coupon
+                if (newValue === null || typeof newValue === 'string') {
                   setSelectedCoupon(null);
+                  return;
                 }
+                // if user selected an object coupon
+                if (isCouponDisabled(newValue)) {
+                  snackbar('warning', 'Mã giảm giá không thỏa điều kiện cho đơn hàng hiện tại');
+                  return;
+                }
+                setSelectedCoupon(newValue);
               }}
               getOptionLabel={(option) => (typeof option === 'string' ? option : option.code)}
               renderOption={(props, option) => (
                 <Box
                   component="li"
                   {...props}
-                  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', py: 1.5 }}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    py: 1.5,
+                    opacity: isCouponDisabled(option) ? 0.8 : 1,
+                    pointerEvents: isCouponDisabled(option) ? 'none' : 'auto',
+                  }}
+                  aria-disabled={isCouponDisabled(option) ? 'true' : undefined}
                 >
                   <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%', mb: 0.5 }}>
                     <CouponIcon sx={{ fontSize: 18, color: palette.primary.main }} />
@@ -425,7 +490,7 @@ const OrderPage: React.FC = () => {
                     <Chip
                       label={
                         option.discount_type === 'percentage'
-                          ? `${option.discount_value}%`
+                          ? `${Number(option.discount_value)}%`
                           : FormatPrice(parseFloat(option.discount_value))
                       }
                       size="small"
@@ -434,7 +499,8 @@ const OrderPage: React.FC = () => {
                     />
                   </Stack>
                   <Typography variant="caption" color="text.secondary">
-                    Đơn tối thiểu: {FormatPrice(parseFloat(option.min_order_amount))}
+                    Đơn tối thiểu: {FormatPrice(parseFloat(option.min_order_amount))} -
+                    {option.discount_type === 'percentage' ? `Giảm tối đa: ${FormatPrice(parseFloat(option.max_discount_amount))}` : ''}
                   </Typography>
                   {option.usage_limit && (
                     <Typography variant="caption" color="text.secondary">
@@ -473,7 +539,13 @@ const OrderPage: React.FC = () => {
                 <Typography variant="body2" color="text.secondary">
                   Phí vận chuyển
                 </Typography>
-                <Typography variant="body2">Miễn phí</Typography>
+                <Typography variant="body2">
+                  {shippingFee > 0
+                    ? FormatPrice(shippingFee)
+                    : isInImportantWard
+                    ? 'Thanh toán khi nhận hàng'
+                    : 'Miễn phí'}
+                </Typography>
               </Stack>
 
               <Divider />

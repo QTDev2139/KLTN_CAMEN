@@ -45,8 +45,8 @@ const ProductScreen: React.FC = () => {
       <Divider sx={{ color: palette.divider }} />
       
       {mode === ProductMode.LIST && <ListProduct onEdit={goUpdate} />}
-      {mode === ProductMode.CREATE && <CreateProduct />}
-      {mode === ProductMode.UPDATE && <CreateProduct initial={editingProduct} />}
+      {mode === ProductMode.CREATE && <CreateProduct onSuccess={goList} />}
+      {mode === ProductMode.UPDATE && <CreateProduct initial={editingProduct} onSuccess={goList} />}
     </Stack>
   );
 }

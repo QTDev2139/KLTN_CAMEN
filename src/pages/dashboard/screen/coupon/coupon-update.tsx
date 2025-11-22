@@ -38,6 +38,9 @@ const CouponUpdateModal: React.FC<Props> = ({ open, onClose, coupon, onSubmitted
   const [decision, setDecision] = useState('approve');
   const [activeStatus, setActiveStatus] = useState<number>(1);
   const [reasonEnd, setReasonEnd] = useState<string>('');
+  const [reasonReject, setReasonReject] = useState<string>('');
+  const [reasonRejectError, setReasonRejectError] = useState<boolean>(false);
+  const [reasonEndError, setReasonEndError] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const { snackbar } = useSnackbar();
   if (!coupon) return null;
@@ -48,9 +51,21 @@ const CouponUpdateModal: React.FC<Props> = ({ open, onClose, coupon, onSubmitted
 
   const handleUpdateApproval = async () => {
     setLoading(true);
+
+    // validate required reason when rejecting
+    if (decision === 'reject' && !reasonReject.trim()) {
+      setReasonRejectError(true);
+      snackbar('error', 'Vui lòng nhập lý do từ chối');
+      setLoading(false);
+      return;
+    }
+
     try {
       const newState = decision === 'approve' ? 'approved' : 'rejected';
-      await updateStatusCoupon(coupon.id, { state: newState });
+      const payload: any = { state: newState };
+      if (newState === 'rejected' && reasonReject) payload.reason_end = reasonReject;
+      await updateStatusCoupon(coupon.id, payload);
+      if (newState === 'approved') setReasonReject('');
       snackbar('success', 'Duyệt thành công');
       onClose();
       if (onSubmitted) await onSubmitted();
@@ -63,6 +78,15 @@ const CouponUpdateModal: React.FC<Props> = ({ open, onClose, coupon, onSubmitted
 
   const handleUpdateActiveStatus = async () => {
     setLoading(true);
+
+    // validate required reason when deactivating
+    if (activeStatus === 0 && !reasonEnd.trim()) {
+      setReasonEndError(true);
+      snackbar('error', 'Vui lòng nhập lý do ngưng hoạt động');
+      setLoading(false);
+      return;
+    }
+
     try {
       if(activeStatus === 1) {
         setReasonEnd('');
@@ -114,10 +138,26 @@ const CouponUpdateModal: React.FC<Props> = ({ open, onClose, coupon, onSubmitted
               Xử lý
             </FormLabel>
             {role === 'root' ? (
-              <RadioGroup row value={decision ?? 'approve'} onChange={(e) => setDecision(e.target.value)}>
-                <FormControlLabel value="approve" control={<Radio />} label="Duyệt" />
-                <FormControlLabel value="reject" control={<Radio />} label="Từ chối" />
-              </RadioGroup>
+              <Stack>
+                <RadioGroup row value={decision ?? 'approve'} onChange={(e) => setDecision(e.target.value)}>
+                  <FormControlLabel value="approve" control={<Radio />} label="Duyệt" />
+                  <FormControlLabel value="reject" control={<Radio />} label="Từ chối" />
+                </RadioGroup>
+                {decision === 'reject' && (
+                  <TextField
+                    label="Lý do từ chối"
+                    multiline
+                    rows={3}
+                    value={reasonReject}
+                    onChange={(e) => {
+                      setReasonReject(e.target.value);
+                      if (e.target.value.trim()) setReasonRejectError(false);
+                    }}
+                    error={reasonRejectError}
+                    helperText={reasonRejectError ? 'Lý do từ chối là bắt buộc' : ' '}
+                  />
+                )}
+              </Stack>
             ) : (
               <Stack>
                 <RadioGroup row value={String(activeStatus)} onChange={(e) => setActiveStatus(Number(e.target.value))}>
@@ -125,12 +165,17 @@ const CouponUpdateModal: React.FC<Props> = ({ open, onClose, coupon, onSubmitted
                   <FormControlLabel value="0" control={<Radio />} label="Ngưng hoạt động" />
                 </RadioGroup>
                 {activeStatus === 0 && (
-                  <TextField 
+                  <TextField
                     label="Lý do ngưng hoạt động"
                     multiline
                     rows={3}
                     value={reasonEnd}
-                    onChange={(e) => setReasonEnd(e.target.value)}
+                    onChange={(e) => {
+                      setReasonEnd(e.target.value);
+                      if (e.target.value.trim()) setReasonEndError(false);
+                    }}
+                    error={reasonEndError}
+                    helperText={reasonEndError ? 'Lý do ngưng hoạt động là bắt buộc' : ' '}
                   />
                 )}
               </Stack>

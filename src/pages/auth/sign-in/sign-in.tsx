@@ -6,7 +6,7 @@ import Logo from '~/components/logo/logo';
 import { FONT_SIZE } from '~/common/constant/style.constant';
 
 import { StackRowAlignCenter } from '~/components/elements/styles/stack.style';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AUTH_SCREEN, DASHBOARD_SCREEN, SITE_SCREEN } from '~/router/path.route';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { BoxForm } from '~/components/elements/forms/box/box-form';
@@ -91,7 +91,15 @@ export default function LoginPage() {
           error={showError('password')}
           helperText={helperText('password')}
         />
-
+        <div style={{ width: '100%', position: 'relative' }}>
+          <Link
+            to={`/${prefix}auth/${AUTH_SCREEN.FORGOT_PW}`}
+            replace
+            style={{ display: 'block', textAlign: 'end', fontSize: '14px', color: 'text.secondary', position: 'absolute', right: 0, top: -20 }}
+          >
+            Quên mật khẩu
+          </Link>
+        </div>
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
           {formik.isSubmitting ? 'Đang gửi…' : 'Sign in'}
         </Button>

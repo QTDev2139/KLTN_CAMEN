@@ -17,8 +17,8 @@ export const currentTime = dayjs().format('DD/MM/YYYY HH:mm:ss');
 
 export const getDefaultDates = () => {
   const now = dayjs();
-  const startDate = now.startOf('day').format('YYYY-MM-DDTHH:mm');
-  const endDate = now.endOf('day').format('YYYY-MM-DDTHH:mm');
+  const startDate = now.add(1, 'day').startOf('day').format('YYYY-MM-DDTHH:mm');
+  const endDate = now.add(7, 'day').endOf('day').format('YYYY-MM-DDTHH:mm');
 
   return { startDate, endDate };
 };

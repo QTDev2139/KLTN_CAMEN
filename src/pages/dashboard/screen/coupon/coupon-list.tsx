@@ -38,7 +38,6 @@ const ListCoupon: React.FC = () => {
     };
     fetchProfile();
   }, []);
-  console.log('User role in list coupon:', role);
   const handleOpenConfirm = (coupon: Coupon) => {
     setSelectedCoupon(coupon);
     setOpenConfirm(true);
@@ -50,6 +49,7 @@ const ListCoupon: React.FC = () => {
     try {
       await couponApi.deleteCoupon(selectedCoupon.id);
       setListCoupon((prev) => prev.filter((p) => p.id !== selectedCoupon.id));
+      snackbar('success', 'Xóa mã giảm giá thành công');
     } catch (error) {
       console.error(error);
       snackbar('error', 'Xóa sản phẩm thất bại');
@@ -143,14 +143,14 @@ const ListCoupon: React.FC = () => {
               <Typography>{formatDate(coupon.end_date)}</Typography>
             </TableCell>
             <TableCell>
-              <TagElement type={StateTagType[coupon.state]} content={StateLabel[coupon.state]}  />
+              <TagElement type={StateTagType[coupon.state]} content={StateLabel[coupon.state]} />
             </TableCell>
 
             <TableCell>
               {(() => {
                 const validity = getValidityStatus(coupon);
                 return validity.label ? (
-                  <TagElement type={validity.type || 'info'} content={validity.label}  />
+                  <TagElement type={validity.type || 'info'} content={validity.label} />
                 ) : (
                   <Typography sx={{ textAlign: 'center' }}>-</Typography>
                 );
@@ -173,7 +173,7 @@ const ListCoupon: React.FC = () => {
                   <IconButton
                     onClick={() => handleEditClick(coupon.id)}
                     disabled={
-                      (role === 'root' && coupon.state !== 'pending') || (role !== 'root' && coupon.state === 'pending')
+                      (role !== 'root' &&coupon.state === 'rejected') || (role === 'root' && coupon.state !== 'pending') || (role !== 'root' && coupon.state === 'pending')
                     }
                   >
                     {/* Thay root bằng giám đốc  */}
