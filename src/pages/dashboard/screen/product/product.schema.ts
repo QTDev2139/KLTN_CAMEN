@@ -14,10 +14,10 @@ export const schema = Yup.object().shape({
       language_id: Yup.number().required(),
       name: Yup.string().required('Tên sản phẩm là bắt buộc'),
       slug: Yup.string().required('Slug là bắt buộc'),
-      description: Yup.string().nullable().default(''),
+      description: Yup.string().required('Mô tả là bắt buộc'),
       ingredient: Yup.string().nullable().default(''),
-      nutrition_info: Yup.string().nullable().default(''),
-      usage_instruction: Yup.string().nullable().default(''),
+      nutrition_info: Yup.string().required('Thông tin dinh dưỡng là bắt buộc'),
+      usage_instruction: Yup.string().required('Hướng dẫn sử dụng là bắt buộc'),
       reason_to_choose: Yup.string().nullable().default(''),
     })
   ),

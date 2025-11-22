@@ -28,6 +28,7 @@ export const BoxForm: React.FC<BoxFormProps> = ({ children, sx }) => {
           alignItems: 'center',
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
           margin: 'auto',
+          position: 'relative',
         }}
       >
         {children}

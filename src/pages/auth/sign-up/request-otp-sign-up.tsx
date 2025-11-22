@@ -8,7 +8,7 @@ import { FONT_SIZE } from '~/common/constant/style.constant';
 
 import { SignUpMode } from './sign-up.enum';
 import { StackRowAlignCenter } from '~/components/elements/styles/stack.style';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AUTH_SCREEN } from '~/router/path.route';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { BoxForm } from '~/components/elements/forms/box/box-form';

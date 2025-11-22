@@ -3,6 +3,7 @@ import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { productApi } from '~/apis';
 import { Product, ProductDetail } from '~/apis/product/product.interface.api';
+import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 import { StackRowJustCenter } from '~/components/elements/styles/stack.style';
 import TableElement from '~/components/elements/table-element/table-element';
 import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
@@ -58,13 +59,13 @@ const ListProduct: React.FC<ListProductProps> = ({ onEdit }) => {
   }, []);
 
   const columns = [
-    { id: 'image', label: 'Ảnh' },
-    { id: 'title', label: 'Tên sản phẩm' },
-    { id: 'qty', label: 'Tồn kho' },
-    { id: 'category', label: 'Danh mục' },
+    { id: 'code', label: 'STT' },
+    { id: 'title', label: 'Tên sản phẩm'},
+    { id: 'image', label: 'Hình ảnh' },
+    { id: 'price', label: 'Giá bán' },
+    { id: 'qty', label: 'Số lượng tồn kho'},
     { id: 'action', label: 'Action' },
   ];
-
   return (
     <React.Fragment>
       <TableElement
@@ -72,12 +73,13 @@ const ListProduct: React.FC<ListProductProps> = ({ onEdit }) => {
         rows={listProduct}
         renderRow={(product, index) => (
           <TableRow hover key={index}>
+            <TableCell sx={{ textAlign: 'center' }}>{index + 1}</TableCell>
+            <TableCell>{product.product_translations[0].name}</TableCell>
             <TableCell sx={{ textAlign: 'center' }}>
               <img src={product.product_images[0].image_url} alt="Product" style={{ width: '100px', height: '60px' }} />
             </TableCell>
-            <TableCell>{product.product_translations[0].name}</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>{FormatPrice(product.price)}</TableCell>
             <TableCell sx={{ textAlign: 'center' }}>{product.stock_quantity}</TableCell>
-            <TableCell sx={{ textAlign: 'center' }}>{product.category_id}</TableCell>
             <TableCell>
               <StackRowJustCenter sx={{ width: '100%', cursor: 'pointer' }}>
                 <Tooltip title="Sửa">
