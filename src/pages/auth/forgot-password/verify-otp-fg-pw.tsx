@@ -8,6 +8,7 @@ import OtpInputComponent from '~/components/otp-input/otp-input';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { ForgotPasswordMode } from './forgot-password.enum';
 import { BoxForm } from '~/components/elements/forms/box/box-form';
+import { ArrowCircleLeftOutlined } from '@mui/icons-material';
 
 interface VerifyOtpSignUpProps {
   setMode: (mode: ForgotPasswordMode) => void;
@@ -20,6 +21,7 @@ export default function VerifyOtpForgottenPassword({ setMode, email }: VerifyOtp
   const [cooldownOtp, setCooldownOtp] = useState(120);
   const [otp, setOtp] = useState('');
   const { palette } = useTheme();
+  
 
   // Đếm ngược resend
   useEffect(() => {
@@ -69,12 +71,12 @@ export default function VerifyOtpForgottenPassword({ setMode, email }: VerifyOtp
 
   return (
     <Box component="form" onSubmit={submit}>
-      <BoxForm>
+      <BoxForm sx={{ position: 'relative' }}>
         <Button
-          style={{ position: 'absolute', top: '10px', left: '20px', color: palette.text.primary }}
+          style={{ position: 'absolute', top: '10px', left: '10px', color: palette.text.primary }}
           onClick={handlePrev}
         >
-          Quay lại
+          <ArrowCircleLeftOutlined sx={{ color: 'text.secondary' }} />
         </Button>
         <Logo />
 

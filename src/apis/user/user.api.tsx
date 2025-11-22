@@ -57,8 +57,14 @@ export const resetPassword = async ({ password, reset_token }: {  password: stri
   return res.data.message;
 }
 
-// --------------
+// ----------------------------------- PROFILE ----------------------------------
 export const getProfile = async () => {
   const res = await axiosApi.get('auth/profile');
+  return res.data.post;
+}
+
+// ----------------------------------- NHANVIEN LIST -----------------------------
+export const getDsnv = async () => {
+  const res = await axiosApi.get('dsnv/customer');
   return res.data.post;
 }

@@ -69,7 +69,7 @@ export default function CouponViewModal({ open, onClose, coupon }: Props) {
               })()}
             </Stack>
             <Typography variant="body2" color="text.secondary" mt={1}>
-              {coupon.reason_end && `Lý do ngưng hoạt động: ${coupon.reason_end}` || ''}
+              {coupon.reason_end && `Lý do: ${coupon.reason_end}` || ''}
             </Typography>
           </Box>
 

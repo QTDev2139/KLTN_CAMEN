@@ -281,7 +281,7 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
                 }}
               >
                 <Typography variant="h6" fontWeight={700}>
-                  Tổng cộng:
+                  Tổng cộng: 
                 </Typography>
                 <Typography variant="h6" fontWeight={700} color="primary.main">
                   {FormatPrice(order.grand_total)}

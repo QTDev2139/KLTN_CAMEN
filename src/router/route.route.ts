@@ -14,7 +14,6 @@ import SitePage from '~/pages/site/site.page';
 import HomePage from '~/pages/site/screen/home/home.screen';
 import CartPage from '~/pages/site/screen/cart/cart.screen';
 import CategoryPage from '~/pages/site/screen/category/category.screen';
-import ProductPage from '~/pages/site/screen/product/product.screen';
 import ProductDomesticPage from '~/pages/site/screen/product-domestic/product-domestic.screen';
 import ProductExportPage from '~/pages/site/screen/product-export/product-export.screen';
 import ProductDetailPage from '~/pages/site/screen/product-detail/product-detail.screen';
@@ -26,6 +25,7 @@ import CheckoutPage from '~/pages/site/screen/checkout/checkout.screen';
 import OrderPage from '~/pages/site/screen/order/order.screen';
 import PaymentCallbackPage from '~/pages/site/screen/payment/payment-callback.screen';
 import PurchasePage from '~/pages/site/screen/purchase/purchase.screen';
+import CodConfirmationPage from '~/pages/site/screen/payment/cod-confirmation.screen';
 
 import DashboardLayout from '~/layouts/dashboard/dashboard.layout';
 import DashboardPage from '~/pages/dashboard/dashboard.page';
@@ -36,8 +36,8 @@ import CustomersScreen from '~/pages/dashboard/screen/customers/customers.screen
 import BlogScreen from '~/pages/dashboard/screen/blog/blog.screen';
 import CouponScreen from '~/pages/dashboard/screen/coupon/coupon.screen';
 import ReviewsScreen from '~/pages/dashboard/screen/reviews/reviews.screen';
+import ChatScreen from '~/pages/dashboard/screen/chat/chat.screen';
 import { UserType } from '~/apis/user/user.enum';
-import CodConfirmationPage from '~/pages/site/screen/payment/cod-confirmation.screen';
 
 export type Route = {
   path: string;
@@ -252,6 +252,12 @@ export const routes: Route[] = [
         element: ReviewsScreen,
         type: RouteType.PROTECTED,
         allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.CHATBOX,
+        element: ChatScreen,
+        type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.STAFF],
       },
     ],
   },

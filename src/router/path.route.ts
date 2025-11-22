@@ -48,6 +48,7 @@ export const DASHBOARD_SCREEN = {
     BLOG: 'blog',
     COUPON: 'coupon',
     REVIEWS: 'review',
+    CHATBOX: 'chatbox',
     // ANALYTICS: 'analytics',
     // SETTINGS: 'settings',
 }

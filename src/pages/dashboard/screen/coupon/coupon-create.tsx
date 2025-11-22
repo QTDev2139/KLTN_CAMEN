@@ -41,7 +41,24 @@ export default function CouponCreate({ onSubmit }: CouponCreateProps) {
         snackbar('success', 'Tạo mã giảm giá thành công');
         if (onSubmit) onSubmit();
       } catch (error: any) {
-        snackbar('error', error?.message || 'Có lỗi xảy ra');
+        const resp = error?.response?.data;
+        let message = error?.message || 'Có lỗi xảy ra';
+
+        if (resp) {
+          if (typeof resp === 'string') {
+            message = resp;
+          } else if (typeof resp.message === 'string') {
+            message = resp.message;
+          } else if (resp.errors) {
+            if (Array.isArray(resp.errors)) {
+              message = resp.errors.join(', ');
+            } else if (typeof resp.errors === 'object') {
+              message = Object.values(resp.errors).flat().join(', ');
+            }
+          }
+        }
+
+        snackbar('error', message);
       } finally {
         helpers.setSubmitting(false);
       }

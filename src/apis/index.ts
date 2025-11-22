@@ -7,3 +7,4 @@ export * as orderApi from './order/order.api';
 export * as couponApi from './coupon/coupon.api';
 export * as paymentApi from './payment/payment.api';
 export * as reviewApi from './review/review.api';
+export * as chatApi from './chat-box/chatbox.api';

@@ -4,13 +4,14 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, 
 type ModalElementProps = {
   open: boolean;
   title?: string;
-  message?: string;
+  message?: React.ReactNode;
   onClose: () => void;
   onConfirm?: () => void;
   loading?: boolean;
   confirmText?: string;
   confirmColor?: 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success';
   cancelText?: string;
+  maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   icon?: React.ReactNode;
   iconColor?: 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success' | 'inherit' | 'action' | 'disabled';
 };
@@ -26,10 +27,11 @@ export const ModalElement: React.FC<ModalElementProps> = ({
   confirmColor = 'info',
   cancelText = 'Hủy',
   icon,
+  maxWidth = 'sm',
   iconColor = 'warning',
 }) => {
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: 2, p: 1 } }}>
+    <Dialog open={open} onClose={onClose} maxWidth={maxWidth} fullWidth PaperProps={{ sx: { borderRadius: 2, p: 1 } }}>
       <DialogTitle>
         <Stack direction="row" alignItems="center" gap={1}>
           {icon && (
@@ -46,7 +48,7 @@ export const ModalElement: React.FC<ModalElementProps> = ({
       </DialogTitle>
 
       <DialogContent>
-        <Typography variant="body1">{message}</Typography>
+        {message}
       </DialogContent>
 
       <DialogActions>
