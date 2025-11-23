@@ -311,52 +311,45 @@ export default function CreateProduct(props: {
           {isEditMode ? 'Chỉnh sửa thông tin sản phẩm' : 'Thông tin chung'}
         </Typography>
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mt: 2 }}>
-          <TextField
-            label="Giá bán"
-            type="number"
-            fullWidth
-            {...formik.getFieldProps('price')}
-            error={showError('price')}
-            helperText={helperText('price')}
-          />
-          {/* <TextField
-            label="Giá so sánh (khuyến mãi)"
-            type="number"
-            fullWidth
-            {...formik.getFieldProps('compare_at_price')}
-            error={showError('compare_at_price')}
-            helperText={helperText('compare_at_price')}
-          /> */}
-          <TextField
-            label="Tồn kho"
-            type="number"
-            fullWidth
-            {...formik.getFieldProps('stock_quantity')}
-            error={showError('stock_quantity')}
-            helperText={helperText('stock_quantity')}
-          />
+          {/* Hide price/stock/quantity/category when product type is "export" */}
+          {formik.values.type !== 'export' && (
+            <>
+              <TextField
+                label="Giá bán"
+                type="number"
+                fullWidth
+                {...formik.getFieldProps('price')}
+                error={showError('price')}
+                helperText={helperText('price')}
+              />
+              <TextField
+                label="Giá so sánh (khuyến mãi)"
+                type="number"
+                fullWidth
+                {...formik.getFieldProps('compare_at_price')}
+                error={showError('compare_at_price')}
+                helperText={helperText('compare_at_price')}
+              />
+              <TextField
+                label="Tồn kho"
+                type="number"
+                fullWidth
+                {...formik.getFieldProps('stock_quantity')}
+                error={showError('stock_quantity')}
+                helperText={helperText('stock_quantity')}
+              />
+            </>
+          )}
         </Stack>
 
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mt: 2 }}>
-          <TextField
+          {/* <TextField
             label="Xuất xứ (origin)"
             fullWidth
             {...formik.getFieldProps('origin')}
             error={showError('origin')}
             helperText={helperText('origin')}
-          />
-          <TextField
-            label="Số lượng/Combo"
-            type="number"
-            fullWidth
-            {...formik.getFieldProps('quantity_per_pack')}
-            disabled={isQuantityAuto}
-            error={showError('quantity_per_pack')}
-            helperText={helperText('quantity_per_pack')}
-          />
-        </Stack>
-
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mt: 2 }}>
+          /> */}
           <TextField
             label="Nơi giao (shipping_from)"
             fullWidth
@@ -364,41 +357,71 @@ export default function CreateProduct(props: {
             error={showError('shipping_from')}
             helperText={helperText('shipping_from')}
           />
+          {formik.values.type !== 'export' && (
+            <TextField
+              label="Số lượng/Combo"
+              type="number"
+              fullWidth
+              {...formik.getFieldProps('quantity_per_pack')}
+              disabled={isQuantityAuto}
+              error={showError('quantity_per_pack')}
+              helperText={helperText('quantity_per_pack')}
+            />
+          )}
+        </Stack>
+
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mt: 2 }}>
+          
           <TextField
             label="Loại sản phẩm"
             select
             fullWidth
-            {...formik.getFieldProps('type')}
+            value={formik.values.type}
+            onChange={(e) => {
+              const val = String(e.target.value);
+              formik.setFieldValue('type', val);
+              // when switching to export, clear/hard-set fields we hide to avoid validation issues
+              if (val === 'export') {
+                formik.setFieldValue('price', 0);
+                formik.setFieldValue('stock_quantity', 0);
+                formik.setFieldValue('quantity_per_pack', 1);
+                formik.setFieldValue('category_id', 1);
+              }
+            }}
+            onBlur={formik.handleBlur}
             error={showError('type')}
             helperText={helperText('type')}
           >
             <MenuItem value="domestic">Nội địa</MenuItem>
             <MenuItem value="export">Xuất khẩu</MenuItem>
           </TextField>
-          <TextField
-            label="Danh mục sản phẩm"
-            select
-            fullWidth
-            name="category_id"
-            value={formik.values.category_id}
-            onChange={(e) => {
-              const val = Number(e.target.value);
-              formik.setFieldValue('category_id', val);
-              if (categoryAutoMap[val] !== undefined) {
-                formik.setFieldValue('quantity_per_pack', categoryAutoMap[val]);
-              } else {
-                // optional fallback
-                formik.setFieldValue('quantity_per_pack', 1);
-              }
-            }}
-            onBlur={formik.handleBlur}
-            error={showError('category_id')}
-            helperText={helperText('category_id')}
-          >
-            <MenuItem value={1}>1 gói</MenuItem>
-            <MenuItem value={2}>Combo 3 gói</MenuItem>
-            <MenuItem value={3}>Combo 10 gói</MenuItem>
-          </TextField>
+          {/* Category should also be hidden when type is export */}
+          {formik.values.type !== 'export' && (
+            <TextField
+              label="Danh mục sản phẩm"
+              select
+              fullWidth
+              name="category_id"
+              value={formik.values.category_id}
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                formik.setFieldValue('category_id', val);
+                if (categoryAutoMap[val] !== undefined) {
+                  formik.setFieldValue('quantity_per_pack', categoryAutoMap[val]);
+                } else {
+                  // optional fallback
+                  formik.setFieldValue('quantity_per_pack', 1);
+                }
+              }}
+              onBlur={formik.handleBlur}
+              error={showError('category_id')}
+              helperText={helperText('category_id')}
+            >
+              <MenuItem value={1}>1 gói</MenuItem>
+              <MenuItem value={2}>Combo 3 gói</MenuItem>
+              <MenuItem value={3}>Combo 10 gói</MenuItem>
+            </TextField>
+          )}
         </Stack>
 
         {/* Gallery ảnh */}

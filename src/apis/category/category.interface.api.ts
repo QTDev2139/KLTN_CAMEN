@@ -7,5 +7,4 @@ export interface CategoryTranSlation{
 export interface Category {
     id: number;
     category_translation: CategoryTranSlation[];
-
 } 
