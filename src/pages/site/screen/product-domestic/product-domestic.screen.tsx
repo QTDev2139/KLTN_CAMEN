@@ -1,4 +1,4 @@
-import { Card, CardContent, CardMedia, Divider, Grid, Rating, Stack, Typography, useTheme } from '@mui/material';
+import { Card, CardContent, CardMedia, Divider, Grid, Rating, Stack, Typography, useTheme, Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useParams } from 'react-router-dom';
 import { categoryApi, productApi } from '~/apis';
@@ -14,15 +14,43 @@ import { LocationOn } from '@mui/icons-material';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 
+// helper to format sales count (>=1000 -> "1K", "10K", ...)
+const formatSalesCount = (n: number) => {
+  if (!n) return '0';
+  if (n >= 1000) return `${Math.floor(n / 1000)}K`;
+  return `${n}`;
+};
+
 const ProductDomesticPage: React.FC = () => {
   const [category, setCategory] = useState<Category[]>([]);
   const [product, setProduct] = useState<Product[]>([]);
+  const [salesCountMap, setSalesCountMap] = useState<Record<number, number>>({});
   const { slug = 'san-pham' } = useParams<{ slug?: string }>();
 
   // Lấy lang từ hook thay vì useParams
   const currentLang = useLang();
   const prefix = getLangPrefix(currentLang);
   const { palette } = useTheme();
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        const result = await productApi.getSalesCount();
+        // result expected like: [{ product_id: 1, sales_count: "1" }, ...]
+        const map: Record<number, number> = {};
+        (result || []).forEach((r: any) => {
+          const id = Number(r.product_id);
+          const count = Number(r.sales_count) || 0;
+          if (!Number.isNaN(id)) map[id] = count;
+        });
+        setSalesCountMap(map);
+      } catch (err) {
+        console.error('Failed fetch sales count', err);
+        setSalesCountMap({});
+      }
+    };
+    fetchApi();
+  }, []);
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -82,8 +110,29 @@ const ProductDomesticPage: React.FC = () => {
                   <Typography variant="subtitle2" sx={{ ...getLimitLineCss(2) }}>
                     {item.product_translations[0].description}
                   </Typography>
-                  <Typography variant="subtitle1" sx={{ color: palette.primary.main, height: '60px' }}>
-                    {FormatPrice(item.price)}
+                  {/* Hiển thị giá: nếu có giá khuyến mãi (compare_at_price > 0) thì show khuyến mãi (primary)
+                      và price gạch ngang, đổi màu secondary. Ngược lại hiển thị price bình thường. */}
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ height: '60px', display: 'flex', alignItems: 'center', gap: 1 }}
+                  >
+                    {item.compare_at_price && Number(item.compare_at_price) > 0 ? (
+                      <>
+                        <Box component="span" sx={{ color: palette.primary.main }}>
+                          {FormatPrice(item.compare_at_price)}
+                        </Box>
+                        <Box
+                          component="span"
+                          sx={{ textDecoration: 'line-through', color: palette.text.secondary, fontSize: '14px' }}
+                        >
+                          {FormatPrice(item.price)}
+                        </Box>
+                      </>
+                    ) : (
+                      <Box component="span" sx={{ color: palette.primary.main }}>
+                        {FormatPrice(item.price)}
+                      </Box>
+                    )}
                   </Typography>
                   <StackRowAlignCenter gap={1}>
                     <Rating name="read-only" size="small" value={1} max={1} readOnly />
@@ -95,6 +144,9 @@ const ProductDomesticPage: React.FC = () => {
                       {item.shipping_from}
                     </Typography>
                   </StackRowAlignCenter>
+                  <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontSize: '12px' }}>
+                    Đã bán: {formatSalesCount(salesCountMap[item.id] ?? 0)}
+                  </Typography>
                 </CardContent>
               </Card>
             </Link>

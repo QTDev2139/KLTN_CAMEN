@@ -3,8 +3,6 @@ import { useFormik, getIn } from 'formik';
 import * as Yup from 'yup';
 import { Box, Stack, TextField, Button, Typography, Tabs, Tab, Divider, Paper } from '@mui/material';
 import { RichEditor } from '~/components/rick-text-editor/rick-text-editor';
-// import axios from 'axios'; // <- Bật nếu bạn dùng axios trực tiếp
-// import { axiosApi } from '~/apis'; // <- Hoặc client axios riêng của bạn
 
 /** ---------------------------------------------------------
  *  Types

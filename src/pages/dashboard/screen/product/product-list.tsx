@@ -1,5 +1,5 @@
 import { DeleteOutline, ModeEditOutlineOutlined } from '@mui/icons-material';
-import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
+import { IconButton, TableCell, TableRow, Tooltip, TextField, MenuItem, Box } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { productApi } from '~/apis';
 import { Product, ProductDetail } from '~/apis/product/product.interface.api';
@@ -19,6 +19,8 @@ const ListProduct: React.FC<ListProductProps> = ({ onEdit }) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const { snackbar } = useSnackbar();
+  // filter for product type: 'domestic' or 'export'
+  const [filterType, setFilterType] = useState<'domestic' | 'export'>('domestic');
 
   const handleOpenConfirm = (product: Product) => {
     setSelectedProduct(product);
@@ -52,11 +54,16 @@ const ListProduct: React.FC<ListProductProps> = ({ onEdit }) => {
 
   useEffect(() => {
     const fetchListProduct = async () => {
-      const result = await productApi.getProduct('vi');
-      setListProduct(result);
+      try {
+        const result = await productApi.getProduct('vi', filterType);
+        setListProduct(result);
+      } catch (e) {
+        console.error(e);
+        snackbar('error', 'Không tải được danh sách sản phẩm');
+      }
     };
     fetchListProduct();
-  }, []);
+  }, [filterType]); // reload when filter type changes
 
   const columns = [
     { id: 'code', label: 'STT' },
@@ -68,6 +75,20 @@ const ListProduct: React.FC<ListProductProps> = ({ onEdit }) => {
   ];
   return (
     <React.Fragment>
+      {/* Filter: domestic / export */}
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+        <TextField
+        sx={{ minWidth: 160 }}
+          select
+          size="small"
+          label="Loại sản phẩm"
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value as 'domestic' | 'export')}
+        >
+          <MenuItem value="domestic">Nội địa</MenuItem>
+          <MenuItem value="export">Xuất khẩu</MenuItem>
+        </TextField>
+      </Box>
       <TableElement
         columns={columns}
         rows={listProduct}
@@ -78,8 +99,12 @@ const ListProduct: React.FC<ListProductProps> = ({ onEdit }) => {
             <TableCell sx={{ textAlign: 'center' }}>
               <img src={product.product_images[0].image_url} alt="Product" style={{ width: '100px', height: '60px' }} />
             </TableCell>
-            <TableCell sx={{ textAlign: 'center' }}>{FormatPrice(product.price)}</TableCell>
-            <TableCell sx={{ textAlign: 'center' }}>{product.stock_quantity}</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>
+              {product.price == null ? '-' : FormatPrice(product.price)}
+            </TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>
+              {product.stock_quantity == null ? '-' : product.stock_quantity}
+            </TableCell>
             <TableCell>
               <StackRowJustCenter sx={{ width: '100%', cursor: 'pointer' }}>
                 <Tooltip title="Sửa">
