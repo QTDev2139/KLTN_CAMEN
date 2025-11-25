@@ -20,21 +20,13 @@ import { schema } from './product.schema';
 import { productApi } from '~/apis';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { RichEditor } from '~/components/rick-text-editor/rick-text-editor';
+import { slugify } from '~/common/until/slug';
 
 // type code cho tab
 type LocaleCode = 'vi' | 'en';
 
 // --- utils nhỏ ---
-const slugify = (s: string) =>
-  s
-    .normalize('NFD') // tách dấu
-    .replace(/[\u0300-\u036f]/g, '') // xoá dấu
-    .toLowerCase()
-    .replace(/đ/g, 'd') // đ -> d
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-');
+
 
 export default function CreateProduct(props: {
   initial?: Partial<ProductDetail>; // dùng cho edit
@@ -42,8 +34,6 @@ export default function CreateProduct(props: {
 }) {
   const { initial, onSuccess } = props;
   const { snackbar } = useSnackbar();
-
-  // Tab ngôn ngữ
   const [tab, setTab] = useState<LocaleCode>('vi');
 
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
@@ -152,9 +142,6 @@ export default function CreateProduct(props: {
             }
           });
         }
-        console.log('FormData to submit:', fd);
-        // before calling API
-        // console.log('values.id',values.id);
         Array.from(fd.entries()).forEach(([k, v]) => {
           console.log(k, v);
         });

@@ -54,16 +54,13 @@ export default function Header() {
   return (
     <Stack sx={{ position: 'relative', zIndex: 100, boxShadow: '0 6px 4px 0 rgba(0, 0, 0, 0.09)' }}>
       <ContainerWrapper>
-        {/* Desktop: AuthLink shown as before; Mobile: keep in drawer */}
         {!isMobile ? <AuthLink /> : null}
 
-        {/* Top row: responsive */}
         {!isMobile ? (
           <StackRowJustBetweenAlignCenter>
             <Logo />
             <SearchInput />
             <StackRowJustCenter sx={{ width: '260px' }}>
-              {/* Cart */}
               <Link to={`${prefix}/${SITE_SCREEN.CART}`} style={{ color: palette.text.primary }}>
                 <ShoppingCart />
               </Link>
@@ -75,9 +72,7 @@ export default function Header() {
             <IconButton aria-label="menu" size="large" onClick={toggleDrawer(true)} sx={{ color: palette.text.primary }}>
               <MenuIcon />
             </IconButton>
-
             <Logo />
-
             <Stack direction="row" spacing={1} alignItems="center">
               <Link to={`${prefix}/${SITE_SCREEN.CART}`} style={{ color: palette.text.primary }}>
                 <ShoppingCart />

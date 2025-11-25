@@ -33,7 +33,8 @@ import OverviewScreen from '~/pages/dashboard/screen/overview/overview.screen';
 import OrdersScreen from '~/pages/dashboard/screen/orders/orders.screen';
 import ProductScreen from '~/pages/dashboard/screen/product/product.screen';
 import CustomersScreen from '~/pages/dashboard/screen/customers/customers.screen';
-import BlogScreen from '~/pages/dashboard/screen/blog/blog.screen';
+import BlogScreen from '~/pages/dashboard/screen/blog/blog-view/blog.screen';
+import BlogCategoryScreen from '~/pages/dashboard/screen/blog/blog-categories/blog-categories.screen';
 import CouponScreen from '~/pages/dashboard/screen/coupon/coupon.screen';
 import ReviewsScreen from '~/pages/dashboard/screen/reviews/reviews.screen';
 import ChatScreen from '~/pages/dashboard/screen/chat/chat.screen';
@@ -236,8 +237,14 @@ export const routes: Route[] = [
         allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
       },
       {
-        path: PATH.DASHBOARD_SCREEN.BLOG,
+        path: PATH.DASHBOARD_SCREEN.BLOG.BLOG_VIEW,
         element: BlogScreen,
+        type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.BLOG.BLOG_CATEGORY,
+        element: BlogCategoryScreen,
         type: RouteType.PROTECTED,
         allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
       },
