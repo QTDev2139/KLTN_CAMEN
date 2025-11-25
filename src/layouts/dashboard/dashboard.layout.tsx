@@ -1,4 +1,6 @@
-import { Divider, Stack, useTheme, CircularProgress, Avatar, Typography } from '@mui/material';
+import { Divider, Stack, useTheme, CircularProgress, Avatar, Typography, Collapse, Box } from '@mui/material';
+import { ChangeCircle } from '@mui/icons-material';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { STYLE } from '~/common/constant';
@@ -13,7 +15,6 @@ import { userApi } from '~/apis';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { AUTH_SCREEN } from '~/router/path.route';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { ChangeCircle } from '@mui/icons-material';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -23,6 +24,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { palette } = useTheme();
   const { userRole, loading, hasAccess } = useUserRole();
   const [user, setUser] = useState<User | null>(null);
+  const [openSub, setOpenSub] = useState<Record<string, boolean>>({});
+  const handleToggleSub = (key: string) => {
+    setOpenSub((s) => ({ ...s, [key]: !s[key] }));
+  };
   const navigate = useNavigate();
   const { snackbar } = useSnackbar();
 
@@ -74,22 +79,71 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <LogoDashboard />
         <Divider sx={{ color: palette.divider }} />
         {/* Chỉ hiển thị sidebar user có quyền */}
-        {visibleSidebars.map((sidebar, index) => (
-          <NavLink
-            key={index}
-            to={sidebar.to}
-            style={({ isActive }: { isActive: boolean }) => ({
-              padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
-              color: isActive ? palette.primary.main : palette.text.primary,
-              background: isActive ? palette.primary.light : 'transparent',
-              transition: 'all 500ms ease',
-            })}
-          >
-            <TypographyHover variant="h6" sx={{ margin: '5px 10px' }}>
-              {sidebar.title}
-            </TypographyHover>
-          </NavLink>
-        ))}
+        {visibleSidebars.map((sidebar, index) => {
+          const key = sidebar.to ?? String(index);
+          if (sidebar.children && sidebar.children.length) {
+            return (
+              <div key={key}>
+                <StackRow
+                  onClick={() => handleToggleSub(String(key))}
+                  sx={{
+                    cursor: 'pointer',
+                    alignItems: 'center',
+                    padding: `0 ${STYLE.PADDING_GAP_ITEM}`,
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <StackRowAlignCenter columnGap={1} sx={{ margin: '5px 10px' }}>
+                    {sidebar.icon ? <Box component="span">{sidebar.icon}</Box> : null}
+                    <Typography variant="h6">{sidebar.title}</Typography>
+                  </StackRowAlignCenter>
+                  {openSub[String(key)] ? <ExpandLess /> : <ExpandMore />}
+                </StackRow>
+
+                <Collapse in={Boolean(openSub[String(key)])} timeout="auto" unmountOnExit>
+                  <Stack sx={{ pl: 2 }}>
+                    {sidebar.children.map((child) => (
+                      <NavLink
+                        key={child.to}
+                        to={child.to}
+                        style={({ isActive }: { isActive: boolean }) => ({
+                          padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
+                          color: isActive ? palette.primary.main : palette.text.primary,
+                          textDecoration: 'none',
+                        })}
+                      >
+                        <StackRowAlignCenter columnGap={1} sx={{ margin: '5px 10px', fontSize: '14px' }}>
+                          {child.icon ? <Box component="span">{child.icon}</Box> : null}
+                          <TypographyHover variant="h6" sx={{ fontSize: '14px' }}>
+                            {child.title}
+                          </TypographyHover>
+                        </StackRowAlignCenter>
+                      </NavLink>
+                    ))}
+                  </Stack>
+                </Collapse>
+              </div>
+            );
+          }
+
+          return (
+            <NavLink
+              key={sidebar.to ?? index}
+              to={sidebar.to}
+              style={({ isActive }: { isActive: boolean }) => ({
+                padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
+                color: isActive ? palette.primary.main : palette.text.primary,
+                background: isActive ? palette.primary.light : 'transparent',
+                transition: 'all 500ms ease',
+              })}
+            >
+              <StackRowAlignCenter columnGap={1} sx={{ margin: '5px 10px' }}>
+                {sidebar.icon ? <Box component="span">{sidebar.icon}</Box> : null}
+                <TypographyHover variant="h6">{sidebar.title}</TypographyHover>
+              </StackRowAlignCenter>
+            </NavLink>
+          );
+        })}
         {user && (
           <Stack  sx={{ position: 'absolute', bottom: 40, paddingLeft: '20px', paddingTop: '20px', borderTop: `1px solid ${palette.divider}`, width: '230px',  }}>
             <StackRowAlignCenter columnGap={1} sx={{ py: 1 }}>

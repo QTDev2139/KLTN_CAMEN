@@ -11,6 +11,7 @@ export interface CartItem {
   product_id: {
     id: number;
     quantity_per_pack: number;
+    stock_quantity?: number;
   };
   product_name: string;
   product_image: string;

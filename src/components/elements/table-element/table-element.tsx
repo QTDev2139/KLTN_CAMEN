@@ -40,7 +40,7 @@ export default function TableElement<T>({ title, columns, rows, renderRow }: Tab
                         
                       }}
                     >
-                      <Typography variant="h6" sx={{ textAlign: 'center', width: col.width }}>
+                      <Typography variant="h6" sx={{ textAlign: 'center', minWidth: col.width, width: '100%' }}>
                         {col.label}
                       </Typography>
                     </TableCell>

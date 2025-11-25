@@ -28,7 +28,7 @@ import { StateTagTypeChat } from './chat.state';
 import { TagElement } from '~/components/elements/tag/tag.element';
 import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 import { ModalElement } from '~/components/modal/modal-element/modal-element';
-import { formatDate, formatDateHeader, formatDateTime, formatTime } from '~/common/until/date-format.until';
+import { formatDate, formatDateHeader, formatTime } from '~/common/until/date-format.until';
 
 const ChatScreen: React.FC = () => {
   const [rooms, setRooms] = useState<ChatRoom[]>([]);
@@ -534,11 +534,11 @@ const ChatScreen: React.FC = () => {
                                 }}
                                 onClick={() => {
                                   setOpen(true);
-                                  setModalSrc(`http://localhost:8000/storage/${img}`);
+                                  setModalSrc(`${process.env.REACT_APP_BASE}storage/${img}`);
                                 }}
                               >
                                 <img
-                                  src={`http://localhost:8000/storage/${img}`}
+                                  src={`${process.env.REACT_APP_BASE}storage/${img}`}
                                   alt={`img-${idx}`}
                                   style={{
                                     width: '100%',

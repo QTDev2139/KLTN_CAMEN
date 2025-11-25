@@ -360,12 +360,12 @@ const ChatBox: React.FC = () => {
                                   key={idx}
                                   sx={{ width: 60, height: 60, cursor: 'pointer' }}
                                   onClick={() => {
-                                    setModalSrc(`http://localhost:8000/storage/${img}`);
+                                    setModalSrc(`${process.env.REACT_APP_BASE}storage/${img}`);
                                     setImageOpen(true);
                                   }}
                                 >
                                   <img
-                                    src={`http://localhost:8000/storage/${img}`}
+                                    src={`${process.env.REACT_APP_BASE}storage/${img}`}
                                     alt={m.message ? `${m.message} (image ${idx + 1})` : `Image ${idx + 1}`}
                                     style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 4 }}
                                   />
