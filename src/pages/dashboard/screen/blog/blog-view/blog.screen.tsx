@@ -3,17 +3,28 @@ import { useState } from 'react';
 import { StackRowAlignCenter } from '~/components/elements/styles/stack.style';
 
 import ListBlog from './list-blog';
-import UpdateBlog from './update-blog';
 import CreateBlog from './create-blog';
 import { BlogMode } from './blog.enum';
+import type { Post } from '~/apis/blog/blog.interface.api';
 
 export default function BlogScreen() {
   const { palette } = useTheme();
-  const [mode, setMode] = useState<BlogMode>(BlogMode.LIST);
 
-  const goList = () => setMode(BlogMode.LIST);
-  const goCreate = () => setMode(BlogMode.CREATE);
-  const goUpdate = () => setMode(BlogMode.UPDATE);
+  const [mode, setMode] = useState<BlogMode>(BlogMode.LIST);
+  const [selected, setSelected] = useState<Post | null>(null);
+
+  const goList = () => {
+    setSelected(null);
+    setMode(BlogMode.LIST);
+  };
+  const goCreate = () => {
+    setSelected(null);
+    setMode(BlogMode.CREATE);
+  };
+  const goUpdate = (post: Post) => {
+    setSelected(post);
+    setMode(BlogMode.UPDATE);
+  };
 
   return (
     <Stack spacing={2}>
@@ -29,12 +40,14 @@ export default function BlogScreen() {
             <Typography variant="subtitle2">Quay Lại</Typography>
           </Button>
         )}
-        
       </StackRowAlignCenter>
+
       <Divider sx={{ color: palette.divider }} />
+
       {mode === BlogMode.LIST && <ListBlog onUpdate={goUpdate} />}
-      {mode === BlogMode.CREATE && <CreateBlog />}
-      {mode === BlogMode.UPDATE && <UpdateBlog />}
+      {(mode === BlogMode.CREATE || mode === BlogMode.UPDATE) && (
+        <CreateBlog initial={selected ?? undefined} onSuccess={goList} />
+      )}
     </Stack>
   );
 }

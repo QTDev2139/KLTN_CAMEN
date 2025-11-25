@@ -74,14 +74,15 @@ const OrderPage: React.FC = () => {
     },
     validationSchema: orderSchema,
     onSubmit: async (values) => {
-      // Nếu không thuộc IMPORTANT_WARDS -> kiểm tra product_id.quantity_per_pack
       if (!isInImportantWard) {
-        const hasInvalid = items.some((it) => {
-          const qpp = it.product_id?.quantity_per_pack;
-          return !(qpp && Number(qpp) > 10);
-        });
-        if (hasInvalid) {
-          snackbar('error', 'Ngoại khu vực TP.HCM, tổng sản phẩm phải trên 10 gói.');
+        const MIN_PACKS_OUTSIDE = 10; 
+        const totalPacks = items.reduce((sum, it) => {
+          const qty = Number(it.qty ?? 0);
+          const perPack = Number(it.product_id?.quantity_per_pack ?? 1);
+          return sum + qty * perPack;
+        }, 0);
+        if (totalPacks < MIN_PACKS_OUTSIDE) {
+          snackbar('error', `Ngoại khu vực TP.HCM, tổng số gói phải ít nhất ${MIN_PACKS_OUTSIDE}.`);
           return;
         }
       }
