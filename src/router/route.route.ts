@@ -38,6 +38,7 @@ import BlogCategoryScreen from '~/pages/dashboard/screen/blog/blog-categories/bl
 import CouponScreen from '~/pages/dashboard/screen/coupon/coupon.screen';
 import ReviewsScreen from '~/pages/dashboard/screen/reviews/reviews.screen';
 import ChatScreen from '~/pages/dashboard/screen/chat/chat.screen';
+import ContactScreen from '~/pages/dashboard/screen/contact/contact.screen';
 import { UserType } from '~/apis/user/user.enum';
 
 export type Route = {
@@ -263,6 +264,12 @@ export const routes: Route[] = [
       {
         path: PATH.DASHBOARD_SCREEN.CHATBOX,
         element: ChatScreen,
+        type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.STAFF],
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.CONTACT,
+        element: ContactScreen,
         type: RouteType.PROTECTED,
         allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.STAFF],
       },

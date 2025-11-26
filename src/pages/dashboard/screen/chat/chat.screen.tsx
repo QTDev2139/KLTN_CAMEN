@@ -40,9 +40,7 @@ const ChatScreen: React.FC = () => {
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  // files + previews
   const MAX_IMAGES = 5;
-  // rooms pagination
   const ROOMS_PER_PAGE = 8;
   const [roomPage, setRoomPage] = useState(1);
   // reset page when rooms change (or filter changes)
@@ -126,7 +124,7 @@ const ChatScreen: React.FC = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await userApi.getDsnv();
+        const res = await userApi.getPersonnel(4);
         setDsnv(res);
       } catch (error) {
         console.error('Failed to load profile', error);

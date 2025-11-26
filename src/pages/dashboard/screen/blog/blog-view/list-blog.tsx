@@ -1,4 +1,4 @@
-import { IconButton, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
+import { IconButton, Stack, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
 import TableElement from '~/components/elements/table-element/table-element';
 import { useEffect, useState } from 'react';
 import { getListBlog, deletePost } from '~/apis/blog/blog.api';
@@ -55,45 +55,47 @@ export default function ListBlog({ onUpdate }: ListBlogProps) {
   ];
 
   return (
-    <TableElement
-      columns={columns}
-      rows={listBlog}
-      renderRow={(blog, index) => (
-        <TableRow hover key={index}>
-          <TableCell sx={{ textAlign: 'center' }}>{index + 1}</TableCell>
-          <TableCell>
-            <Typography sx={{ ...getLimitLineCss(1) }}>{(blog as any).post_category?.translations?.[0]?.name ?? ''}</Typography>
-          </TableCell>
-          <TableCell>
-            <Typography sx={{ ...getLimitLineCss(1) }}>{(blog as any).title}</Typography>
-          </TableCell>
-          <TableCell sx={{ textAlign: 'center' }}>
-            <img src={(blog as any).thumbnail} alt="Blog" style={{ width: '100px', height: '60px' }} />
-          </TableCell>
-          <TableCell sx={{ textAlign: 'center' }}>{(blog as any).user?.name}</TableCell>
-          <TableCell sx={{ textAlign: 'center' }}>{(blog as any).created_at}</TableCell>
-          <TableCell sx={{ textAlign: 'center' }}>
-            <TagElement
-              type={(blog as any).status === 1 ? 'success' : 'error'}
-              content={(blog as any).status === 1 ? 'Hoạt động' : 'Không hoạt động'}
-            />
-          </TableCell>
-          <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
-            <StackRowJustCenter sx={{ width: '100%', cursor: 'pointer' }}>
-              <Tooltip title="Sửa">
-                <IconButton size="small" onClick={() => onUpdate(blog)}>
-                  <ModeEditOutlineOutlined fontSize="small" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Xóa">
-                <IconButton size="small" onClick={() => handleDelete(blog)}>
-                  <DeleteOutline />
-                </IconButton>
-              </Tooltip>
-            </StackRowJustCenter>
-          </TableCell>
-        </TableRow>
-      )}
-    />
+    <Stack>
+      <TableElement
+        columns={columns}
+        rows={listBlog}
+        renderRow={(blog, index) => (
+          <TableRow hover key={index}>
+            <TableCell sx={{ textAlign: 'center' }}>{index + 1}</TableCell>
+            <TableCell>
+              <Typography sx={{ ...getLimitLineCss(1) }}>{(blog as any).post_category?.translations?.[0]?.name ?? ''}</Typography>
+            </TableCell>
+            <TableCell>
+              <Typography sx={{ ...getLimitLineCss(1) }}>{(blog as any).title}</Typography>
+            </TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>
+              <img src={(blog as any).thumbnail} alt="Blog" style={{ width: '100px', height: '60px' }} />
+            </TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>{(blog as any).user?.name}</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>{(blog as any).created_at}</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>
+              <TagElement
+                type={(blog as any).status === 1 ? 'success' : 'error'}
+                content={(blog as any).status === 1 ? 'Hoạt động' : 'Không hoạt động'}
+              />
+            </TableCell>
+            <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
+              <StackRowJustCenter sx={{ width: '100%', cursor: 'pointer' }}>
+                <Tooltip title="Sửa">
+                  <IconButton size="small" onClick={() => onUpdate(blog)}>
+                    <ModeEditOutlineOutlined fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Xóa">
+                  <IconButton size="small" onClick={() => handleDelete(blog)}>
+                    <DeleteOutline />
+                  </IconButton>
+                </Tooltip>
+              </StackRowJustCenter>
+            </TableCell>
+          </TableRow>
+        )}
+      />
+    </Stack>
   );
 }
