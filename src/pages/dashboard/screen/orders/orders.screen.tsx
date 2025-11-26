@@ -21,11 +21,6 @@ const OrderScreen: React.FC = () => {
     setMode(OrderMode.CREATE);
   };
   
-  const goUpdate = (Order: Order) => {
-    setEditingOrder(Order);
-    setMode(OrderMode.UPDATE);
-  };
-
 
   return (
     <Stack spacing={2}>

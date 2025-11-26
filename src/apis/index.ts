@@ -9,3 +9,4 @@ export * as paymentApi from './payment/payment.api';
 export * as reviewApi from './review/review.api';
 export * as chatApi from './chat-box/chatbox.api';
 export * as postCategoryApi from './post-category/post-category.api';
+export * as contactApi from './contact/contact.api';

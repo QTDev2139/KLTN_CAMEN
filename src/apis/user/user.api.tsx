@@ -64,7 +64,7 @@ export const getProfile = async () => {
 }
 
 // ----------------------------------- NHANVIEN LIST -----------------------------
-export const getDsnv = async () => {
-  const res = await axiosApi.get('dsnv/customer');
+export const getPersonnel = async ($id: number) => {
+  const res = await axiosApi.get(`/personnel/${$id}`);
   return res.data.post;
 }

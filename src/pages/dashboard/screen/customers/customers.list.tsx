@@ -32,19 +32,15 @@ export default function CustomersList({ users, onView, onEdit, onDelete }: Props
           <TableCell>
             <Typography>{user.fullName}</Typography>
           </TableCell>
-
           <TableCell>
             <Typography>{user.email}</Typography>
           </TableCell>
-
           <TableCell>
             <Typography>{user.role}</Typography>
           </TableCell>
-
           <TableCell>
             <TagElement type={user.status === "Hoạt động" ? "success" : "error"} content={user.status} />
           </TableCell>
-
           <TableCell sx={{ position: "sticky", right: 0, backgroundColor: "background.default" }}>
             <StackRowJustCenter sx={{ width: "100%", cursor: "pointer" }}>
               <Tooltip title="Xem">
