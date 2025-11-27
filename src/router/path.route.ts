@@ -44,6 +44,7 @@ export const DASHBOARD_SCREEN = {
     OVERVIEW: 'overview',
     ORDERS: 'orders',
     PRODUCT: 'product',
+    CONTACT: 'contact',
     CUSTOMERS: 'customers',
     BLOG: {
         BLOG_VIEW: 'blog-view',

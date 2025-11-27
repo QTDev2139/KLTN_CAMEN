@@ -4,18 +4,30 @@ import {
   Button,
   TextField,
   useTheme,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
 } from '@mui/material';
 import { getIn } from 'formik';
+import { useRef, useState } from 'react';
 
 import { StackRow } from '~/components/elements/styles/stack.style';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { FormContact } from './contact-type';
 import { ContactSchema } from './contact-schema';
+import { contactApi } from '~/apis';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function ContactForm() {
   const { snackbar } = useSnackbar();
 
   const { palette } = useTheme();
+
+  const recaptchaRef = useRef<ReCAPTCHA | null>(null);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+
   const formik = useFormik<FormContact>({
     initialValues: {
       name: '',
@@ -23,20 +35,28 @@ export default function ContactForm() {
       phone: '',
       title: '',
       content: '',
-      gender: '',
     },
     validationSchema: ContactSchema,
     onSubmit: async (values, { setSubmitting }) => {
-      // setSubmitting: formik.isSubmitting sẽ được đặt thành true
       try {
         setSubmitting(true);
-        // const { confirm_password, ...dataToSend } = values;
-        // const res = await userApi.createRegister(dataToSend);
 
-        console.log(values);
-        // snackbar('success', res);
+        // Bắt buộc token
+        if (!recaptchaToken) {
+          snackbar('error', 'Vui lòng xác nhận không phải robot');
+          setSubmitting(false);
+          return;
+        }
+        const data = { ...values, recaptcha_token: recaptchaToken };
+        // Gửi values + recaptcha token về server để verify với secret
+        console.log('Contact form data:', data);
+        const res = await contactApi.createContact(data);
+        snackbar('success', res?.data?.message || 'Gửi liên hệ thành côngg');
+        formik.resetForm();
+        recaptchaRef.current?.reset();
+        setRecaptchaToken(null);
       } catch (error: any) {
-        const message = error?.response?.data?.message || 'Lỗi không xác định';
+        const message = error?.message || 'Lỗi không xác định';
         snackbar('error', message);
       } finally {
         setSubmitting(false);
@@ -86,14 +106,26 @@ export default function ContactForm() {
           error={showError('phone')}
           helperText={helperText('phone')}
         />
-        <TextField
+        {/* <TextField
           label="Tiêu đề"
           variant="standard"
           fullWidth
           {...formik.getFieldProps('title')}
           error={showError('title')}
           helperText={helperText('title')}
-        />
+        /> */}
+        <FormControl variant="standard" fullWidth error={showError('title')}>
+          <InputLabel id="contact-title-label">Loại dịch vụ</InputLabel>
+          <Select labelId="contact-title-label" label="Loại dịch vụ" {...formik.getFieldProps('title')}>
+            <MenuItem value="">
+              <em>Chọn</em>
+            </MenuItem>
+            <MenuItem value="export">Xuất khẩu</MenuItem>
+            <MenuItem value="agency">Đại lý</MenuItem>
+            <MenuItem value="media">Truyền thông</MenuItem>
+          </Select>
+          <FormHelperText>{helperText('title')}</FormHelperText>
+        </FormControl>
       </StackRow>
       <TextField
         label="Nội dung"
@@ -105,10 +137,18 @@ export default function ContactForm() {
         error={showError('content')}
         helperText={helperText('content')}
       />
-      
+
+      {/* reCAPTCHA widget */}
+      <Box sx={{ my: 2 }}>
+        <ReCAPTCHA
+          ref={recaptchaRef}
+          sitekey="6Les7xcsAAAAAGjvO7hCiENL9QurrfNiP2odhZUx"
+          onChange={(token: string | null) => setRecaptchaToken(token)}
+        />
+      </Box>
 
       <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-        {formik.isSubmitting ? 'Đang gửi…' : 'Gửi liên hệ'}
+        {formik.isSubmitting ? 'Gửi liên hệ' : 'Gửi liên hệ'}
       </Button>
     </Box>
   );

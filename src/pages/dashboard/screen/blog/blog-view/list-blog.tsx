@@ -1,4 +1,4 @@
-import { IconButton, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
+import { IconButton, Stack, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
 import TableElement from '~/components/elements/table-element/table-element';
 import { useEffect, useState } from 'react';
 import { getListBlog, deletePost } from '~/apis/blog/blog.api';
@@ -8,6 +8,7 @@ import { StackRowJustCenter } from '~/components/elements/styles/stack.style';
 import { TagElement } from '~/components/elements/tag/tag.element';
 import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
+import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
 
 type ListBlogProps = {
   onUpdate: (post: Post) => void;
@@ -15,6 +16,8 @@ type ListBlogProps = {
 export default function ListBlog({ onUpdate }: ListBlogProps) {
   const [listBlog, setListBlog] = useState<Post[]>([]);
   const { snackbar } = useSnackbar();
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [selected, setSelected] = useState<Post | null>(null);
 
   const fetch = async () => {
     try {
@@ -30,13 +33,13 @@ export default function ListBlog({ onUpdate }: ListBlogProps) {
     fetch();
   }, []);
 
-  const handleDelete = async (blog: Post) => {
-    const ok = window.confirm(`Xóa bài viết "${(blog as any).title ?? blog.id}"? Hành động không thể hoàn tác.`);
-    if (!ok) return;
+  const handleDelete = async (id: number) => {
     try {
-      await deletePost(Number((blog as any).id));
-      setListBlog((prev) => prev.filter((p) => String((p as any).id) !== String((blog as any).id)));
+      await deletePost(id);
+      setListBlog((prev) => prev.filter((p) => p.id !== id));
       snackbar('success', 'Xóa bài viết thành công');
+      setOpenConfirm(false);
+      setSelected(null);
     } catch (err: any) {
       console.error('delete failed', err);
       snackbar('error', err?.message || 'Xóa thất bại');
@@ -45,7 +48,7 @@ export default function ListBlog({ onUpdate }: ListBlogProps) {
 
   const columns = [
     { id: 'stt', label: 'STT', width: 60 },
-    { id: 'title', label: 'Danh mục', width: 200 },
+    { id: 'category', label: 'Danh mục', width: 200 }, // changed id from 'title' -> 'category'
     { id: 'title', label: 'Tên bài viết', width: 200 },
     { id: 'image', label: 'Ảnh', width: 200 },
     { id: 'user', label: 'Người đăng', width: 200 },
@@ -55,45 +58,62 @@ export default function ListBlog({ onUpdate }: ListBlogProps) {
   ];
 
   return (
-    <TableElement
-      columns={columns}
-      rows={listBlog}
-      renderRow={(blog, index) => (
-        <TableRow hover key={index}>
-          <TableCell sx={{ textAlign: 'center' }}>{index + 1}</TableCell>
-          <TableCell>
-            <Typography sx={{ ...getLimitLineCss(1) }}>{(blog as any).post_category?.translations?.[0]?.name ?? ''}</Typography>
-          </TableCell>
-          <TableCell>
-            <Typography sx={{ ...getLimitLineCss(1) }}>{(blog as any).title}</Typography>
-          </TableCell>
-          <TableCell sx={{ textAlign: 'center' }}>
-            <img src={(blog as any).thumbnail} alt="Blog" style={{ width: '100px', height: '60px' }} />
-          </TableCell>
-          <TableCell sx={{ textAlign: 'center' }}>{(blog as any).user?.name}</TableCell>
-          <TableCell sx={{ textAlign: 'center' }}>{(blog as any).created_at}</TableCell>
-          <TableCell sx={{ textAlign: 'center' }}>
-            <TagElement
-              type={(blog as any).status === 1 ? 'success' : 'error'}
-              content={(blog as any).status === 1 ? 'Hoạt động' : 'Không hoạt động'}
-            />
-          </TableCell>
-          <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
-            <StackRowJustCenter sx={{ width: '100%', cursor: 'pointer' }}>
-              <Tooltip title="Sửa">
-                <IconButton size="small" onClick={() => onUpdate(blog)}>
-                  <ModeEditOutlineOutlined fontSize="small" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Xóa">
-                <IconButton size="small" onClick={() => handleDelete(blog)}>
-                  <DeleteOutline />
-                </IconButton>
-              </Tooltip>
-            </StackRowJustCenter>
-          </TableCell>
-        </TableRow>
-      )}
-    />
+    <Stack>
+      <TableElement
+        columns={columns}
+        rows={listBlog}
+        renderRow={(blog, index) => (
+          <TableRow hover key={index}>
+            <TableCell sx={{ textAlign: 'center' }}>{index + 1}</TableCell>
+            <TableCell>
+              <Typography sx={{ ...getLimitLineCss(1) }}>
+                {(blog as any).post_category?.translations?.[0]?.name ?? ''}
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography sx={{ ...getLimitLineCss(1) }}>{(blog as any).title}</Typography>
+            </TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>
+              <img src={(blog as any).thumbnail} alt="Blog" style={{ width: '100px', height: '60px' }} />
+            </TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>{(blog as any).user?.name}</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>{(blog as any).created_at}</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>
+              <TagElement
+                type={(blog as any).status === 1 ? 'success' : 'error'}
+                content={(blog as any).status === 1 ? 'Hoạt động' : 'Không hoạt động'}
+              />
+            </TableCell>
+            <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
+              <StackRowJustCenter sx={{ width: '100%', cursor: 'pointer' }}>
+                <Tooltip title="Sửa">
+                  <IconButton size="small" onClick={() => onUpdate(blog)}>
+                    <ModeEditOutlineOutlined fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Xóa">
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      setSelected(blog);
+                      setOpenConfirm(true);
+                    }}
+                  >
+                    <DeleteOutline />
+                  </IconButton>
+                </Tooltip>
+              </StackRowJustCenter>
+            </TableCell>
+          </TableRow>
+        )}
+      />
+      <ModalConfirm
+        open={openConfirm}
+        title="Xóa liên hệ"
+        message={`Bạn có chắc muốn xóa liên hệ của "${selected?.translations?.[0]?.title}" không?`}
+        onClose={() => setOpenConfirm(false)}
+        onConfirm={() => handleDelete(selected?.id!)}
+      />
+    </Stack>
   );
 }

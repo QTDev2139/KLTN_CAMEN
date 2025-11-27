@@ -8,6 +8,8 @@ import ArticleOutlined from '@mui/icons-material/ArticleOutlined';
 import LocalOfferOutlined from '@mui/icons-material/LocalOfferOutlined';
 import StarOutline from '@mui/icons-material/StarOutline';
 import ChatBubbleOutline from '@mui/icons-material/ChatBubbleOutline';
+import { ContactMailOutlined } from '@mui/icons-material';
+import CategoryOutlined from '@mui/icons-material/CategoryOutlined';
 
 export interface SidebarItem {
   to: string;
@@ -57,7 +59,7 @@ export const sidebarsDashboard: SidebarItem[] = [
       {
         to: PATH.DASHBOARD_SCREEN.BLOG.BLOG_CATEGORY,
         title: 'Danh mục bài viết',
-        icon: <LocalOfferOutlined fontSize="small" />,
+        icon: <CategoryOutlined fontSize="small" />,
         allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
       },
     ],
@@ -79,5 +81,11 @@ export const sidebarsDashboard: SidebarItem[] = [
     title: 'Quản lý tin nhắn',
     icon: <ChatBubbleOutline fontSize="small" />,
     allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.STAFF],
+  },
+  {
+    to: PATH.DASHBOARD_SCREEN.CONTACT,
+    title: 'Quản lý liên hệ',
+    icon: <ContactMailOutlined fontSize="small" />,
+    allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER],
   },
 ];

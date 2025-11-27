@@ -1,5 +1,5 @@
 import { axiosApi } from '~/common/until/request.until';
-import { User } from './user.interfaces.api';
+import { CreatePersonnel, User } from './user.interfaces.api';
 
 // ----------------------------------- REGISTER ----------------------------------
 export const createRegister = async ({ name, email, password }: User) => {
@@ -64,7 +64,21 @@ export const getProfile = async () => {
 }
 
 // ----------------------------------- NHANVIEN LIST -----------------------------
-export const getDsnv = async () => {
-  const res = await axiosApi.get('dsnv/customer');
+export const getPersonnelList = async () => {
+  const res = await axiosApi.get('/users');
   return res.data.post;
+}
+export const getPersonnel = async ($id: number) => {
+  const res = await axiosApi.get(`/personnel/${$id}`);
+  return res.data.post;
+}
+
+export const createPersonnel = async (payload: CreatePersonnel) => {
+  const res = await axiosApi.post(`/users`, payload);
+  return res.data;
+}
+
+export const updatePersonnel = async ($id: number, payload: Partial<CreatePersonnel>) => {
+  const res = await axiosApi.put(`/users/${$id}`, payload);
+  return res.data;
 }

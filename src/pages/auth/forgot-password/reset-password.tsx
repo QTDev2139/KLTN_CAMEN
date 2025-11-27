@@ -90,7 +90,7 @@ export default function ResetPassword() {
           helperText={helperText('confirm_password')}
         />
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-          {formik.isSubmitting ? 'Đang gửi…' : 'Update password'}
+          {formik.isSubmitting ? 'Update password' : 'Update password'}
         </Button>
       </BoxForm>
     </Box>

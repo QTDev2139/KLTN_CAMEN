@@ -45,8 +45,6 @@ export default function BlogCategoriesScreen() {
   }
 
   function handleDelete(cat: BlogCategory) {
-    const ok = window.confirm(`Xóa danh mục "${cat.post_category_translations?.[0]?.name ?? cat.id}"? Hành động không thể hoàn tác.`);
-    if (!ok) return;
     deleteCategory(cat.id);
     snackbar('success', 'Xóa danh mục bài viết thành công');
   }
