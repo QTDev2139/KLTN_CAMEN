@@ -33,6 +33,7 @@ const ListProduct: React.FC<ListProductProps> = ({ onEdit }) => {
     try {
       await productApi.deleteProduct(selectedProduct.id);
       setListProduct((prev) => prev.filter((p) => p.id !== selectedProduct.id));
+      snackbar('success', "Xóa sản phẩm thành công");
     } catch (error) {
       console.error(error);
       snackbar('error', "Xóa sản phẩm thất bại");

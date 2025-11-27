@@ -23,6 +23,7 @@ import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 import { StateLabelContact } from './contact.state';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { User } from '~/apis/user/user.interfaces.api';
+import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
 // import contactApi from '~/apis/contact'; // uncomment if API exists
 
 type ContactItem = {
@@ -47,6 +48,7 @@ const ContactList: React.FC = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [selected, setSelected] = useState<ContactItem | null>(null);
   const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
+  const [openConfirm, setOpenConfirm] = useState(false);
 
   const [role, setRole] = useState('');
   const [note, setNote] = useState('');
@@ -81,7 +83,6 @@ const ContactList: React.FC = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       const res = await userApi.getPersonnel(3);
-      console.log('res', res);
       setDsnv(res);
     };
 
@@ -108,7 +109,6 @@ const ContactList: React.FC = () => {
   const handleSubmitState = async () => {
     if (!selected) return;
     try {
-      console.log('selected id', selected.id, note);
       const res = await contactApi.updateStatusContact(selected.id, note);
       snackbar('success', res.message || 'Cập nhật trạng thái thành công');
       await fetchList();
@@ -119,11 +119,12 @@ const ContactList: React.FC = () => {
   };
 
   const handleDelete = async (id: number | string) => {
-    // eslint-disable-next-line no-restricted-globals
-    if (!confirm('Xóa liên hệ này?')) return;
     try {
-      // await contactApi.delete(id);
-      setItems((prev) => prev.filter((i) => i.id !== id));
+      console.log('Deleting contact with id:', id);
+      await contactApi.deleteContact(id);
+      snackbar('success', 'Xóa liên hệ thành công');
+      await fetchList();
+      setOpenConfirm(false);
     } catch (e) {
       console.error(e);
     }
@@ -176,7 +177,14 @@ const ContactList: React.FC = () => {
                   <EditOutlined fontSize="small" />
                 </IconButton>
                 {(role === 'admin' || role === 'root') && (
-                  <IconButton size="small" title="Xóa" onClick={() => handleDelete(row.id)}>
+                  <IconButton
+                    size="small"
+                    title="Xóa"
+                    onClick={() => {
+                      setSelected(row);      
+                      setOpenConfirm(true);
+                    }}
+                  >
                     <DeleteOutline fontSize="small" />
                   </IconButton>
                 )}
@@ -184,6 +192,14 @@ const ContactList: React.FC = () => {
             </TableCell>
           </TableRow>
         )}
+      />
+
+      <ModalConfirm
+        open={openConfirm}
+        title="Xóa liên hệ"
+        message={`Bạn có chắc muốn xóa liên hệ của "${selected?.name}" không?`}
+        onClose={() => setOpenConfirm(false)}
+        onConfirm={() => handleDelete(selected?.id!)}
       />
 
       {/* View dialog (no Grid) */}

@@ -33,14 +33,14 @@ export default function TableElement<T>({ title, columns, rows, renderRow }: Tab
                     <TableCell
                       key={col.id}
                       sx={{
-                        p: 1,
+                       
                         position: 'sticky',
                         right: 0,
                         backgroundColor: 'background.paper',
                         
                       }}
                     >
-                      <Typography variant="h6" sx={{ textAlign: 'center', minWidth: col.width, width: '100%' }}>
+                      <Typography variant="h6" sx={{ textAlign: 'center', width: '100%' }}>
                         {col.label}
                       </Typography>
                     </TableCell>
@@ -48,7 +48,7 @@ export default function TableElement<T>({ title, columns, rows, renderRow }: Tab
                 }
                 return (
                   <TableCell key={col.id} >
-                    <Typography variant="h6" sx={{ p: 1, textAlign: 'center', width: col.width }}>
+                    <Typography variant="h6" sx={{ textAlign: 'center', width: col.width }}>
                       {col.label}
                     </Typography>
                   </TableCell>

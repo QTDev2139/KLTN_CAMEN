@@ -148,7 +148,7 @@ export default function ContactForm() {
       </Box>
 
       <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-        {formik.isSubmitting ? 'Đang gửi…' : 'Gửi liên hệ'}
+        {formik.isSubmitting ? 'Gửi liên hệ' : 'Gửi liên hệ'}
       </Button>
     </Box>
   );
