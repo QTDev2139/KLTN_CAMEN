@@ -52,7 +52,23 @@ export default function LoginPage() {
           navigate('/dashboard/' + DASHBOARD_SCREEN.OVERVIEW, { replace: true });
         }
       } catch (error: any) {
-        const message = error?.response?.data?.message || 'Tài khoản mật khẩu không chính xác';
+        const resp = error?.response?.data;
+        let message = error?.message || 'Có lỗi xảy ra';
+
+        if (resp) {
+          if (typeof resp === 'string') {
+            message = resp;
+          } else if (typeof resp.message === 'string') {
+            message = resp.message;
+          } else if (resp.errors) {
+            if (Array.isArray(resp.errors)) {
+              message = resp.errors.join(', ');
+            } else if (typeof resp.errors === 'object') {
+              message = Object.values(resp.errors).flat().join(', ');
+            }
+          }
+        }
+
         snackbar('error', message);
       } finally {
         setSubmitting(false);
@@ -95,13 +111,21 @@ export default function LoginPage() {
           <Link
             to={`/${prefix}auth/${AUTH_SCREEN.FORGOT_PW}`}
             replace
-            style={{ display: 'block', textAlign: 'end', fontSize: '14px', color: 'text.secondary', position: 'absolute', right: 0, top: -20 }}
+            style={{
+              display: 'block',
+              textAlign: 'end',
+              fontSize: '14px',
+              color: 'text.secondary',
+              position: 'absolute',
+              right: 0,
+              top: -20,
+            }}
           >
             Quên mật khẩu
           </Link>
         </div>
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-          {formik.isSubmitting ? 'Đang gửi…' : 'Sign in'}
+          {formik.isSubmitting ? 'Sign in' : 'Sign in'}
         </Button>
         <StackRowAlignCenter sx={{ width: '100%' }}>
           <Divider sx={{ flex: 1 }} />

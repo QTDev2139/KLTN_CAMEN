@@ -5,7 +5,6 @@ export const localeSchema = Yup.object({
   title: Yup.string().required('Không được để trống'),
   slug: Yup.string().required('Không được để trống'),
   content: Yup.string().required('Không được để trống'),
-  meta_title: Yup.string().required('Bắt buộc'),
   meta_description: Yup.string().required('Bắt buộc'),
 });
 

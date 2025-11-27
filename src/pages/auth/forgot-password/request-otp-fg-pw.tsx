@@ -85,7 +85,7 @@ export default function RequestOtpForgottenPassword({ setMode, setEmail }: Props
           helperText={helperText('email')}
         />
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-          {formik.isSubmitting ? 'Đang gửi…' : 'Xác nhận'}
+          {formik.isSubmitting ? 'Xác nhận' : 'Xác nhận'}
         </Button>
       </BoxForm>
     </Box>

@@ -33,7 +33,6 @@ export default function CreateBlogMultiLang({ initial, onSuccess }: { initial?: 
     const postCatId =
       (initial as any).post_category?.id ??
       (initial as any).post_category_id ??
-      // fallback: try nested shape used by some responses
       (initial as any).post_category?.post_category_id ??
       '';
 
@@ -45,7 +44,6 @@ export default function CreateBlogMultiLang({ initial, onSuccess }: { initial?: 
         title: viTr.title ?? '',
         slug: viTr.slug ?? '',
         content: viTr.content ?? '',
-        meta_title: viTr.meta_title ?? '',
         meta_description: viTr.meta_description ?? '',
       },
       en: {
@@ -53,7 +51,6 @@ export default function CreateBlogMultiLang({ initial, onSuccess }: { initial?: 
         title: enTr.title ?? '',
         slug: enTr.slug ?? '',
         content: enTr.content ?? '',
-        meta_title: enTr.meta_title ?? '',
         meta_description: enTr.meta_description ?? '',
       },
     };
@@ -79,7 +76,6 @@ export default function CreateBlogMultiLang({ initial, onSuccess }: { initial?: 
           fd.append(`post_translations[${idx}][title]`, t.title);
           fd.append(`post_translations[${idx}][slug]`, t.slug);
           fd.append(`post_translations[${idx}][content]`, t.content);
-          fd.append(`post_translations[${idx}][meta_title]`, t.meta_title ?? '');
           fd.append(`post_translations[${idx}][meta_description]`, t.meta_description ?? '');
         });
 
@@ -258,13 +254,6 @@ export default function CreateBlogMultiLang({ initial, onSuccess }: { initial?: 
                 helperText={helperText('vi.slug')}
               />
 
-              <TextField
-                label="Meta title (VI)"
-                fullWidth
-                {...formik.getFieldProps('vi.meta_title')}
-                error={showError('vi.meta_title')}
-                helperText={helperText('vi.meta_title')}
-              />
 
               <TextField
                 label="Meta description (VI)"
@@ -322,13 +311,6 @@ export default function CreateBlogMultiLang({ initial, onSuccess }: { initial?: 
                 helperText={helperText('en.slug')}
               />
 
-              <TextField
-                label="Meta title (EN)"
-                fullWidth
-                {...formik.getFieldProps('en.meta_title')}
-                error={showError('en.meta_title')}
-                helperText={helperText('en.meta_title')}
-              />
 
               <TextField
                 label="Meta description (EN)"
@@ -369,7 +351,7 @@ export default function CreateBlogMultiLang({ initial, onSuccess }: { initial?: 
            Reset
          </Button>
          <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting}>
-           {formik.isSubmitting ? 'Đang gửi…' : 'Submit'}
+           {formik.isSubmitting ? 'Submit' : 'Submit'}
          </Button>
        </Stack>
      </Box>
