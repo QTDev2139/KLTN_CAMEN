@@ -14,7 +14,7 @@ import {
 import { ModeEditOutlineOutlined } from '@mui/icons-material';
 import { User } from '~/apis/user/user.interfaces.api';
 import { userApi } from '~/apis';
-import { ConvertRole, StatusRole } from './customers.state';
+import { ConvertRole, NameStatusRole, StatusRole } from './customers.state';
 import { ModalElement } from '~/components/modal/modal-element/modal-element';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { useFormik } from 'formik';
@@ -90,7 +90,7 @@ const CustomersList: React.FC = () => {
               <Typography>{user.email}</Typography>
             </TableCell>
             <TableCell>
-              <TagElement type={StatusRole[user.role?.name || '']} content={user.role?.name || ''} />
+              <TagElement type={StatusRole[user.role?.name || '']} content={NameStatusRole[user.role?.name || '']} />
             </TableCell>
             <TableCell>
               <TagElement
@@ -145,9 +145,10 @@ const CustomersList: React.FC = () => {
               fullWidth
             >
               <MenuItem value="2">Ban lãnh đạo</MenuItem>
-              <MenuItem value="3">Manager</MenuItem>
+              <MenuItem value="3">Quản lý</MenuItem>
               <MenuItem value="5">Marketing</MenuItem>
               <MenuItem value="6">Staff</MenuItem>
+              <MenuItem value="7">Nhân viên kho</MenuItem>
             </TextField>
             <TextField
               select

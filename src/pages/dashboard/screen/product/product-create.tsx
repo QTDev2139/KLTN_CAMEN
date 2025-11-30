@@ -22,15 +22,13 @@ import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { RichEditor } from '~/components/rick-text-editor/rick-text-editor';
 import { slugify } from '~/common/until/slug';
 
-// type code cho tab
 type LocaleCode = 'vi' | 'en';
 
-// --- utils nhỏ ---
 
 
 export default function CreateProduct(props: {
-  initial?: Partial<ProductDetail>; // dùng cho edit
-  onSuccess?: () => void; // callback sau khi submit thành công
+  initial?: Partial<ProductDetail>;
+  onSuccess?: () => void; 
 }) {
   const { initial, onSuccess } = props;
   const { snackbar } = useSnackbar();
