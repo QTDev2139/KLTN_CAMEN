@@ -104,9 +104,10 @@ export default function CustomersScreen() {
               helperText={formik.touched.role_id && formik.errors.role_id ? formik.errors.role_id : ' '}
             >
               <MenuItem value="2">Ban lãnh đạo</MenuItem>
-              <MenuItem value="3">Manager</MenuItem>
+              <MenuItem value="3">Quản lý</MenuItem>
               <MenuItem value="5">Marketing</MenuItem>
               <MenuItem value="6">Staff</MenuItem>
+              <MenuItem value="7">Nhân viên kho</MenuItem>
             </TextField>
           </Stack>
         }

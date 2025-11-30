@@ -55,4 +55,5 @@ export const DASHBOARD_SCREEN = {
     CHATBOX: 'chatbox',
     // ANALYTICS: 'analytics',
     // SETTINGS: 'settings',
+    IMPORT_PRODUCT: 'import-product',
 }

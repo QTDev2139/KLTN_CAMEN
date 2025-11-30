@@ -40,6 +40,7 @@ import ReviewsScreen from '~/pages/dashboard/screen/reviews/reviews.screen';
 import ChatScreen from '~/pages/dashboard/screen/chat/chat.screen';
 import ContactScreen from '~/pages/dashboard/screen/contact/contact.screen';
 import { UserType } from '~/apis/user/user.enum';
+import ImportProductScreen from '~/pages/dashboard/screen/import-product/import-product.screen';
 
 export type Route = {
   path: string;
@@ -272,6 +273,12 @@ export const routes: Route[] = [
         element: ContactScreen,
         type: RouteType.PROTECTED,
         allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.STAFF],
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.IMPORT_PRODUCT,
+        element: ImportProductScreen,
+        type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.STAFF, UserType.STORAGEKEEPER],
       },
     ],
   },
