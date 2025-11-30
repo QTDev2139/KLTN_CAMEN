@@ -4,16 +4,8 @@ export const schema = Yup.object().shape({
   price: Yup.number().required('Giá bán là bắt buộc').min(10000, 'Giá phải lớn hơn 10.000 VND'),
   compare_at_price: Yup.number()
     .nullable()
-    .min(0, 'Giá phải lớn hơn 0')
-    .test(
-      'compare-at-price-half',
-      'Giá khuyến mãi phải lớn hơn 50% của Giá bán',
-      function (value) {
-        const { price } = this.parent as any;
-        if (value == null || price == null) return true; // nếu không nhập khuyến mãi hoặc price chưa có -> bỏ qua kiểm tra
-        return value > price * 0.5;
-      },
-    ),
+    .min(0, 'Khuyến mãi lớn hơn hoặc bằng 0')
+    ,
   origin: Yup.string().required('Xuất xứ là bắt buộc'),
   quantity_per_pack: Yup.number().required('Số lượng/combo là bắt buộc').min(1, 'Số lượng phải lớn hơn 0'),
   shipping_from: Yup.string().required('Nơi giao hàng là bắt buộc'),

@@ -132,6 +132,7 @@ const ContactList: React.FC = () => {
 
   // Columns for TableElement
   const columns = [
+    { id: 'stt', label: 'STT' },
     { id: 'name', label: 'Tên khách hàng', width: 240 },
     { id: 'email', label: 'Địa chỉ email', width: 260 },
     { id: 'phone', label: 'Số điện thoại', width: 140 },
@@ -148,8 +149,9 @@ const ContactList: React.FC = () => {
       <TableElement
         columns={columns}
         rows={items}
-        renderRow={(row: ContactItem) => (
+        renderRow={(row: ContactItem, index: number) => (
           <TableRow key={row.id} hover>
+            <TableCell sx={{ textAlign: 'center' }}>{index + 1}</TableCell>
             <TableCell>{row.name}</TableCell>
             <TableCell>{row.email}</TableCell>
             <TableCell sx={{ textAlign: 'center' }}>{row.phone || '-'}</TableCell>

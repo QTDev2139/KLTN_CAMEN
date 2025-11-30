@@ -24,7 +24,7 @@ export const sidebarsDashboard: SidebarItem[] = [
     to: PATH.DASHBOARD_SCREEN.OVERVIEW,
     title: 'Overview',
     icon: <DashboardOutlined fontSize="small" />,
-    allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
+    allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE, UserType.MARKETING, UserType.STAFF, UserType.STORAGEKEEPER],
   },
   {
     to: PATH.DASHBOARD_SCREEN.ORDERS,
@@ -87,5 +87,11 @@ export const sidebarsDashboard: SidebarItem[] = [
     title: 'Quản lý liên hệ',
     icon: <ContactMailOutlined fontSize="small" />,
     allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER],
+  },
+  {
+    to: PATH.DASHBOARD_SCREEN.IMPORT_PRODUCT,
+    title: 'Quản lý nhập hàng',
+    icon: <Inventory2Outlined fontSize="small" />,
+    allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.STAFF, UserType.STORAGEKEEPER],
   },
 ];
