@@ -17,7 +17,7 @@ export const AUTH_SCREEN = {
 
 export const SITE_SCREEN = {
     HOME: 'home',
-    CATEGORY: 'c/:slug',
+    DECLARATION: 'declaration',
     PRODUCT: {
         ROOT: 'product',
         DOMESTIC: 'product-domestic',
@@ -32,20 +32,28 @@ export const SITE_SCREEN = {
     BLOG_DETAIL: 'blog/:slug',
     ACCOUNT: 'account',
     // ACCOUNT_ORDERS: 'account_orders',
-    CHECKOUT: 'checkout',
+    PRODUCTION_PROCESS: 'production-process',
     ORDER: 'order',
     ORDER_DETAIL: 'order/:id',
+    PURCHASE: 'purchase',
     PAYMENT_CALLBACK: 'payment-callback',
+    COD_CONFIRMATION: 'cod-confirmation',
 }
 
 export const DASHBOARD_SCREEN = {
     OVERVIEW: 'overview',
     ORDERS: 'orders',
     PRODUCT: 'product',
+    CONTACT: 'contact',
     CUSTOMERS: 'customers',
-    BLOG: 'blog',
+    BLOG: {
+        BLOG_VIEW: 'blog-view',
+        BLOG_CATEGORY: 'blog-categories',
+    },
     COUPON: 'coupon',
     REVIEWS: 'review',
+    CHATBOX: 'chatbox',
     // ANALYTICS: 'analytics',
     // SETTINGS: 'settings',
+    IMPORT_PRODUCT: 'import-product',
 }

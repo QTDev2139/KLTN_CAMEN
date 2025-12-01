@@ -6,7 +6,7 @@ import Logo from '~/components/logo/logo';
 import { FONT_SIZE } from '~/common/constant/style.constant';
 
 import { StackRowAlignCenter } from '~/components/elements/styles/stack.style';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AUTH_SCREEN, DASHBOARD_SCREEN, SITE_SCREEN } from '~/router/path.route';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { BoxForm } from '~/components/elements/forms/box/box-form';
@@ -14,6 +14,7 @@ import { useAuth } from '~/common/auth/auth.context';
 import { authApi } from '~/apis/auth/auth.api';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
+import { useTranslation } from 'react-i18next';
 
 export interface FormRegister {
   email: string;
@@ -29,6 +30,8 @@ export default function LoginPage() {
   const { login } = useAuth();
   const { snackbar } = useSnackbar();
   const navigate = useNavigate();
+
+  const { t } = useTranslation('login');
 
   // Lấy lang từ hook
   const currentLang = useLang();
@@ -52,7 +55,23 @@ export default function LoginPage() {
           navigate('/dashboard/' + DASHBOARD_SCREEN.OVERVIEW, { replace: true });
         }
       } catch (error: any) {
-        const message = error?.response?.data?.message || 'Tài khoản mật khẩu không chính xác';
+        const resp = error?.response?.data;
+        let message = error?.message || 'Có lỗi xảy ra';
+
+        if (resp) {
+          if (typeof resp === 'string') {
+            message = resp;
+          } else if (typeof resp.message === 'string') {
+            message = resp.message;
+          } else if (resp.errors) {
+            if (Array.isArray(resp.errors)) {
+              message = resp.errors.join(', ');
+            } else if (typeof resp.errors === 'object') {
+              message = Object.values(resp.errors).flat().join(', ');
+            }
+          }
+        }
+
         snackbar('error', message);
       } finally {
         setSubmitting(false);
@@ -73,37 +92,53 @@ export default function LoginPage() {
       <BoxForm>
         <Logo />
         <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, padding: '20px 0' }}>
-          Sign in to CamenFood
+          {t('title')}
         </Typography>
 
         <TextField
-          label="Email"
+          label={t('email_placeholder')}
           fullWidth
           {...formik.getFieldProps('email')}
           error={showError('email')}
           helperText={helperText('email')}
         />
         <TextField
-          label="Password"
+          label={t('password_placeholder')}
           type="password"
           fullWidth
           {...formik.getFieldProps('password')}
           error={showError('password')}
           helperText={helperText('password')}
         />
-
+        <div style={{ width: '100%', position: 'relative' }}>
+          <Link
+            to={`${prefix}/auth/${AUTH_SCREEN.FORGOT_PW}`}
+            replace
+            style={{
+              display: 'block',
+              textAlign: 'end',
+              fontSize: '14px',
+              color: 'text.secondary',
+              position: 'absolute',
+              right: 0,
+              top: -20,
+            }}
+          >
+            {t('forgot_password')}
+          </Link>
+        </div>
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-          {formik.isSubmitting ? 'Đang gửi…' : 'Sign in'}
+          {formik.isSubmitting ? t('sign_in_button') : t('sign_in_button')}
         </Button>
         <StackRowAlignCenter sx={{ width: '100%' }}>
           <Divider sx={{ flex: 1 }} />
-          <Typography sx={{ padding: '10px' }}>or</Typography>
+          <Typography sx={{ padding: '10px' }}>{t('or_separator')}</Typography>
           <Divider sx={{ flex: 1 }} />
         </StackRowAlignCenter>
         <StackRowAlignCenter sx={{ justifyContent: 'center' }}>
-          <Typography sx={{ paddingRight: '6px' }}>New to CamenFood?</Typography>
-          <Link to={`/${prefix}/auth/${AUTH_SCREEN.SIGN_UP}`} replace>
-            Create an account
+          <Typography sx={{ paddingRight: '6px' }}>{t('new_user_prompt')}</Typography>
+          <Link to={`${prefix}/auth/${AUTH_SCREEN.SIGN_UP}`} replace>
+            {t('create_account_link')}
           </Link>
         </StackRowAlignCenter>
       </BoxForm>

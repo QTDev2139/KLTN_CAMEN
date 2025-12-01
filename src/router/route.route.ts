@@ -13,8 +13,7 @@ import SiteLayout from '~/layouts/site/site.layout';
 import SitePage from '~/pages/site/site.page';
 import HomePage from '~/pages/site/screen/home/home.screen';
 import CartPage from '~/pages/site/screen/cart/cart.screen';
-import CategoryPage from '~/pages/site/screen/category/category.screen';
-import ProductPage from '~/pages/site/screen/product/product.screen';
+import DeclarationPage from '~/pages/site/screen/declaration/declaration.screen';
 import ProductDomesticPage from '~/pages/site/screen/product-domestic/product-domestic.screen';
 import ProductExportPage from '~/pages/site/screen/product-export/product-export.screen';
 import ProductDetailPage from '~/pages/site/screen/product-detail/product-detail.screen';
@@ -22,9 +21,11 @@ import ContactPage from '~/pages/site/screen/contact/contact.screen';
 import BlogPage from '~/pages/site/screen/blog/blog.screen';
 import BlogDetailPage from '~/pages/site/screen/blog-detail/blog-detail.screen';
 import AccountPage from '~/pages/site/screen/account/account.screen';
-import CheckoutPage from '~/pages/site/screen/checkout/checkout.screen';
+import ProductionProcessPage from '~/pages/site/screen/production-process/production-process.screen';
 import OrderPage from '~/pages/site/screen/order/order.screen';
 import PaymentCallbackPage from '~/pages/site/screen/payment/payment-callback.screen';
+import PurchasePage from '~/pages/site/screen/purchase/purchase.screen';
+import CodConfirmationPage from '~/pages/site/screen/payment/cod-confirmation.screen';
 
 import DashboardLayout from '~/layouts/dashboard/dashboard.layout';
 import DashboardPage from '~/pages/dashboard/dashboard.page';
@@ -32,10 +33,15 @@ import OverviewScreen from '~/pages/dashboard/screen/overview/overview.screen';
 import OrdersScreen from '~/pages/dashboard/screen/orders/orders.screen';
 import ProductScreen from '~/pages/dashboard/screen/product/product.screen';
 import CustomersScreen from '~/pages/dashboard/screen/customers/customers.screen';
-import BlogScreen from '~/pages/dashboard/screen/blog/blog.screen';
+import BlogScreen from '~/pages/dashboard/screen/blog/blog-view/blog.screen';
+import BlogCategoryScreen from '~/pages/dashboard/screen/blog/blog-categories/blog-categories.screen';
 import CouponScreen from '~/pages/dashboard/screen/coupon/coupon.screen';
 import ReviewsScreen from '~/pages/dashboard/screen/reviews/reviews.screen';
+import ChatScreen from '~/pages/dashboard/screen/chat/chat.screen';
+import ContactScreen from '~/pages/dashboard/screen/contact/contact.screen';
 import { UserType } from '~/apis/user/user.enum';
+import ImportProductScreen from '~/pages/dashboard/screen/import-product/import-product.screen';
+
 
 export type Route = {
   path: string;
@@ -102,8 +108,8 @@ export const routes: Route[] = [
         allowUserTypes: [],
       },
       {
-        path: PATH.SITE_SCREEN.CATEGORY,
-        element: CategoryPage,
+        path: PATH.SITE_SCREEN.DECLARATION,
+        element: DeclarationPage,
         type: RouteType.PUBLIC,
         allowUserTypes: [],
       },
@@ -162,8 +168,8 @@ export const routes: Route[] = [
         allowUserTypes: [],
       },
       {
-        path: PATH.SITE_SCREEN.CHECKOUT,
-        element: CheckoutPage,
+        path: PATH.SITE_SCREEN.PRODUCTION_PROCESS,
+        element: ProductionProcessPage,
         type: RouteType.PUBLIC,
         allowUserTypes: [],
       },
@@ -185,6 +191,19 @@ export const routes: Route[] = [
         type: RouteType.PUBLIC,
         allowUserTypes: [],
       },
+      {
+        path: PATH.SITE_SCREEN.PURCHASE,
+        element: PurchasePage,
+        type: RouteType.PUBLIC,
+        allowUserTypes: [],
+      },
+      {
+        path: PATH.SITE_SCREEN.COD_CONFIRMATION,
+        element: CodConfirmationPage,
+        type: RouteType.PUBLIC,
+        allowUserTypes: [],
+      },
+
     ],
   },
 
@@ -221,8 +240,14 @@ export const routes: Route[] = [
         allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
       },
       {
-        path: PATH.DASHBOARD_SCREEN.BLOG,
+        path: PATH.DASHBOARD_SCREEN.BLOG.BLOG_VIEW,
         element: BlogScreen,
+        type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.BLOG.BLOG_CATEGORY,
+        element: BlogCategoryScreen,
         type: RouteType.PROTECTED,
         allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
       },
@@ -237,6 +262,24 @@ export const routes: Route[] = [
         element: ReviewsScreen,
         type: RouteType.PROTECTED,
         allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.CHATBOX,
+        element: ChatScreen,
+        type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.STAFF],
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.CONTACT,
+        element: ContactScreen,
+        type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.STAFF],
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.IMPORT_PRODUCT,
+        element: ImportProductScreen,
+        type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.STAFF, UserType.STORAGEKEEPER],
       },
     ],
   },

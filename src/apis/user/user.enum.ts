@@ -6,4 +6,5 @@ export enum UserType {
   MARKETING = 'marketing', 
   STAFF = 'staff',
   CUSTOMER = 'customer',
+  STORAGEKEEPER = 'storekeeper',
 }

@@ -70,6 +70,8 @@ const CartPage: React.FC = () => {
   };
 
   const scheduleSync = (itemId: number, nextQty: number) => {
+    // clamp to max 10
+    nextQty = Math.min(nextQty, 10);
     updateQtyOptimistic(itemId, nextQty);
 
     const old = debounceTimers.current.get(itemId);
@@ -107,7 +109,9 @@ const CartPage: React.FC = () => {
     if (syncing.has(id)) return;
     const item = cartItems.find((i) => i.id === id);
     if (!item) return;
-    scheduleSync(id, item.qty + 1);
+    // don't increment beyond 10
+    if (item.qty >= 10) return;
+    scheduleSync(id, Math.min(item.qty + 1, 10));
   };
 
   const handleOpenConfirm = (itemId: number) => {
@@ -117,7 +121,7 @@ const CartPage: React.FC = () => {
 
   const handleConfirmDelete = async () => {
     if (selectedItemId === null) return;
-    
+
     setLoadingDelete(true);
     try {
       setSyncing((prev) => new Set(prev).add(selectedItemId));
@@ -225,7 +229,7 @@ const CartPage: React.FC = () => {
                   <Typography variant="subtitle1">{FormatPrice(parseFloat(item.unit_price))}</Typography>
                 </Grid>
 
-                <Grid size={{ md: 2 }}>
+                <Grid size={{ md: 2 }} sx={{ position: 'relative' }}>
                   <StackRow>
                     <ButtonGroup variant="outlined" color="inherit" size="small" sx={{ color: palette.text.primary }}>
                       <Button onClick={() => handlePrev(item.id)} disabled={item.qty === 1 || isItemSyncing}>
@@ -237,6 +241,9 @@ const CartPage: React.FC = () => {
                       </Button>
                     </ButtonGroup>
                   </StackRow>
+                  <Typography variant="subtitle2" sx={{ position: 'absolute', bottom: '-20px', right: '38%', color: palette.text.secondary, fontSize: '12px' }}>
+                    Số lượng tồn: {item.product_id.stock_quantity}
+                  </Typography>
                 </Grid>
 
                 <Grid size={{ md: 1 }}>
@@ -250,6 +257,7 @@ const CartPage: React.FC = () => {
                       color: isItemSyncing ? palette.text.disabled : palette.primary.main,
                       cursor: isItemSyncing ? 'default' : 'pointer',
                       pointerEvents: isItemSyncing ? 'none' : 'auto',
+                      textAlign: 'center',
                     }}
                     onClick={() => handleOpenConfirm(item.id)}
                   >

@@ -6,10 +6,12 @@ import { userApi } from '~/apis';
 import Logo from '~/components/logo/logo';
 import { FONT_SIZE } from '~/common/constant/style.constant';
 
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AUTH_SCREEN } from '~/router/path.route';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { BoxForm } from '~/components/elements/forms/box/box-form';
+import { useLang } from '~/hooks/use-lang/use-lang';
+import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 
 export interface FormResetPw {
   password: string;
@@ -24,7 +26,8 @@ const schema = Yup.object({
 });
 
 export default function ResetPassword() {
-  const { lang } = useParams();
+  const currentLang = useLang();
+  const prefix = getLangPrefix(currentLang);
   const { snackbar } = useSnackbar();
   const navigate = useNavigate();
 
@@ -44,7 +47,7 @@ export default function ResetPassword() {
         const data = { ...dataToSend, reset_token };
         const res = await userApi.resetPassword(data);
         snackbar('success', res);
-        navigate(`/${lang}/auth/${AUTH_SCREEN.LOGIN}`);
+        navigate(`${prefix}/auth/${AUTH_SCREEN.LOGIN}`);
       } catch (error: any) {
         const message = error?.response?.data?.message || 'Lỗi không xác định';
         snackbar('error', message);
@@ -87,7 +90,7 @@ export default function ResetPassword() {
           helperText={helperText('confirm_password')}
         />
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-          {formik.isSubmitting ? 'Đang gửi…' : 'Update password'}
+          {formik.isSubmitting ? 'Update password' : 'Update password'}
         </Button>
       </BoxForm>
     </Box>

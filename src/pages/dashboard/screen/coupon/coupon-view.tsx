@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -8,7 +7,6 @@ import {
   Typography,
   Stack,
   Box,
-  Chip,
   Divider,
   Button,
 } from '@mui/material';
@@ -16,6 +14,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Coupon } from '~/apis/coupon/coupon.interface.api';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 import { formatDate } from '~/common/until/date-format.until';
+import { TagElement } from '~/components/elements/tag/tag.element';
+import { getValidityStatus, StateLabel, StateTagType } from './coupon.state';
 
 type Props = {
   open: boolean;
@@ -23,15 +23,9 @@ type Props = {
   coupon: Coupon | null;
 };
 
-const stateColorMap: Record<string, 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info'> = {
-  pending: 'warning',
-  approved: 'success',
-  rejected: 'error',
-  expired: 'default',
-  disabled: 'default',
-};
-
 export default function CouponViewModal({ open, onClose, coupon }: Props) {
+  
+
   if (!coupon) return null;
 
   const remaining =
@@ -60,19 +54,23 @@ export default function CouponViewModal({ open, onClose, coupon }: Props) {
               <Typography variant="h6" fontWeight={700}>
                 {coupon.code}
               </Typography>
-              <Chip
-                size="small"
-                color={stateColorMap[coupon.state || ''] || 'default'}
-                label={coupon.state || 'N/A'}
-                sx={{ textTransform: 'capitalize' }}
+              <TagElement type={StateTagType[coupon.state]} content={StateLabel[coupon.state]} width={120} />
+              <TagElement
+                type={coupon.is_active ? 'success' : 'error'}
+                content={coupon.is_active ? 'Hoạt động' : 'Không hoạt động'}
+                width={120}
               />
-              <Chip
-                size="small"
-                variant={coupon.is_active ? 'filled' : 'outlined'}
-                color={coupon.is_active ? 'primary' : 'default'}
-                label={coupon.is_active ? 'Active' : 'Inactive'}
-              />
+              {/* Hiển thị trạng thái hiệu lực */}
+              {(() => {
+                const validity = getValidityStatus(coupon);
+                return validity.label ? (
+                  <TagElement type={validity.type || 'info'} content={validity.label} width={140} />
+                ) : null;
+              })()}
             </Stack>
+            <Typography variant="body2" color="text.secondary" mt={1}>
+              {coupon.reason_end && `Lý do: ${coupon.reason_end}` || ''}
+            </Typography>
           </Box>
 
           <Divider />
@@ -153,7 +151,7 @@ export default function CouponViewModal({ open, onClose, coupon }: Props) {
                 <Typography variant="body2" fontWeight={600}>
                   {formatDate(coupon.end_date)}
                 </Typography>
-              </Stack>
+              </Stack>  
             </Stack>
           </Box>
 
@@ -161,7 +159,8 @@ export default function CouponViewModal({ open, onClose, coupon }: Props) {
 
           <Box>
             <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              Người tạo</Typography>
+              Người tạo
+            </Typography>
             <Typography variant="body2" fontWeight={600}>
               {coupon.user?.name || 'N/A'}
             </Typography>
@@ -170,7 +169,9 @@ export default function CouponViewModal({ open, onClose, coupon }: Props) {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose} variant="outlined">Đóng</Button>
+        <Button onClick={onClose} variant="outlined">
+          Đóng
+        </Button>
       </DialogActions>
     </Dialog>
   );

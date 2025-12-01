@@ -1,7 +1,7 @@
 import { DeleteOutline, ModeEditOutlineOutlined } from '@mui/icons-material';
 import { IconButton, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { couponApi } from '~/apis';
+import { couponApi, userApi } from '~/apis';
 import { Coupon } from '~/apis/coupon/coupon.interface.api';
 import { formatDate } from '~/common/until/date-format.until';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
@@ -12,34 +12,12 @@ import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import CouponViewModal from './coupon-view';
 import { TagElement, TagType } from '~/components/elements/tag/tag.element';
+import CouponUpdateModal from './coupon-update';
+import { getValidityStatus, StateLabel, StateTagType } from './coupon.state';
 
-type ListCouponProps = {
-  onEdit: (coupon: Coupon) => void;
-};
+// thêm hàm tính Hiệu lực
 
-const getStateTagType = (state: string): TagType => {
-  const stateMap: Record<string, TagType> = {
-    pending: 'warning',      // Chờ duyệt - màu vàng
-    approved: 'success',     // Đã duyệt - màu xanh lá
-    rejected: 'error',       // Từ chối - màu đỏ
-    expired: 'secondary',    // Hết hạn - màu xám
-    disabled: 'secondary',   // Vô hiệu hóa - xám
-  };
-  return stateMap[state] || 'info';
-};
-
-const getStateLabel = (state: string): string => {
-  const labelMap: Record<string, string> = {
-    pending: 'Chờ duyệt',
-    approved: 'Đã duyệt',
-    rejected: 'Từ chối',
-    expired: 'Hết hạn',
-    disabled: 'Vô hiệu hóa',
-  };
-  return labelMap[state] || state;
-};
-
-const ListCoupon: React.FC<ListCouponProps> = ({ onEdit }) => {
+const ListCoupon: React.FC = () => {
   const [listCoupon, setListCoupon] = useState<Coupon[]>([]);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
@@ -49,6 +27,17 @@ const ListCoupon: React.FC<ListCouponProps> = ({ onEdit }) => {
   const [viewCoupon, setViewCoupon] = useState<Coupon | null>(null);
   const [loadingView, setLoadingView] = useState(false);
 
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [updateCoupon, setUpdateCoupon] = useState<Coupon | null>(null);
+
+  const [role, setRole] = useState('');
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profile = await userApi.getProfile();
+      setRole(profile.role.name);
+    };
+    fetchProfile();
+  }, []);
   const handleOpenConfirm = (coupon: Coupon) => {
     setSelectedCoupon(coupon);
     setOpenConfirm(true);
@@ -60,6 +49,7 @@ const ListCoupon: React.FC<ListCouponProps> = ({ onEdit }) => {
     try {
       await couponApi.deleteCoupon(selectedCoupon.id);
       setListCoupon((prev) => prev.filter((p) => p.id !== selectedCoupon.id));
+      snackbar('success', 'Xóa mã giảm giá thành công');
     } catch (error) {
       console.error(error);
       snackbar('error', 'Xóa sản phẩm thất bại');
@@ -69,15 +59,21 @@ const ListCoupon: React.FC<ListCouponProps> = ({ onEdit }) => {
     }
   };
 
+  // open edit/update modal (fetch detail then open update)
   const handleEditClick = async (id: number) => {
+    setLoadingView(true);
     try {
       const detail = await couponApi.getCouponById(id);
-      onEdit(detail);
+      setUpdateCoupon(detail);
+      setOpenUpdate(true);
     } catch (e) {
       console.error(e);
-      snackbar('error', 'Không tải được thông tin mã giảm giá');
+      snackbar('error', 'Không tải được chi tiết mã giảm giá');
+    } finally {
+      setLoadingView(false);
     }
   };
+
   const handleViewClick = async (id: number) => {
     setLoadingView(true);
     try {
@@ -101,16 +97,17 @@ const ListCoupon: React.FC<ListCouponProps> = ({ onEdit }) => {
   }, []);
 
   const columns = [
-    { id: 'code', label: 'Mã giảm' },
-    { id: 'discount_value', label: 'Giá trị giảm' },
-    { id: 'min_order_amount', label: 'Đơn hàng tối thiểu' },
-    { id: 'usage_limit', label: 'Giới hạn sử dụng' },
-    { id: 'used_count', label: 'Đã sử dụng' },
-    { id: 'start_date', label: 'Ngày bắt đầu' },
-    { id: 'end_date', label: 'Ngày kết thúc' },
-    { id: 'state', label: 'Trạng thái' },
-    { id: 'is_active', label: 'Trạng thái hoạt động' },
-    { id: 'action', label: 'Action' },
+    { id: 'code', label: 'Mã giảm', width: 80 },
+    { id: 'discount_value', label: 'Giá trị giảm', width: 120 },
+    { id: 'min_order_amount', label: 'Đơn hàng tối thiểu', width: 180 },
+    { id: 'usage_limit', label: 'Giới hạn sử dụng', width: 180 },
+    { id: 'used_count', label: 'Đã sử dụng', width: 120 },
+    { id: 'start_date', label: 'Ngày bắt đầu', width: 140 },
+    { id: 'end_date', label: 'Ngày kết thúc', width: 140 },
+    { id: 'state', label: 'Trạng thái duyệt', width: 142 },
+    { id: 'validity', label: 'Hiệu lực', width: 100 },
+    { id: 'is_active', label: 'Trạng thái hoạt động', width: 182 },
+    { id: 'action', label: 'Action', width: 200 },
   ];
 
   return (
@@ -124,37 +121,45 @@ const ListCoupon: React.FC<ListCouponProps> = ({ onEdit }) => {
               <Typography>{coupon.code}</Typography>
             </TableCell>
             <TableCell sx={{ textAlign: 'right' }}>
-              <Typography sx={{ width: '120px' }}>
-                {coupon.discount_type === 'percentage' ? `${coupon.discount_value}%` : FormatPrice(coupon.discount_value)}
+              <Typography>
+                {coupon.discount_type === 'percentage'
+                  ? `${Number(coupon.discount_value)}% - ${FormatPrice(coupon.max_discount_amount)}`
+                  : FormatPrice(coupon.discount_value)}
               </Typography>
             </TableCell>
             <TableCell sx={{ textAlign: 'right' }}>
-              <Typography sx={{ width: '180px' }}>{FormatPrice(coupon.min_order_amount)}</Typography>
+              <Typography>{FormatPrice(coupon.min_order_amount)}</Typography>
             </TableCell>
             <TableCell sx={{ textAlign: 'center' }}>
-              <Typography sx={{ width: '180px' }}>{coupon.usage_limit}</Typography>
+              <Typography>{coupon.usage_limit}</Typography>
             </TableCell>
             <TableCell sx={{ textAlign: 'center' }}>
-              <Typography sx={{ width: '120px' }}>{coupon.used_count}</Typography>
+              <Typography>{coupon.used_count}</Typography>
             </TableCell>
             <TableCell>
-              <Typography sx={{ width: '135px' }}>{formatDate(coupon.start_date)}</Typography>
+              <Typography>{formatDate(coupon.start_date)}</Typography>
             </TableCell>
             <TableCell>
-              <Typography sx={{ width: '140px' }}>{formatDate(coupon.end_date)}</Typography>
+              <Typography>{formatDate(coupon.end_date)}</Typography>
             </TableCell>
             <TableCell>
-              <TagElement 
-                type={getStateTagType(coupon.state)} 
-                content={getStateLabel(coupon.state)} 
-                width={100}
-              />
+              <TagElement type={StateTagType[coupon.state]} content={StateLabel[coupon.state]} />
+            </TableCell>
+
+            <TableCell>
+              {(() => {
+                const validity = getValidityStatus(coupon);
+                return validity.label ? (
+                  <TagElement type={validity.type || 'info'} content={validity.label} />
+                ) : (
+                  <Typography sx={{ textAlign: 'center' }}>-</Typography>
+                );
+              })()}
             </TableCell>
             <TableCell sx={{ textAlign: 'center' }}>
-              <TagElement 
-                type={coupon.is_active ? 'success' : 'error'} 
-                content={coupon.is_active ? 'Hoạt động' : 'Không hoạt động'} 
-                width={200}
+              <TagElement
+                type={coupon.is_active ? 'success' : 'error'}
+                content={coupon.is_active ? 'Hoạt động' : 'Không hoạt động'}
               />
             </TableCell>
             <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
@@ -165,7 +170,13 @@ const ListCoupon: React.FC<ListCouponProps> = ({ onEdit }) => {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Sửa">
-                  <IconButton onClick={() => handleEditClick(coupon.id)}>
+                  <IconButton
+                    onClick={() => handleEditClick(coupon.id)}
+                    disabled={
+                      (role !== 'root' &&coupon.state === 'rejected') || (role === 'root' && coupon.state !== 'pending') || (role !== 'root' && coupon.state === 'pending')
+                    }
+                  >
+                    {/* Thay root bằng giám đốc  */}
                     <ModeEditOutlineOutlined />
                   </IconButton>
                 </Tooltip>
@@ -194,6 +205,19 @@ const ListCoupon: React.FC<ListCouponProps> = ({ onEdit }) => {
           setViewCoupon(null);
         }}
         coupon={viewCoupon}
+      />
+      <CouponUpdateModal
+        open={openUpdate}
+        onClose={() => {
+          setOpenUpdate(false);
+          setUpdateCoupon(null);
+        }}
+        coupon={updateCoupon}
+        onSubmitted={async () => {
+          const data = await couponApi.getCoupons();
+          setListCoupon(data);
+        }}
+        role={role}
       />
     </React.Fragment>
   );

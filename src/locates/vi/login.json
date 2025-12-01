@@ -1,0 +1,10 @@
+{
+  "title": "Đăng nhập vào CamenFood",
+  "email_placeholder": "Email",
+  "password_placeholder": "Mật khẩu",
+  "forgot_password": "Quên mật khẩu",
+  "sign_in_button": "Đăng nhập",
+  "or_separator": "hoặc",
+  "new_user_prompt": "Bạn mới đến CamenFood?",
+  "create_account_link": "Tạo tài khoản"
+}

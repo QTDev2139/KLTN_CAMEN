@@ -87,7 +87,7 @@ const PaymentCallbackPage: React.FC = () => {
                 </Typography>
               )}
               <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
-                <Button variant="contained" size="large" onClick={() => navigate(`${prefix}/order/${orderId}`)}>
+                <Button variant="contained" size="large" onClick={() => navigate(`${prefix}/purchase`)}>
                   Xem đơn hàng
                 </Button>
                 <Button variant="outlined" size="large" onClick={() => navigate(`${prefix}/home`)}>

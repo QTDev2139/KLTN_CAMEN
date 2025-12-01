@@ -1,5 +1,5 @@
 import { Stack, Typography, useTheme, Menu, MenuItem, IconButton, Avatar, Button } from '@mui/material';
-import { StackRowJustEnd } from '../elements/styles/stack.style';
+import { StackRowAlignCenter, StackRowJustEnd } from '../elements/styles/stack.style';
 import BtnSwitchLanguage from '../btn-switch-language/btn-switch-language';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,7 +10,6 @@ import { userApi } from '~/apis';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import LogoutIcon from '@mui/icons-material/Logout';
 
@@ -48,23 +47,25 @@ export default function AuthLink() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('resetToken');
     setUser(null);
     setAnchorEl(null);
-    snackbar('success',  'Đăng xuất thành công');
+    snackbar('success', 'Đăng xuất thành công');
     navigate(`${prefix}/auth/${AUTH_SCREEN.LOGIN}`);
   };
 
   const handleOrders = () => {
     setAnchorEl(null);
-    navigate(`${prefix}/${SITE_SCREEN.ORDER}`);
+    navigate(`${prefix}/${SITE_SCREEN.PURCHASE}`);
   };
 
   return (
     <Stack sx={{ width: '100%', paddingTop: '4px' }}>
       <StackRowJustEnd sx={{ alignItems: 'center' }}>
         <BtnSwitchLanguage />
-        
+
         {user ? (
           <>
             <Button
@@ -107,13 +108,37 @@ export default function AuthLink() {
                 },
               }}
             >
-              <MenuItem onClick={handleOrders} sx={{ py: 1.5 }}>
-                <ShoppingBagIcon sx={{ mr: 1.5, fontSize: 20 }} />
-                <Typography variant="body2">{ 'Đơn hàng'}</Typography>
+              <MenuItem
+                onClick={handleOrders}
+                sx={{
+                  cursor: 'pointer',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main', transform: 'translateX(4px)' },
+                  transition: 'all 200ms ease',
+                  width: '100%',
+                  py: 1,
+                }}
+              >
+                <StackRowAlignCenter onClick={handleOrders} gap={1}>
+                  <ShoppingBagIcon fontSize="small" />
+                  <Typography variant="body2">{'Đơn hàng'}</Typography>
+                </StackRowAlignCenter>
               </MenuItem>
-              <MenuItem onClick={handleLogout} sx={{ py: 1.5, color: palette.error.main }}>
-                <LogoutIcon sx={{ mr: 1.5, fontSize: 20 }} />
-                <Typography variant="body2">{ 'Đăng xuất'}</Typography>
+              <MenuItem
+                onClick={handleLogout}
+                sx={{
+                  cursor: 'pointer',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main', transform: 'translateX(4px)' },
+                  transition: 'all 200ms ease',
+                  width: '100%',
+                  py: 1,
+                }}
+              >
+                <StackRowAlignCenter onClick={handleLogout} gap={1}>
+                  <LogoutIcon fontSize="small" />
+                  <Typography variant="body2">Đăng xuất</Typography>
+                </StackRowAlignCenter>
               </MenuItem>
             </Menu>
           </>

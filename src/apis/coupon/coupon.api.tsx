@@ -1,5 +1,5 @@
 import { axiosApi } from "~/common/until/request.until";
-import { Coupon } from "./coupon.interface.api";
+import { Coupon, CreateCoupon } from "./coupon.interface.api";
 
 export const getCoupons = async () => {
     const res = await axiosApi.get('coupon');
@@ -16,13 +16,17 @@ export const getActiveCoupons = async () => {
     return res.data;
 }
 
-export const createCoupon = async (data: Coupon): Promise<Coupon> => {
+export const createCoupon = async (data: CreateCoupon): Promise<CreateCoupon> => {
     const res = await axiosApi.post('coupon', data);
     return res.data;
 }
 
-export const updateCoupon = async (id: number, data: Coupon): Promise<Coupon> => {
-    const res = await axiosApi.put(`coupon/${id}`, data);
+export const updateStatusCoupon = async (id: number, data: Partial<Coupon>): Promise<Coupon> => {
+    const res = await axiosApi.put(`coupon/status/${id}`, data);
+    return res.data;
+}
+export const updateActiveCoupon = async (id: number, data: Partial<Coupon>): Promise<Coupon> => {
+    const res = await axiosApi.put(`coupon/active/${id}`, data);
     return res.data;
 }
 

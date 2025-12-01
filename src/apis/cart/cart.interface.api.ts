@@ -8,7 +8,11 @@ export interface CartItem {
   qty: number;
   unit_price: string;
   subtotal: string;
-  product_id: number;
+  product_id: {
+    id: number;
+    quantity_per_pack: number;
+    stock_quantity?: number;
+  };
   product_name: string;
   product_image: string;
 }

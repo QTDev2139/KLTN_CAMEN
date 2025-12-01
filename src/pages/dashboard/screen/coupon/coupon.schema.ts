@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import dayjs from 'dayjs';
 
 export const schema = yup.object().shape({
   code: yup
@@ -29,7 +30,14 @@ export const schema = yup.object().shape({
       return parseFloat(value || '0') >= 0;
     }),
   usage_limit: yup.number().required('Giới hạn sử dụng là bắt buộc').min(1, 'Giới hạn sử dụng phải lớn hơn 0'),
-  start_date: yup.string().required('Ngày bắt đầu là bắt buộc'),
+  // start_date must be after current time
+  start_date: yup
+    .string()
+    .required('Ngày bắt đầu là bắt buộc')
+    .test('is-after-now', 'Ngày bắt đầu phải sau thời điểm hiện tại', (value) => {
+      if (!value) return false;
+      return dayjs(value).isAfter(dayjs());
+    }),
   end_date: yup
     .string()
     .required('Ngày kết thúc là bắt buộc')

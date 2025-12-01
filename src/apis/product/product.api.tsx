@@ -1,8 +1,8 @@
 import { axiosApi } from "~/common/until/request.until";
 import { Product, ProductDetail } from "./product.interface.api";
 
-export const getProduct = async (lang: 'vi' | 'en'): Promise<Product[]> => {
-    const res = await axiosApi.get(`product/${lang}`);
+export const getProduct = async (lang: 'vi' | 'en', type: string): Promise<Product[]> => {
+    const res = await axiosApi.get(`product/${lang}/type/${type}`);
     return res.data.post;
 }
 
@@ -38,3 +38,7 @@ export const deleteProduct = async (id: number) => {
     return res.data
 }
 
+export const getSalesCount = async () => {
+    const res = await axiosApi.get(`product/sales-count`);
+    return res.data;
+}

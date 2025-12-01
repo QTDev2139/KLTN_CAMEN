@@ -1,6 +1,6 @@
 import { Box, Button, Stack, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { userApi } from '~/apis';
 import { FONT_SIZE } from '~/common/constant/style.constant';
 import { StackRow } from '~/components/elements/styles/stack.style';
@@ -10,6 +10,9 @@ import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { AUTH_SCREEN } from '~/router/path.route';
 import { SignUpMode } from './sign-up.enum';
 import { BoxForm } from '~/components/elements/forms/box/box-form';
+import { useLang } from '~/hooks/use-lang/use-lang';
+import { getLangPrefix } from '~/common/constant/get-lang-prefix';
+import { ArrowCircleLeftOutlined } from '@mui/icons-material';
 
 interface VerifyOtpSignUpProps {
   setMode: (mode: SignUpMode) => void;
@@ -22,7 +25,8 @@ export default function VerifyOtpSignUp({ setMode, email }: VerifyOtpSignUpProps
   const [cooldownOtp, setCooldownOtp] = useState(120);
   const [otp, setOtp] = useState('');
   const navigate = useNavigate();
-  const { lang } = useParams();
+  const currentLang = useLang();
+  const prefix = getLangPrefix(currentLang);
   const { palette } = useTheme();
 
   // Đếm ngược resend
@@ -62,7 +66,7 @@ export default function VerifyOtpSignUp({ setMode, email }: VerifyOtpSignUpProps
       setLoading(true);
       const res = await userApi.verifyRegister({ email, otp });
       snackbar('success', res);
-      navigate(`/${lang}/auth/${AUTH_SCREEN.LOGIN}`);
+      navigate(`${prefix}/auth/${AUTH_SCREEN.LOGIN}`);
     } catch (err: any) {
       snackbar('warning', err?.response?.data?.message ?? 'Có lỗi xảy ra');
     } finally {
@@ -71,13 +75,13 @@ export default function VerifyOtpSignUp({ setMode, email }: VerifyOtpSignUpProps
   };
 
   return (
-    <Box component="form" onSubmit={submit}>
-      <BoxForm>
+    <Box component="form" onSubmit={submit} >
+      <BoxForm >
         <Button
-          style={{ position: 'absolute', top: '10px', left: '20px', color: palette.text.primary }}
+          style={{ position: 'absolute', top: '10px', left: '10px', color: palette.text.primary }}
           onClick={handlePrev}
         >
-          Quay lại
+          <ArrowCircleLeftOutlined sx={{ color: 'text.secondary' }} />
         </Button>
         <Logo />
 
@@ -100,7 +104,7 @@ export default function VerifyOtpSignUp({ setMode, email }: VerifyOtpSignUpProps
           color="info"
           sx={{ minWidth: '120px', margin: '0 10px' }}
         >
-          {loading ? 'Đang xử lý ...' : 'Xác thực tài khoản'}
+          {loading ? 'Xác thực tài khoản' : 'Xác thực tài khoản'}
         </Button>
         <StackRow sx={{ padding: '16px 0', gap: 1 }}>
           <Typography variant="subtitle2">Bạn chưa nhận được mã?</Typography>

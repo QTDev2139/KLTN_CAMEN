@@ -181,7 +181,7 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
                         </TableCell>
                       </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody> 
                       {order.order_items.map((item, index) => (
                         <TableRow key={index} hover>
                           <TableCell>
@@ -281,7 +281,7 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
                 }}
               >
                 <Typography variant="h6" fontWeight={700}>
-                  Tổng cộng:
+                  Tổng cộng: 
                 </Typography>
                 <Typography variant="h6" fontWeight={700} color="primary.main">
                   {FormatPrice(order.grand_total)}

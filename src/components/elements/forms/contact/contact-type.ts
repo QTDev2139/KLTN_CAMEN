@@ -4,5 +4,4 @@ export interface FormContact {
   phone: string;
   title: string;
   content: string;
-  gender: string;
 }

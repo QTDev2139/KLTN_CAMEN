@@ -9,6 +9,11 @@ import { FONT_SIZE } from '~/common/constant/style.constant';
 import { ForgotPasswordMode } from './forgot-password.enum';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { BoxForm } from '~/components/elements/forms/box/box-form';
+import { ArrowCircleLeftOutlined } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
+import { AUTH_SCREEN } from '~/router/path.route';
+import { useLang } from '~/hooks/use-lang/use-lang';
+import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 
 interface Props {
   setMode: (mode: ForgotPasswordMode) => void;
@@ -25,6 +30,8 @@ const schema = Yup.object({
 
 export default function RequestOtpForgottenPassword({ setMode, setEmail }: Props) {
   const { snackbar } = useSnackbar();
+  const currentLang = useLang();
+  const prefix = getLangPrefix(currentLang);
 
   const formik = useFormik<FormRegister>({
     initialValues: {
@@ -60,6 +67,12 @@ export default function RequestOtpForgottenPassword({ setMode, setEmail }: Props
   return (
     <Box component="form" onSubmit={formik.handleSubmit} noValidate>
       <BoxForm>
+        <Link
+          to={`${prefix}/auth/${AUTH_SCREEN.LOGIN}`}
+          style={{ position: 'absolute', top: '10px', left: '10px', color: 'text.primary' }}
+        >
+          <ArrowCircleLeftOutlined sx={{ color: 'text.secondary' }} />
+        </Link>
         <Logo />
         <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, padding: '10px' }}>
           Forgot Password to CamenFood
@@ -72,7 +85,7 @@ export default function RequestOtpForgottenPassword({ setMode, setEmail }: Props
           helperText={helperText('email')}
         />
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-          {formik.isSubmitting ? 'Đang gửi…' : 'Xác nhận'}
+          {formik.isSubmitting ? 'Xác nhận' : 'Xác nhận'}
         </Button>
       </BoxForm>
     </Box>

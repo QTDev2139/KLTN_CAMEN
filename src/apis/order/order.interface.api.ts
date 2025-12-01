@@ -16,6 +16,7 @@ export interface ShippingAddress {
 export interface CreateOrder {
   items: CartItem[];
   total_amount: number;
+  ship_fee?: number; 
   shipping_address?: ShippingAddress;
   payment_method?: 'cod' | 'vnpay' | 'momo';
   payment_status?: 'unpaid' | 'paid' | 'failed' | 'refunded';
@@ -40,6 +41,10 @@ export interface OrderItem {
   order_id: number;
   product_id: number;
   product: Product;
+  review?: boolean;
+  order?: {
+    code: string;
+  };
 }
 
 export interface OrderDetail {
