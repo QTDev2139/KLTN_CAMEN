@@ -1,0 +1,10 @@
+{
+  "title": "Sign in to CamenFood",
+  "email_placeholder": "Email",
+  "password_placeholder": "Password",
+  "forgot_password": "Forgot password",
+  "sign_in_button": "Sign in",
+  "or_separator": "or",
+  "new_user_prompt": "New to CamenFood?",
+  "create_account_link": "Create an account"
+}

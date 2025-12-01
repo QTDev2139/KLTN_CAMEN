@@ -20,11 +20,11 @@ export const sidebars = [
       ]
     },
     {
-      to: PATH.SITE_SCREEN.CHECKOUT,
+      to: PATH.SITE_SCREEN.PRODUCTION_PROCESS,
       title: 'process',
     },
     {
-      to: PATH.SITE_SCREEN.CATEGORY,
+      to: PATH.SITE_SCREEN.DECLARATION,
       title: 'dossier',
     },
     {

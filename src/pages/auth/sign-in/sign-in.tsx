@@ -14,6 +14,7 @@ import { useAuth } from '~/common/auth/auth.context';
 import { authApi } from '~/apis/auth/auth.api';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
+import { useTranslation } from 'react-i18next';
 
 export interface FormRegister {
   email: string;
@@ -29,6 +30,8 @@ export default function LoginPage() {
   const { login } = useAuth();
   const { snackbar } = useSnackbar();
   const navigate = useNavigate();
+
+  const { t } = useTranslation('login');
 
   // Lấy lang từ hook
   const currentLang = useLang();
@@ -89,18 +92,18 @@ export default function LoginPage() {
       <BoxForm>
         <Logo />
         <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, padding: '20px 0' }}>
-          Sign in to CamenFood
+          {t('title')}
         </Typography>
 
         <TextField
-          label="Email"
+          label={t('email_placeholder')}
           fullWidth
           {...formik.getFieldProps('email')}
           error={showError('email')}
           helperText={helperText('email')}
         />
         <TextField
-          label="Password"
+          label={t('password_placeholder')}
           type="password"
           fullWidth
           {...formik.getFieldProps('password')}
@@ -109,7 +112,7 @@ export default function LoginPage() {
         />
         <div style={{ width: '100%', position: 'relative' }}>
           <Link
-            to={`/${prefix}auth/${AUTH_SCREEN.FORGOT_PW}`}
+            to={`${prefix}/auth/${AUTH_SCREEN.FORGOT_PW}`}
             replace
             style={{
               display: 'block',
@@ -121,21 +124,21 @@ export default function LoginPage() {
               top: -20,
             }}
           >
-            Quên mật khẩu
+            {t('forgot_password')}
           </Link>
         </div>
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-          {formik.isSubmitting ? 'Sign in' : 'Sign in'}
+          {formik.isSubmitting ? t('sign_in_button') : t('sign_in_button')}
         </Button>
         <StackRowAlignCenter sx={{ width: '100%' }}>
           <Divider sx={{ flex: 1 }} />
-          <Typography sx={{ padding: '10px' }}>or</Typography>
+          <Typography sx={{ padding: '10px' }}>{t('or_separator')}</Typography>
           <Divider sx={{ flex: 1 }} />
         </StackRowAlignCenter>
         <StackRowAlignCenter sx={{ justifyContent: 'center' }}>
-          <Typography sx={{ paddingRight: '6px' }}>New to CamenFood?</Typography>
-          <Link to={`/${prefix}auth/${AUTH_SCREEN.SIGN_UP}`} replace>
-            Create an account
+          <Typography sx={{ paddingRight: '6px' }}>{t('new_user_prompt')}</Typography>
+          <Link to={`${prefix}/auth/${AUTH_SCREEN.SIGN_UP}`} replace>
+            {t('create_account_link')}
           </Link>
         </StackRowAlignCenter>
       </BoxForm>

@@ -13,7 +13,7 @@ import SiteLayout from '~/layouts/site/site.layout';
 import SitePage from '~/pages/site/site.page';
 import HomePage from '~/pages/site/screen/home/home.screen';
 import CartPage from '~/pages/site/screen/cart/cart.screen';
-import CategoryPage from '~/pages/site/screen/category/category.screen';
+import DeclarationPage from '~/pages/site/screen/declaration/declaration.screen';
 import ProductDomesticPage from '~/pages/site/screen/product-domestic/product-domestic.screen';
 import ProductExportPage from '~/pages/site/screen/product-export/product-export.screen';
 import ProductDetailPage from '~/pages/site/screen/product-detail/product-detail.screen';
@@ -21,7 +21,7 @@ import ContactPage from '~/pages/site/screen/contact/contact.screen';
 import BlogPage from '~/pages/site/screen/blog/blog.screen';
 import BlogDetailPage from '~/pages/site/screen/blog-detail/blog-detail.screen';
 import AccountPage from '~/pages/site/screen/account/account.screen';
-import CheckoutPage from '~/pages/site/screen/checkout/checkout.screen';
+import ProductionProcessPage from '~/pages/site/screen/production-process/production-process.screen';
 import OrderPage from '~/pages/site/screen/order/order.screen';
 import PaymentCallbackPage from '~/pages/site/screen/payment/payment-callback.screen';
 import PurchasePage from '~/pages/site/screen/purchase/purchase.screen';
@@ -41,6 +41,7 @@ import ChatScreen from '~/pages/dashboard/screen/chat/chat.screen';
 import ContactScreen from '~/pages/dashboard/screen/contact/contact.screen';
 import { UserType } from '~/apis/user/user.enum';
 import ImportProductScreen from '~/pages/dashboard/screen/import-product/import-product.screen';
+
 
 export type Route = {
   path: string;
@@ -107,8 +108,8 @@ export const routes: Route[] = [
         allowUserTypes: [],
       },
       {
-        path: PATH.SITE_SCREEN.CATEGORY,
-        element: CategoryPage,
+        path: PATH.SITE_SCREEN.DECLARATION,
+        element: DeclarationPage,
         type: RouteType.PUBLIC,
         allowUserTypes: [],
       },
@@ -167,8 +168,8 @@ export const routes: Route[] = [
         allowUserTypes: [],
       },
       {
-        path: PATH.SITE_SCREEN.CHECKOUT,
-        element: CheckoutPage,
+        path: PATH.SITE_SCREEN.PRODUCTION_PROCESS,
+        element: ProductionProcessPage,
         type: RouteType.PUBLIC,
         allowUserTypes: [],
       },

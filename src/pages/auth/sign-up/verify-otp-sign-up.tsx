@@ -66,7 +66,7 @@ export default function VerifyOtpSignUp({ setMode, email }: VerifyOtpSignUpProps
       setLoading(true);
       const res = await userApi.verifyRegister({ email, otp });
       snackbar('success', res);
-      navigate(`/${prefix}auth/${AUTH_SCREEN.LOGIN}`);
+      navigate(`${prefix}/auth/${AUTH_SCREEN.LOGIN}`);
     } catch (err: any) {
       snackbar('warning', err?.response?.data?.message ?? 'Có lỗi xảy ra');
     } finally {
