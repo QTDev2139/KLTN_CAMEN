@@ -68,7 +68,7 @@ export default function RequestOtpForgottenPassword({ setMode, setEmail }: Props
     <Box component="form" onSubmit={formik.handleSubmit} noValidate>
       <BoxForm>
         <Link
-          to={`/${prefix}auth/${AUTH_SCREEN.LOGIN}`}
+          to={`${prefix}/auth/${AUTH_SCREEN.LOGIN}`}
           style={{ position: 'absolute', top: '10px', left: '10px', color: 'text.primary' }}
         >
           <ArrowCircleLeftOutlined sx={{ color: 'text.secondary' }} />

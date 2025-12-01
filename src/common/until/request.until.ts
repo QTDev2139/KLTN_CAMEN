@@ -2,7 +2,6 @@ import axios from "axios";
 import { echo } from "~/lib/echo";
 
 export const axiosApi = axios.create({
-  // baseURL: 'https://vlssoft.id.vn/kltn-be/public/api/',
   baseURL: process.env.REACT_APP_API_BASE_URL as string,
 });
 
@@ -28,6 +27,5 @@ axiosApi.interceptors.request.use(
 );
 
 export const baseURL = axios.create({
-  // baseURL: 'https://vlssoft.id.vn/kltn-be/public/api/',
   baseURL: process.env.REACT_APP_BASE as string,
 });
