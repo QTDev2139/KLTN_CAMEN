@@ -6,3 +6,8 @@ export const createReview = async (fd: FormData) => {
     });
     return res.data;
 }
+
+export const getReviews = async () => {
+    const res = await axiosApi.get('review');
+    return res.data;
+}

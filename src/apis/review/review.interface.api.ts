@@ -1,3 +1,6 @@
+import { OrderItem } from "../order/order.interface.api";
+import { Product } from "../product/product.interface.api";
+
 export interface CreateReview {
     order_item_id: number;
     rating: number;
@@ -10,5 +13,7 @@ export interface Review {
     comment: string;
     created_at: string;
     user_name: string;
+    order_item?: OrderItem; 
     images: string[];
+    product?: Product;
 }

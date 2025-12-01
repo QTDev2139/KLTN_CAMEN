@@ -19,7 +19,7 @@ export default function SiteLayout({ children }: SiteLayoutProps) {
       <Stack
         sx={{
           flex: 1,
-          backgroundColor: palette.background.paper,
+          backgroundColor: palette.background.default,
         }}
       >
         <ContainerWrapper

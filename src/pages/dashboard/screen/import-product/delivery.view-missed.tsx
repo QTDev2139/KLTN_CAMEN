@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -14,12 +14,10 @@ import {
 } from '@mui/material';
 import TableElement from '~/components/elements/table-element/table-element';
 import {
-  DeliveryDetail,
   RequestImportPayload,
   ShortageResponse,
 } from '~/apis/request-import/request-import.interface.api';
-import { productApi, requestImportApi } from '~/apis';
-import { Product } from '~/apis/product/product.interface.api';
+import { requestImportApi } from '~/apis';
 import { formatDateTime } from '~/common/until/date-format.until';
 import { TagElement } from '~/components/elements/tag/tag.element';
 import { StatusLabelImport, NameLabelImport } from './import-product.status';

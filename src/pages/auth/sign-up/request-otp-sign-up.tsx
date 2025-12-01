@@ -120,7 +120,7 @@ export default function RequestOtpSignUp({ setMode, setEmail }: Props) {
 
         <StackRowAlignCenter sx={{ justifyContent: 'center', width: '100%', padding: '20px 0' }}>
           <Typography sx={{ paddingRight: '6px' }}>You have an account?</Typography>
-          <Link to={`/${prefix}auth/${AUTH_SCREEN.LOGIN}`} replace>
+          <Link to={`${prefix}/auth/${AUTH_SCREEN.LOGIN}`} replace>
             Login with an account
           </Link>
         </StackRowAlignCenter>

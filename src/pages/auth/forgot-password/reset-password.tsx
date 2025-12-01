@@ -47,7 +47,7 @@ export default function ResetPassword() {
         const data = { ...dataToSend, reset_token };
         const res = await userApi.resetPassword(data);
         snackbar('success', res);
-        navigate(`/${prefix}auth/${AUTH_SCREEN.LOGIN}`);
+        navigate(`${prefix}/auth/${AUTH_SCREEN.LOGIN}`);
       } catch (error: any) {
         const message = error?.response?.data?.message || 'Lỗi không xác định';
         snackbar('error', message);

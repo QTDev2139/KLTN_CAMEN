@@ -1,0 +1,10 @@
+{
+  "title": "Sign up to CamenFood",
+  "username_placeholder": "User Name",
+  "email_placeholder": "Email",
+  "password_placeholder": "Password",
+  "confirm_password_placeholder": "Confirm Password",
+  "create_account_button": "Create account",
+  "have_account_prompt": "You have an account?",
+  "login_link": "Login with an account"
+}
