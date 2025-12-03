@@ -390,10 +390,10 @@ export default function ProductDetailPage() {
           )}
         </Stack>
       )}
-      <Typography variant="subtitle2" sx={{ padding: `${PADDING_GAP_LAYOUT} 0`, color: palette.primary.main }}>
+      {/* <Typography variant="subtitle2" sx={{ padding: `${PADDING_GAP_LAYOUT} 0`, color: palette.primary.main }}>
         Sản phẩm tương tự
       </Typography>
-      <SliderProduct items={items} />
+      <SliderProduct items={items} /> */}
     </Stack>
   );
 }

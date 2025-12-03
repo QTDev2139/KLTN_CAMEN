@@ -118,7 +118,7 @@ const OrderPage: React.FC = () => {
             order_id: order.data?.code,
             order_info: `Thanh toán đơn hàng #${order.data?.code}`,
             bank_code: 'NCB',
-            return_url: `${window.location.origin}${prefix}/payment`, // ✅ Frontend URL
+            return_url: `${window.location.origin}${prefix}/payment`, // Frontend URL
           });
           // Redirect đến VNPay
           window.location.href = result.data?.payment_url;

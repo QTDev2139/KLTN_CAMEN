@@ -7,6 +7,8 @@ export const statusColorMap: Record<string, TagType> = {
   shipped: 'info',
   completed: 'success',
   cancelled: 'error',
+  refund_requested: 'warning',
+  refunded: 'info',
 };
 
 export const statusLabelMap: Record<string, string> = {
@@ -15,6 +17,8 @@ export const statusLabelMap: Record<string, string> = {
   shipped: 'Đang giao',
   completed: 'Hoàn thành',
   cancelled: 'Đã hủy',
+  refund_requested: 'Yêu cầu hoàn tiền',
+  refunded: 'Đã hoàn tiền',
 };
 
 export const paymentStatusColorMap: Record<string, TagType> = {
@@ -24,9 +28,10 @@ export const paymentStatusColorMap: Record<string, TagType> = {
 };
 
 export const paymentStatusLabelMap: Record<string, string> = {
-  unpaid: 'Chưa thanh toán',
+  unpaid: 'Thanh toán khi nhận hàng',
   paid: 'Đã thanh toán',
   refunded: 'Đã hoàn tiền',
+  failed: 'Thanh toán thất bại',
 };
 
 export const paymentMethodMap: Record<string, string> = {
@@ -42,6 +47,7 @@ export const ORDER_FILTERS = [
   { label: 'Đang giao', value: 'shipped' },
   { label: 'Đã giao', value: 'completed' },
   { label: 'Đã hủy', value: 'cancelled' },
+  { label: 'Hoàn tiền', value: 'refunded' },
 ];
 
 export const PaymentStatusTagType: Record<string, TagType> = {
@@ -51,9 +57,11 @@ export const PaymentStatusTagType: Record<string, TagType> = {
 };
 
 export const PaymentStatusLabel: Record<string, string> = {
-  unpaid: 'Chưa thanh toán',
+  unpaid: 'Thanh toán khi nhận hàng',
   paid: 'Đã thanh toán',
   refunded: 'Đã hoàn tiền',
+  failed: 'Thanh toán thất bại',
+
 };
 
 export const PaymentMethodLabel: Record<string, string> = {

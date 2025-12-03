@@ -23,3 +23,10 @@ export interface createPayment {
   user_id: number;              
   coupon_id?: number | null;    
 }
+
+export interface Refund {
+  code: string;
+  trans_type: '02' | '03';
+  amount: number;
+  reason?: string;
+}
