@@ -84,8 +84,6 @@ const ReviewModal: React.FC<Props> = ({ open, onClose, order, onSubmitted }) => 
     }));
   };
 
-
-
   const handleRemoveFor = (itemKey: string, index: number) => {
     const cur = reviews[itemKey];
     if (!cur) return;
@@ -95,8 +93,6 @@ const ReviewModal: React.FC<Props> = ({ open, onClose, order, onSubmitted }) => 
     const newPreviews = cur.previews.filter((_, i) => i !== index);
     setReviews((prev) => ({ ...prev, [itemKey]: { ...cur, images: newImages, previews: newPreviews } }));
   };
-
-
 
   const handlePickClickFor = (itemKey: string) => {
     const ref = inputRefs.current[itemKey];

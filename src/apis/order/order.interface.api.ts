@@ -59,11 +59,20 @@ export interface OrderDetail {
   discount_total: string; // "0.00"
   subtotal: string; // "50000.00"
   grand_total: string; // "50000.00"
-  status: "pending" | "processing" | "completed" | "cancelled" | string;
+  status: "pending" | "processing" | "completed" | "cancelled" | "refund_requested" | "refunded" | string;
   payment_method: "vnpay" | "cod" | string;
-  payment_status: "paid" | "unpaid" | "refunded" | string;
+  payment_status: "paid" | "unpaid" | "refunded" | "failed" | string;
   transaction_code: string;
+  refund_amount?: string;
+  refund_transaction_code?: string;
+  reason_refund?: string;
+  img_refund?: string[];
   shipping_address: ShippingAddress;
   order_items: OrderItem[];
 }
 
+export interface OrderRefundRequest {
+  order_code: string;
+  reason_refund: string;
+  images: File[];
+}

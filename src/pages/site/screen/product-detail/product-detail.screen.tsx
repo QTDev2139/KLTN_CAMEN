@@ -18,6 +18,7 @@ import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import { formatDateTime } from '~/common/until/date-format.until';
+import ContainerWrapper from '~/components/elements/container/container.element';
 
 export default function ProductDetailPage() {
   const { palette } = useTheme();
@@ -125,124 +126,127 @@ export default function ProductDetailPage() {
   }, [activeFilter, productDetail?.reviews]);
 
   return (
-    <Stack spacing={2} sx={{ backgroundColor: palette.background.default }}>
-      <StackRow sx={{ display: 'grid', gridTemplateColumns: '5fr 7fr', gap: 4, marginBottom: '40px' }}>
-        <Stack>
-          <BoxContent>
-            <Box
-              sx={{ padding: '10px 0', transition: 'all 0.2s ease-in-out' }}
-              onClick={() => {
-                const src = mainImage || productDetail?.product_images?.[0]?.image_url || '';
-                setModalSrc(src);
-                setOpen(true);
-              }}
-            >
-              <img src={mainImage} alt="Sản phẩm" style={{ display: 'block', maxWidth: '100%' }} />
-            </Box>
-          </BoxContent>
-          <StackRow sx={{ margin: '20px' }} gap={1}>
-            {productDetail?.product_images.map((img, idx) => (
+    <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
+      <Stack spacing={2} sx={{ backgroundColor: palette.background.default }}>
+        <StackRow sx={{ display: 'grid', gridTemplateColumns: '5fr 7fr', gap: 4, marginBottom: '40px' }}>
+          <Stack>
+            <BoxContent>
               <Box
-                key={idx}
-                sx={{
-                  maxWidth: '60px',
-                  height: '60px',
-                  border: `2px solid ${
-                    mainImage === img.image_url ? palette.primary.main : palette.background.default
-                  }`,
-                  padding: '8px 12px',
-                  transition: 'all 0.2s ease-in-out',
-                  '&:hover': {
-                    borderColor: palette.primary.main,
-                  },
-                }}
+                sx={{ padding: '10px 0', transition: 'all 0.2s ease-in-out' }}
                 onClick={() => {
-                  setMainImage(img.image_url);
-                  setModalSrc(img.image_url);
-                }}
-                onMouseEnter={() => {
-                  setMainImage(img.image_url);
-                  setModalSrc(img.image_url);
+                  const src = mainImage || productDetail?.product_images?.[0]?.image_url || '';
+                  setModalSrc(src);
+                  setOpen(true);
                 }}
               >
-                <img
-                  src={img.image_url}
-                  alt="Sản phẩm"
-                  style={{ display: 'block', maxWidth: '100%', height: '100%' }}
-                />
+                <img src={mainImage} alt="Sản phẩm" style={{ display: 'block', maxWidth: '100%' }} />
               </Box>
-            ))}
-          </StackRow>
-          {/*  */}
-          <ModalImage open={open} onClose={() => setOpen(false)} src={modalSrc} alt="Sản phẩm" />
-          {/*  */}
-        </Stack>
-        <Stack sx={{ position: 'relative', top: '-40%', transform: 'translateY(50%)', gap: 1 }}>
-          <Typography variant="h2" sx={{ paddingBottom: '16px' }}>
-            {productDetail?.product_translations[0].name}
-          </Typography>
-          <Typography variant="subtitle1">{productDetail?.product_translations[0].description}</Typography>
-          {/* Nếu là sản phẩm xuất khẩu thì ẩn giá, số lượng và nút hành động */}
-          {productDetail?.type !== 'export' && (
-            <>
-              <Typography variant="h5" sx={{ height: '60px', display: 'flex', alignItems: 'center', gap: 1 }}>
-                {productDetail?.compare_at_price && Number(productDetail?.compare_at_price) > 0 ? (
-                  <>
-                    <Box component="span" sx={{ color: palette.primary.main }}>
-                      {FormatPrice(productDetail?.compare_at_price)}
-                    </Box>
-                    <Box
-                      component="span"
-                      sx={{ textDecoration: 'line-through', color: palette.text.secondary, fontSize: '14px' }}
-                    >
-                      {FormatPrice(productDetail?.price)}
-                    </Box>
-                  </>
-                ) : (
-                  <Box component="span" sx={{ color: palette.primary.main }}>
-                    {FormatPrice(productDetail?.price)}
-                  </Box>
-                )}
-              </Typography>
-              <StackRow sx={{ paddingTop: PADDING_GAP_LAYOUT, alignItems: 'center' }} gap={1}>
-                <Typography variant="subtitle1">Số lượng: </Typography>
-                <ButtonGroup variant="outlined" color="inherit" size="small" sx={{ color: palette.text.primary }}>
-                  <Button onClick={handlePrev} disabled={qty === 1}>
-                    -
-                  </Button>
-                  <Button style={{ userSelect: 'text', cursor: 'text' }}>{qty}</Button>
-                  <Button
-                    onClick={handlePlus}
-                    disabled={((productDetail?.stock_quantity ?? Infinity) <= qty) || qty === 10}
-                  >
-                    +
-                  </Button>
-                </ButtonGroup>
-              <Typography variant="subtitle2" sx={{ color: palette.text.secondary, fontSize: '14px' }}>{productDetail?.stock_quantity} Sản phẩm có sẳn </Typography>
-              </StackRow>
-              <StackRow gap={2} sx={{ paddingTop: 4 }}>
-                <Button
-                  variant="outlined"
-                  startIcon={<ShoppingCartOutlined />}
-                  onClick={handleAddToCart}
-                  disabled={isAddingToCart}
+            </BoxContent>
+            <StackRow sx={{ margin: '20px' }} gap={1}>
+              {productDetail?.product_images.map((img, idx) => (
+                <Box
+                  key={idx}
                   sx={{
-                    color: palette.primary.main,
-                    borderColor: palette.primary.main,
-                    backgroundColor: palette.primary.light,
-                    textTransform: 'none',
-                    px: 3,
-                    py: 1,
+                    maxWidth: '60px',
+                    height: '60px',
+                    border: `2px solid ${
+                      mainImage === img.image_url ? palette.primary.main : palette.background.default
+                    }`,
+                    padding: '8px 12px',
+                    transition: 'all 0.2s ease-in-out',
                     '&:hover': {
-                      opacity: '0.9',
+                      borderColor: palette.primary.main,
                     },
                   }}
+                  onClick={() => {
+                    setMainImage(img.image_url);
+                    setModalSrc(img.image_url);
+                  }}
+                  onMouseEnter={() => {
+                    setMainImage(img.image_url);
+                    setModalSrc(img.image_url);
+                  }}
                 >
-                  {isAddingToCart ? 'Thêm Vào Giỏ Hàng' : 'Thêm Vào Giỏ Hàng'}
-                </Button>
+                  <img
+                    src={img.image_url}
+                    alt="Sản phẩm"
+                    style={{ display: 'block', maxWidth: '100%', height: '100%' }}
+                  />
+                </Box>
+              ))}
+            </StackRow>
+            {/*  */}
+            <ModalImage open={open} onClose={() => setOpen(false)} src={modalSrc} alt="Sản phẩm" />
+            {/*  */}
+          </Stack>
+          <Stack sx={{ position: 'relative', top: '-40%', transform: 'translateY(50%)', gap: 1 }}>
+            <Typography variant="h2" sx={{ paddingBottom: '16px' }}>
+              {productDetail?.product_translations[0].name}
+            </Typography>
+            <Typography variant="subtitle1">{productDetail?.product_translations[0].description}</Typography>
+            {/* Nếu là sản phẩm xuất khẩu thì ẩn giá, số lượng và nút hành động */}
+            {productDetail?.type !== 'export' && (
+              <>
+                <Typography variant="h5" sx={{ height: '60px', display: 'flex', alignItems: 'center', gap: 1 }}>
+                  {productDetail?.compare_at_price && Number(productDetail?.compare_at_price) > 0 ? (
+                    <>
+                      <Box component="span" sx={{ color: palette.primary.main }}>
+                        {FormatPrice(productDetail?.compare_at_price)}
+                      </Box>
+                      <Box
+                        component="span"
+                        sx={{ textDecoration: 'line-through', color: palette.text.secondary, fontSize: '14px' }}
+                      >
+                        {FormatPrice(productDetail?.price)}
+                      </Box>
+                    </>
+                  ) : (
+                    <Box component="span" sx={{ color: palette.primary.main }}>
+                      {FormatPrice(productDetail?.price)}
+                    </Box>
+                  )}
+                </Typography>
+                <StackRow sx={{ paddingTop: PADDING_GAP_LAYOUT, alignItems: 'center' }} gap={1}>
+                  <Typography variant="subtitle1">Số lượng: </Typography>
+                  <ButtonGroup variant="outlined" color="inherit" size="small" sx={{ color: palette.text.primary }}>
+                    <Button onClick={handlePrev} disabled={qty === 1}>
+                      -
+                    </Button>
+                    <Button style={{ userSelect: 'text', cursor: 'text' }}>{qty}</Button>
+                    <Button
+                      onClick={handlePlus}
+                      disabled={(productDetail?.stock_quantity ?? Infinity) <= qty || qty === 10}
+                    >
+                      +
+                    </Button>
+                  </ButtonGroup>
+                  <Typography variant="subtitle2" sx={{ color: palette.text.secondary, fontSize: '14px' }}>
+                    {productDetail?.stock_quantity} Sản phẩm có sẳn{' '}
+                  </Typography>
+                </StackRow>
+                <StackRow gap={2} sx={{ paddingTop: 4 }}>
+                  <Button
+                    variant="outlined"
+                    startIcon={<ShoppingCartOutlined />}
+                    onClick={handleAddToCart}
+                    disabled={isAddingToCart}
+                    sx={{
+                      color: palette.primary.main,
+                      borderColor: palette.primary.main,
+                      backgroundColor: palette.primary.light,
+                      textTransform: 'none',
+                      px: 3,
+                      py: 1,
+                      '&:hover': {
+                        opacity: '0.9',
+                      },
+                    }}
+                  >
+                    {isAddingToCart ? 'Thêm Vào Giỏ Hàng' : 'Thêm Vào Giỏ Hàng'}
+                  </Button>
 
-                {/* Nút Mua ngay */}
-                {/* <Button
+                  {/* Nút Mua ngay */}
+                  {/* <Button
                   variant="contained"
                   sx={{
                     backgroundColor: palette.primary.main,
@@ -257,143 +261,151 @@ export default function ProductDetailPage() {
                 >
                   Mua Ngay
                 </Button> */}
-              </StackRow>
+                </StackRow>
+              </>
+            )}
+          </Stack>
+        </StackRow>
+
+        <Grid container spacing={2}>
+          <Grid size={{ md: 6, xs: 12 }}>
+            <BoxContent title="Giá trị dinh dưỡng" content={productDetail?.product_translations[0].nutrition_info} />
+          </Grid>
+          <Grid size={{ md: 6, xs: 12 }}>
+            <BoxContent title="Hướng dẫn sử dụng" content={productDetail?.product_translations[0].usage_instruction} />
+          </Grid>
+
+          {productDetail?.product_translations[0].reason_to_choose && (
+            <>
+              <Grid size={{ md: 6, xs: 12 }}></Grid>
+              <Grid size={{ md: 6, xs: 12 }}>
+                <BoxContent
+                  title="Lý do chọn sản phẩm"
+                  content={productDetail?.product_translations[0].reason_to_choose}
+                />
+              </Grid>
             </>
           )}
-        </Stack>
-      </StackRow>
-
-      <Grid container spacing={2}>
-        <Grid size={{ md: 6, xs: 12 }}>
-          <BoxContent title="Giá trị dinh dưỡng" content={productDetail?.product_translations[0].nutrition_info} />
         </Grid>
-        <Grid size={{ md: 6, xs: 12 }}>
-          <BoxContent title="Hướng dẫn sử dụng" content={productDetail?.product_translations[0].usage_instruction} />
-        </Grid>
-        {productDetail?.product_translations[0].reason_to_choose && (
-          <Grid size={{ md: 6, xs: 12 }}>
-            <BoxContent title="Lý do chọn sản phẩm" content={productDetail?.product_translations[0].reason_to_choose} />
-          </Grid>
-        )}
-      </Grid>
-      {/* Hiển thị panel đánh giá kể cả khi chưa có đánh giá */}
-      {productDetail?.reviews !== undefined && (
-        <Stack
-          spacing={2}
-          sx={{ borderRadius: PADDING_GAP_LAYOUT, boxShadow: '0 2px 8px rgba(0,0,0,0.2)', p: 3, flex: 1 }}
-        >
-          <Stack>
-            <Typography variant="h2" sx={{ paddingBottom: PADDING_GAP_LAYOUT, color: palette.primary.main }}>
-              Đánh giá sản phẩm
-            </Typography>
-            <StackRow>
-              {Rated.map((rate) => {
-                const active = activeFilter === rate.value;
-                return (
-                  <Box
-                    key={rate.value}
-                    onClick={() => setActiveFilter(rate.value)}
-                    sx={{
-                      px: 2,
-                      py: 0.75,
-                      cursor: 'pointer',
-                      userSelect: 'none',
-                      color: active ? 'primary.main' : 'text.primary',
-                      border: active ? `1px solid ${palette.primary.main}` : '1px solid transparent',
-                      position: 'relative',
-                      '&:hover': { color: 'primary.main' },
-                    }}
-                  >
-                    <Typography variant="subtitle2" sx={{ minWidth: 80, textAlign: 'center' }}>
-                      {rate.label}
-                      {rate.value !== 'all' && <span> ({filterCounts[rate.value] ?? 0})</span>}
-                    </Typography>
-                  </Box>
-                );
-              })}
-            </StackRow>
-          </Stack>
+        {/* Hiển thị panel đánh giá kể cả khi chưa có đánh giá */}
+        {productDetail?.reviews !== undefined && (
+          <Stack
+            spacing={2}
+            sx={{ borderRadius: PADDING_GAP_LAYOUT, boxShadow: '0 2px 8px rgba(0,0,0,0.2)', p: 3, flex: 1 }}
+          >
+            <Stack>
+              <Typography variant="h2" sx={{ paddingBottom: PADDING_GAP_LAYOUT, color: palette.primary.main }}>
+                Đánh giá sản phẩm
+              </Typography>
+              <StackRow>
+                {Rated.map((rate) => {
+                  const active = activeFilter === rate.value;
+                  return (
+                    <Box
+                      key={rate.value}
+                      onClick={() => setActiveFilter(rate.value)}
+                      sx={{
+                        px: 2,
+                        py: 0.75,
+                        cursor: 'pointer',
+                        userSelect: 'none',
+                        color: active ? 'primary.main' : 'text.primary',
+                        border: active ? `1px solid ${palette.primary.main}` : '1px solid transparent',
+                        position: 'relative',
+                        '&:hover': { color: 'primary.main' },
+                      }}
+                    >
+                      <Typography variant="subtitle2" sx={{ minWidth: 80, textAlign: 'center' }}>
+                        {rate.label}
+                        {rate.value !== 'all' && <span> ({filterCounts[rate.value] ?? 0})</span>}
+                      </Typography>
+                    </Box>
+                  );
+                })}
+              </StackRow>
+            </Stack>
 
-          {/* Nếu bộ lọc không có đánh giá thì hiển thị message */}
-          {filteredRate.length === 0 ? (
-            <Typography variant="subtitle2" sx={{ color: palette.text.secondary, px: 1 }}>
-              Chưa có đánh giá
-            </Typography>
-          ) : (
-            filteredRate
-              .slice((commentPage - 1) * COMMENTS_PER_PAGE, commentPage * COMMENTS_PER_PAGE)
-              .map((rev, idx) => (
-                <Stack spacing={1} key={idx}>
-                  <StackRowAlignCenter columnGap={1}>
-                    <Avatar sx={{ width: 34, height: 34, bgcolor: palette.primary.main }}>
-                      {rev.user_name.charAt(0).toUpperCase()}
-                    </Avatar>
-                    <Stack>
+            {/* Nếu bộ lọc không có đánh giá thì hiển thị message */}
+            {filteredRate.length === 0 ? (
+              <Typography variant="subtitle2" sx={{ color: palette.text.secondary, px: 1 }}>
+                Chưa có đánh giá
+              </Typography>
+            ) : (
+              filteredRate
+                .slice((commentPage - 1) * COMMENTS_PER_PAGE, commentPage * COMMENTS_PER_PAGE)
+                .map((rev, idx) => (
+                  <Stack spacing={1} key={idx}>
+                    <StackRowAlignCenter columnGap={1}>
+                      <Avatar sx={{ width: 34, height: 34, bgcolor: palette.primary.main }}>
+                        {rev.user_name.charAt(0).toUpperCase()}
+                      </Avatar>
+                      <Stack>
+                        <Typography
+                          variant="subtitle2"
+                          sx={{ color: palette.text.primary, paddingLeft: '4px', fontSize: '10px' }}
+                        >
+                          {rev.user_name}
+                        </Typography>
+                        <Rating name="read-only" size="small" value={rev.rating} readOnly />
+                      </Stack>
+                    </StackRowAlignCenter>
+                    <Stack sx={{ paddingLeft: '38px' }}>
                       <Typography
                         variant="subtitle2"
                         sx={{ color: palette.text.primary, paddingLeft: '4px', fontSize: '10px' }}
                       >
-                        {rev.user_name}
+                        {formatDateTime(rev.created_at)}
                       </Typography>
-                      <Rating name="read-only" size="small" value={rev.rating} readOnly />
+                      <Typography
+                        variant="subtitle2"
+                        sx={{ color: palette.text.primary, paddingLeft: '4px', fontSize: FONT_SIZE.small }}
+                      >
+                        {rev.comment}
+                      </Typography>
+                      {rev.images.length > 0 && (
+                        <StackRow gap={1} sx={{ marginTop: '8px' }}>
+                          {rev.images.map((img, imgIdx) => (
+                            <Box
+                              key={imgIdx}
+                              component="img"
+                              src={img}
+                              alt={`review-${imgIdx}`}
+                              sx={{
+                                width: 80,
+                                height: 80,
+                                objectFit: 'cover',
+                                cursor: 'pointer',
+                                borderRadius: 1,
+                                border: `1px solid ${palette.background.paper}`,
+                              }}
+                              onClick={() => {
+                                setModalSrc(img);
+                                setOpen(true);
+                              }}
+                            />
+                          ))}
+                        </StackRow>
+                      )}
                     </Stack>
-                  </StackRowAlignCenter>
-                  <Stack sx={{ paddingLeft: '38px' }}>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{ color: palette.text.primary, paddingLeft: '4px', fontSize: '10px' }}
-                    >
-                      {formatDateTime(rev.created_at)}
-                    </Typography>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{ color: palette.text.primary, paddingLeft: '4px', fontSize: FONT_SIZE.small }}
-                    >
-                      {rev.comment}
-                    </Typography>
-                    {rev.images.length > 0 && (
-                      <StackRow gap={1} sx={{ marginTop: '8px' }}>
-                        {rev.images.map((img, imgIdx) => (
-                          <Box
-                            key={imgIdx}
-                            component="img"
-                            src={img}
-                            alt={`review-${imgIdx}`}
-                            sx={{
-                              width: 80,
-                              height: 80,
-                              objectFit: 'cover',
-                              cursor: 'pointer',
-                              borderRadius: 1,
-                              border: `1px solid ${palette.background.paper}`,
-                            }}
-                            onClick={() => {
-                              setModalSrc(img);
-                              setOpen(true);
-                            }}
-                          />
-                        ))}
-                      </StackRow>
-                    )}
                   </Stack>
-                </Stack>
-              ))
-          )}
+                ))
+            )}
 
-          {Math.ceil(filteredRate.length / COMMENTS_PER_PAGE) > 1 && (
-            <Pagination
-              count={Math.ceil(filteredRate.length / COMMENTS_PER_PAGE)}
-              page={commentPage}
-              variant="outlined"
-              onChange={(event, value) => setCommentPage(value)}
-            />
-          )}
-        </Stack>
-      )}
-      <Typography variant="subtitle2" sx={{ padding: `${PADDING_GAP_LAYOUT} 0`, color: palette.primary.main }}>
+            {Math.ceil(filteredRate.length / COMMENTS_PER_PAGE) > 1 && (
+              <Pagination
+                count={Math.ceil(filteredRate.length / COMMENTS_PER_PAGE)}
+                page={commentPage}
+                variant="outlined"
+                onChange={(event, value) => setCommentPage(value)}
+              />
+            )}
+          </Stack>
+        )}
+        {/* <Typography variant="subtitle2" sx={{ padding: `${PADDING_GAP_LAYOUT} 0`, color: palette.primary.main }}>
         Sản phẩm tương tự
       </Typography>
-      <SliderProduct items={items} />
-    </Stack>
+      <SliderProduct items={items} /> */}
+      </Stack>
+    </ContainerWrapper>
   );
 }

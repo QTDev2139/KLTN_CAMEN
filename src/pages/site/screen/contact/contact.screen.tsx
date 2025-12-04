@@ -1,4 +1,6 @@
 import { Stack, Typography, useTheme } from '@mui/material';
+import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
+import ContainerWrapper from '~/components/elements/container/container.element';
 import ContactForm from '~/components/elements/forms/contact/contact-form';
 import IconLabel from '~/components/elements/icon-label/icon-label.element';
 import { StackRow } from '~/components/elements/styles/stack.style';
@@ -7,7 +9,7 @@ import { StackRow } from '~/components/elements/styles/stack.style';
 const ContactPage: React.FC = () => {
   const { palette } = useTheme();
   return (
-    <Stack>
+    <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
       <Typography variant="h2">LIÊN HỆ</Typography>
       <Typography variant="h5" style={{ color: palette.primary.main, padding: '40px 0' }}>
         Cà Mèn Quán
@@ -35,7 +37,16 @@ const ContactPage: React.FC = () => {
               ></iframe>
               <a
                 href="https://sprunkiretake.net"
-                style={{ fontSize: '2px', color: 'gray', position: 'absolute', bottom: 0, left: 0, zIndex: 1, maxHeight: '1px', overflow: 'hidden' }}
+                style={{
+                  fontSize: '2px',
+                  color: 'gray',
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  zIndex: 1,
+                  maxHeight: '1px',
+                  overflow: 'hidden',
+                }}
               >
                 sprunki retake
               </a>
@@ -47,7 +58,7 @@ const ContactPage: React.FC = () => {
           <ContactForm />
         </Stack>
       </StackRow>
-    </Stack>
+    </ContainerWrapper>
   );
-}
+};
 export default ContactPage;

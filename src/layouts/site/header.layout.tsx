@@ -18,7 +18,17 @@ import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 
 // mobile
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { IconButton, Drawer, List, ListItem, ListItemButton, ListItemText, Collapse, Divider, Box } from '@mui/material';
+import {
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Collapse,
+  Divider,
+  Box,
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
@@ -51,25 +61,117 @@ export default function Header() {
     setOpenSub((s) => ({ ...s, [key]: !s[key] }));
   };
 
+  // Header style: sticky on desktop, relative on mobile
+  const headerSx = {
+    position: isMobile ? 'relative' : 'sticky',
+    ...(isMobile ? {} : { top: 0, left: 0, right: 0 }),
+    zIndex: 100,
+    boxShadow: '0 6px 4px 0 rgba(0, 0, 0, 0.09)',
+    backgroundColor: palette.background.paper,
+  };
+
   return (
-    <Stack sx={{ position: 'relative', zIndex: 100, boxShadow: '0 6px 4px 0 rgba(0, 0, 0, 0.09)' }}>
+    <Stack sx={headerSx}>
       <ContainerWrapper>
-        {!isMobile ? <AuthLink /> : null}
+        {/* {!isMobile ? <AuthLink /> : null} */}
 
         {!isMobile ? (
           <StackRowJustBetweenAlignCenter>
             <Logo />
-            <SearchInput />
-            <StackRowJustCenter sx={{ width: '260px' }}>
-              <Link to={`${prefix}/${SITE_SCREEN.CART}`} style={{ color: palette.text.primary }}>
-                <ShoppingCart />
+
+            <StackRow>
+              {sidebars.map((sidebar, index) => {
+                if ('children' in sidebar && sidebar.children?.length) {
+                  return (
+                    <Stack key={sidebar.to ?? index}>
+                      <Button
+                        id="basic-button"
+                        aria-controls={open ? 'basic-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                        onClick={handleClick}
+                        sx={{
+                          padding: 0,
+                          color: palette.text.primary,
+                          '&:hover': {
+                            backgroundColor: 'transparent',
+                            boxShadow: 'none',
+                          },
+                        }}
+                      >
+                        <TypographyHover
+                          variant="h6"
+                          style={{
+                            // paddingBottom: `${STYLE.PADDING_GAP_ITEM}`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontSize: '16px',
+                          }}
+                        >
+                          {t(sidebar.title)} {open ? <ExpandLess /> : <ExpandMore />}
+                        </TypographyHover>
+                      </Button>
+
+                      <Menu id="basic-menu" anchorEl={anchorEl} open={open} onClose={handleClose} onClick={handleClose}>
+                        {sidebar.children.map((item) => (
+                          <Stack key={item.to}>
+                            <NavLink
+                              to={`${prefix}/${item.to}`}
+                              style={({ isActive }: { isActive: boolean }) => ({
+                                padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
+                                color: isActive ? palette.primary.main : palette.text.primary,
+                                textDecoration: 'none',
+                              })}
+                            >
+                              <TypographyHover variant="h6" sx={{ justifyContent: 'flex-start', fontSize: '16px' }}>
+                                {t(item.title)}
+                              </TypographyHover>
+                            </NavLink>
+                          </Stack>
+                        ))}
+                      </Menu>
+                    </Stack>
+                  );
+                }
+
+                return (
+                  <NavLink
+                    key={sidebar.to ?? index}
+                    to={`${prefix}/${sidebar.to}`}
+                    style={({ isActive }: { isActive: boolean }) => ({
+                      padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
+                      color: isActive ? palette.primary.main : palette.text.primary,
+                      textDecoration: 'none',
+                    })}
+                  >
+                    <TypographyHover
+                      variant="h6"
+                      style={{ fontSize: '16px' }}
+                    >
+                      {t(sidebar.title)}
+                    </TypographyHover>
+                  </NavLink>
+                );
+              })}
+            </StackRow>
+
+            {/* <SearchInput /> */}
+            <StackRowJustCenter textAlign="center" rowGap={2}>
+              <AuthLink />
+              <Link to={`${prefix}/${SITE_SCREEN.CART}`} style={{ color: palette.text.primary, marginLeft: 16 }}>
+                <ShoppingCart sx={{ height: '100%' }}/>
               </Link>
             </StackRowJustCenter>
           </StackRowJustBetweenAlignCenter>
         ) : (
           // Mobile header: menu, logo, cart (+ optional search icon)
           <StackRowJustBetweenAlignCenter>
-            <IconButton aria-label="menu" size="large" onClick={toggleDrawer(true)} sx={{ color: palette.text.primary }}>
+            <IconButton
+              aria-label="menu"
+              size="large"
+              onClick={toggleDrawer(true)}
+              sx={{ color: palette.text.primary }}
+            >
               <MenuIcon />
             </IconButton>
             <Logo />
@@ -82,81 +184,15 @@ export default function Header() {
         )}
 
         {/* Desktop navigation (unchanged) */}
-        {!isMobile && (
-          <StackRow>
-            {sidebars.map((sidebar, index) => {
-              if ('children' in sidebar && sidebar.children?.length) {
-                return (
-                  <Stack key={sidebar.to ?? index}>
-                    <Button
-                      id="basic-button"
-                      aria-controls={open ? 'basic-menu' : undefined}
-                      aria-haspopup="true"
-                      aria-expanded={open ? 'true' : undefined}
-                      onClick={handleClick}
-                      sx={{
-                        padding: 0,
-                        color: palette.text.primary,
-                        '&:hover': {
-                          backgroundColor: 'transparent',
-                          boxShadow: 'none',
-                        },
-                      }}
-                    >
-                      <TypographyHover
-                        variant="h6"
-                        style={{ paddingBottom: `${STYLE.PADDING_GAP_ITEM}`, display: 'flex', alignItems: 'center', fontSize: '16px' }}
-                      >
-                        {t(sidebar.title)} {open ? <ExpandLess /> : <ExpandMore />}
-                      </TypographyHover>
-                    </Button>
-
-                    <Menu id="basic-menu" anchorEl={anchorEl} open={open} onClose={handleClose} onClick={handleClose}>
-                      {sidebar.children.map((item) => (
-                        <Stack key={item.to}>
-                          <NavLink
-                            to={`${prefix}/${item.to}`}
-                            style={({ isActive }: { isActive: boolean }) => ({
-                              padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
-                              color: isActive ? palette.primary.main : palette.text.primary,
-                              textDecoration: 'none',
-                            })}
-                          >
-                            <TypographyHover variant="h6" sx={{ justifyContent: 'flex-start', fontSize: '16px' }}>
-                              {t(item.title)}
-                            </TypographyHover>
-                          </NavLink>
-                        </Stack>
-                      ))}
-                    </Menu>
-                  </Stack>
-                );
-              }
-
-              return (
-                <NavLink
-                  key={sidebar.to ?? index}
-                  to={`${prefix}/${sidebar.to}`}
-                  style={({ isActive }: { isActive: boolean }) => ({
-                    padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
-                    color: isActive ? palette.primary.main : palette.text.primary,
-                    textDecoration: 'none',
-                  })}
-                >
-                  <TypographyHover variant="h6" style={{ paddingBottom: `${STYLE.PADDING_GAP_ITEM}`, fontSize: '16px' }}>
-                    {t(sidebar.title)}
-                  </TypographyHover>
-                </NavLink>
-              );
-            })}
-          </StackRow>
-        )}
+        
 
         {/* Mobile Drawer with navigation */}
         <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
           <Box sx={{ width: 280 }} role="presentation">
             <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 1 }}>
-              <Box><Logo /></Box>
+              <Box>
+                <Logo />
+              </Box>
               <IconButton aria-label="close" onClick={toggleDrawer(false)}>
                 <CloseIcon />
               </IconButton>

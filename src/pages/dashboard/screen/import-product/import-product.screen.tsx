@@ -66,10 +66,10 @@ const ImportProductScreen: React.FC = () => {
   return (
     <Stack spacing={2}>
       <StackRowAlignCenter sx={{ justifyContent: 'space-between' }}>
-        <Typography variant="h3">Quản lý sản phẩm</Typography>
+        <Typography variant="h3">Quản lý nhập hàng</Typography>
         {mode === ImportProductMode.LIST && (
           <Button onClick={goCreate}>
-            <Typography variant="subtitle2">Thêm sản phẩm mới</Typography>
+            <Typography variant="subtitle2">Thêm yêu cầu nhập hàng mới</Typography>
           </Button>
         )}
         {(mode === ImportProductMode.CREATE || mode === ImportProductMode.UPDATE) && (

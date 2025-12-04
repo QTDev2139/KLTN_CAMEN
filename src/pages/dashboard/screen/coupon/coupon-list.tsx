@@ -31,6 +31,7 @@ const ListCoupon: React.FC = () => {
   const [updateCoupon, setUpdateCoupon] = useState<Coupon | null>(null);
 
   const [role, setRole] = useState('');
+  console.log('role', role);
   useEffect(() => {
     const fetchProfile = async () => {
       const profile = await userApi.getProfile();
@@ -173,7 +174,7 @@ const ListCoupon: React.FC = () => {
                   <IconButton
                     onClick={() => handleEditClick(coupon.id)}
                     disabled={
-                      (role !== 'root' &&coupon.state === 'rejected') || (role === 'root' && coupon.state !== 'pending') || (role !== 'root' && coupon.state === 'pending')
+                      (role !== 'root' && coupon.state === 'rejected') || (role === 'root' && coupon.state !== 'pending') || (role !== 'root' && coupon.state === 'pending')
                     }
                   >
                     {/* Thay root bằng giám đốc  */}

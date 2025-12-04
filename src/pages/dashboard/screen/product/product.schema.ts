@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 
 export const schema = Yup.object().shape({
-  price: Yup.number().required('Giá bán là bắt buộc').min(10000, 'Giá phải lớn hơn 10.000 VND'),
+  price: Yup.number().required('Giá bán là bắt buộc').min(0, 'Giá phải lớn hơn 0'),
   compare_at_price: Yup.number()
     .nullable()
     .min(0, 'Khuyến mãi lớn hơn hoặc bằng 0')

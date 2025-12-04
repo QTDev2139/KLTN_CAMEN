@@ -41,14 +41,14 @@ import ChatScreen from '~/pages/dashboard/screen/chat/chat.screen';
 import ContactScreen from '~/pages/dashboard/screen/contact/contact.screen';
 import { UserType } from '~/apis/user/user.enum';
 import ImportProductScreen from '~/pages/dashboard/screen/import-product/import-product.screen';
-
+import ChangePasswordPage from '~/pages/auth/change-password/change-password';
 
 export type Route = {
   path: string;
   element: ElementType;
   layout?: ElementType;
   children?: Route[];
-  allowUserTypes: UserType[];  // Các loại người dùng được phép truy cập (quyền)
+  allowUserTypes: UserType[]; // Các loại người dùng được phép truy cập (quyền)
   type: RouteType;
 };
 
@@ -87,6 +87,12 @@ export const routes: Route[] = [
       {
         path: PATH.AUTH_SCREEN.FORGOT_PW,
         element: ForgotPasswordPage,
+        type: RouteType.PUBLIC,
+        allowUserTypes: [],
+      },
+      {
+        path: PATH.AUTH_SCREEN.CHANGE_PASSWORD,
+        element: ChangePasswordPage,
         type: RouteType.PUBLIC,
         allowUserTypes: [],
       },
@@ -181,13 +187,13 @@ export const routes: Route[] = [
       },
       {
         path: PATH.SITE_SCREEN.ORDER_DETAIL,
-        element: OrderPage, 
+        element: OrderPage,
         type: RouteType.PUBLIC,
         allowUserTypes: [],
       },
       {
         path: PATH.SITE_SCREEN.PAYMENT_CALLBACK,
-        element: PaymentCallbackPage, 
+        element: PaymentCallbackPage,
         type: RouteType.PUBLIC,
         allowUserTypes: [],
       },
@@ -203,7 +209,6 @@ export const routes: Route[] = [
         type: RouteType.PUBLIC,
         allowUserTypes: [],
       },
-
     ],
   },
 
@@ -213,7 +218,14 @@ export const routes: Route[] = [
     element: DashboardPage,
     layout: DashboardLayout,
     type: RouteType.PROTECTED,
-    allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE, UserType.MARKETING, UserType.STAFF],
+    allowUserTypes: [
+      UserType.ROOT,
+      UserType.ADMIN,
+      UserType.MANAGER,
+      UserType.EXECUTIVE,
+      UserType.MARKETING,
+      UserType.STAFF,
+    ],
     children: [
       {
         path: PATH.DASHBOARD_SCREEN.OVERVIEW,

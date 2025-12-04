@@ -17,6 +17,7 @@ import {
   TableRow,
   Paper,
   Grid,
+  TextField,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { OrderDetail } from '~/apis/order/order.interface.api';
@@ -33,9 +34,12 @@ import { DetailRow } from '~/components/elements/table-element/row-element';
 
 import Placeholder from '~/assets/images/placeholder.png';
 import { StackRowJustBetween } from '~/components/elements/styles/stack.style';
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { updateOrder } from '~/apis/order/order.api';
+import { vnpayManualRefund } from '~/apis/payment/payment.api';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 type Props = {
   open: boolean;
@@ -55,22 +59,91 @@ export const statusUpdate: Record<string, string> = {
 
 const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = false, onUpdateSuccess }) => {
   const { snackbar } = useSnackbar();
+  const [refundNote, setRefundNote] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [refundType, setRefundType] = useState<'02' | '03'>('02'); // '02' = toàn bộ, '03' = một phần
+  const [refundAmount, setRefundAmount] = useState<string>('');
 
+  React.useEffect(() => {
+    if (order) {
+      setRefundAmount(String(order.grand_total || ''));
+      setRefundType('02');
+    }
+  }, [order]);
   if (!order) return null;
   const handleUpdate = async () => {
     try {
       const updatedOrder = await updateOrder(order.id, { status: statusUpdate[order.status] });
-      snackbar('success', updatedOrder.message ||'Cập nhật đơn hàng thành công');
-
-      // Gọi callback để refresh data
+      snackbar('success', updatedOrder.message || 'Cập nhật đơn hàng thành công');
       if (onUpdateSuccess) {
         await onUpdateSuccess();
       }
-
       onClose();
     } catch (e) {
       console.error(e);
       snackbar('error', 'Cập nhật đơn hàng thất bại');
+    }
+  };
+
+  const handleConfirmRefund = async () => {
+    setLoading(true);
+    try {
+      const amountNum = parseFloat(refundAmount as any) || 0;
+      if (refundType === '03' && (isNaN(amountNum) || amountNum < 1000)) {
+        snackbar('error', 'Số tiền hoàn tối thiểu 1000');
+        setLoading(false);
+        return;
+      }
+
+      const payload = {
+        code: order.code,
+        trans_type: refundType,
+        amount: amountNum,
+        reason: refundNote || undefined,
+      };
+      console.log('refund payload', payload);
+      const payRes = await vnpayManualRefund(payload);
+      // tùy backend trả về gì, giả sử trả về success
+      snackbar('success', payRes.message || 'Yêu cầu hoàn tiền đã gửi');
+
+      // cập nhật trạng thái đơn hàng — điều chỉnh theo business rule
+      const updatePayload: any = {
+        reason_refund: refundNote,
+      };
+      if (refundType === '02') {
+        updatePayload.status = 'refunded';
+        updatePayload.refund_amount = amountNum || order.grand_total;
+      } else {
+        // partial: set refund amount and optionally a status like 'partially_refunded' hoặc keep 'processing'
+        updatePayload.status = 'refunded';
+        updatePayload.refund_amount = amountNum;
+      }
+
+      console.log('updatePayload', updatePayload);
+      const res = await updateOrder(order.id, updatePayload);
+      if (onUpdateSuccess) await onUpdateSuccess();
+      onClose();
+    } catch (e) {
+      console.error(e);
+      snackbar('error', 'Hoàn tiền thất bại');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRejectRefund = async () => {
+    setLoading(true);
+    try {
+      // Trả trạng thái về processing (hoặc thay đổi theo business rule)
+      const res = await updateOrder(order.id, { status: 'processing', reason_refund: refundNote });
+      snackbar('success', res.message || 'Đã từ chối hoàn tiền');
+      if (onUpdateSuccess) await onUpdateSuccess();
+      onClose();
+    } catch (e) {
+      console.error(e);
+      snackbar('error', 'Thao tác thất bại');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,6 +179,91 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
               />
             </Stack>
           </Box>
+
+          {/* Hiển thị thông tin hoàn tiền khi có yêu cầu hoặc đã hoàn */}
+          {(order.status === 'refund_requested' || order.status === 'refunded') && (
+            <Stack spacing={1}>
+              <Divider />
+              <Typography variant="subtitle2" fontWeight={600}>
+                Hoàn tiền
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Lý do: {order.reason_refund || 'N/A'}
+              </Typography>
+              {/* <DetailRow label="Số tiền hoàn" value={FormatPrice(order.refund_amount)} /> */}
+              {/* <DetailRow label="Mã giao dịch hoàn tiền" value={order.refund_transaction_code} /> */}
+              {order.img_refund && order.img_refund.length > 0 && (
+                <Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    Ảnh minh chứng
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    {order.img_refund?.map((img, idx) => {
+                      const imageSrc = img ? `${process.env.REACT_APP_BASE}storage/${img}` : Placeholder;
+                      return (
+                        <a
+                          key={idx}
+                          href={imageSrc}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ display: 'inline-block' }}
+                        >
+                          <Box
+                            component="img"
+                            src={imageSrc}
+                            alt={`refund-${idx}`}
+                            sx={{
+                              width: 80,
+                              height: 80,
+                              objectFit: 'cover',
+                              borderRadius: 1,
+                              border: '1px solid',
+                              borderColor: 'divider',
+                            }}
+                          />
+                        </a>
+                      );
+                    })}
+                    {/* Trường ghi chú cho admin khi xử lý hoàn tiền */}
+                  </Box>
+                    <Box sx={{ minWidth: 300, mt: 1 }}>
+                      <TextField
+                        fullWidth
+                        label="Ghi chú"
+                        placeholder="Nhập ghi chú xử lý hoàn tiền..."
+                        multiline
+                        minRows={2}
+                        value={refundNote}
+                        onChange={(e) => setRefundNote(e.target.value)}
+                        size="small"
+                      />
+                      <Box sx={{ mt: 1, display: 'flex', gap: 1, alignItems: 'center' }}>
+                        <ToggleButtonGroup
+                          size="small"
+                          value={refundType}
+                          exclusive
+                          onChange={(_, v) => v && setRefundType(v)}
+                          aria-label="refund-type"
+                        >
+                          <ToggleButton value="02" aria-label="toàn bộ">Hoàn toàn bộ</ToggleButton>
+                          <ToggleButton value="03" aria-label="một phần">Hoàn một phần</ToggleButton>
+                        </ToggleButtonGroup>
+
+                        {refundType === '03' && (
+                          <TextField
+                            label="Số tiền hoàn (VND)"
+                            size="small"
+                            value={refundAmount}
+                            onChange={(e) => setRefundAmount(e.target.value.replace(/[^\d.]/g, ''))}
+                            sx={{ width: 160 }}
+                          />
+                        )}
+                      </Box>
+                    </Box>
+                </Box>
+              )}
+            </Stack>
+          )}
 
           <Divider />
 
@@ -181,14 +339,17 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
                         </TableCell>
                       </TableRow>
                     </TableHead>
-                    <TableBody> 
+                    <TableBody>
                       {order.order_items.map((item, index) => (
                         <TableRow key={index} hover>
                           <TableCell>
                             <Stack direction="row" spacing={2} alignItems="center">
                               <Box
                                 component="img"
-                                src={item.product?.product_images[0]?.image_url || Placeholder}
+                                src={
+                                  `${process.env.REACT_APP_BASE}storage/${item.product?.product_images[0]?.image_url}` ||
+                                  Placeholder
+                                }
                                 alt={item.product?.product_translations?.[0]?.name || 'Product'}
                                 sx={{
                                   width: 60,
@@ -281,7 +442,7 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
                 }}
               >
                 <Typography variant="h6" fontWeight={700}>
-                  Tổng cộng: 
+                  Tổng cộng:
                 </Typography>
                 <Typography variant="h6" fontWeight={700} color="primary.main">
                   {FormatPrice(order.grand_total)}
@@ -317,6 +478,16 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
           <Button onClick={() => handleUpdate()} variant="contained" color="primary">
             Xác nhận đơn hàng
           </Button>
+        )}
+        {order.status === 'refund_requested' && (
+          <>
+            <Button onClick={handleRejectRefund} variant="outlined" color="inherit" disabled={loading}>
+              Từ chối hoàn tiền
+            </Button>
+            <Button onClick={handleConfirmRefund} variant="contained" color="primary" disabled={loading}>
+              Xác nhận hoàn tiền
+            </Button>
+          </>
         )}
       </DialogActions>
     </Dialog>

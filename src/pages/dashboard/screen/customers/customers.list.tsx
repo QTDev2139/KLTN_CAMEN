@@ -19,6 +19,16 @@ import { ModalElement } from '~/components/modal/modal-element/modal-element';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { useFormik } from 'formik';
 
+const actionName: Record<number, string> = {
+  0: "Bị khóa",
+  1: "Hoạt động",
+}
+const actionColor: Record<number, string> = {
+  0: "error",
+  1: "success",
+}
+
+
 const CustomersList: React.FC = () => {
   const { snackbar } = useSnackbar();
   const [listPersonnel, setListPersonnel] = useState<User[]>([]);
@@ -94,8 +104,8 @@ const CustomersList: React.FC = () => {
             </TableCell>
             <TableCell>
               <TagElement
-                type={user.status === 1 ? 'success' : 'error'}
-                content={user.status === 1 ? 'Hoạt động' : 'Bị khóa'}
+                type={actionColor[user.status || 1] as any}
+                content={actionName[user.status || 1]}
               />
             </TableCell>
             <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>

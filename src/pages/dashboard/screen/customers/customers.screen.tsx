@@ -105,8 +105,8 @@ export default function CustomersScreen() {
             >
               <MenuItem value="2">Ban lãnh đạo</MenuItem>
               <MenuItem value="3">Quản lý</MenuItem>
-              <MenuItem value="5">Marketing</MenuItem>
-              <MenuItem value="6">Staff</MenuItem>
+              {/* <MenuItem value="5">Marketing</MenuItem> */}
+              <MenuItem value="6">Nhân viên bán hàng</MenuItem>
               <MenuItem value="7">Nhân viên kho</MenuItem>
             </TextField>
           </Stack>

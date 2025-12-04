@@ -256,7 +256,7 @@ const ProductionProcessPage: React.FC = () => {
                                 variant="h2"
                                 component="h1"
                                 sx={{
-                                    fontWeight: 800,
+                                    fontWeight: 700,
                                     mb: 3,
                                     fontSize: { xs: '2rem', md: '3.5rem' },
                                     color: palette.text.primary,
