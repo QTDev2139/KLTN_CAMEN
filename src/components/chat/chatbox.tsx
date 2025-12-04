@@ -79,6 +79,31 @@ const ChatBox: React.FC = () => {
     };
   }, [room?.id]);
 
+  // Lắng nghe sự kiện mở chat từ nơi khác trong app
+  useEffect(() => {
+   const handler = async (e: Event) => {
+     const detail = (e as CustomEvent)?.detail || {};
+     // Mở popper, anchor vào FAB
+     setAnchorEl(buttonRef.current);
+     setIsOpen(true);
+
+     if (detail.sellerId) {
+       try {
+         const rooms = await chatApi.getRooms();
+         const matched = (rooms || []).find((r: any) => r.seller_id === detail.sellerId || r.partner_id === detail.sellerId);
+         if (matched) {
+           setRoom(matched);
+         }
+       } catch (err) {
+         console.error('open-chat: failed to find room', err);
+       }
+     }
+   };
+
+   window.addEventListener('open-chat', handler as EventListener);
+   return () => window.removeEventListener('open-chat', handler as EventListener);
+ }, []);
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -233,6 +258,9 @@ const ChatBox: React.FC = () => {
             { name: 'computeStyles', options: { adaptive: false } },
           ],
         }}
+        sx={{ 
+          zIndex: 1000,
+         }}
       >
         <Paper
           elevation={6}

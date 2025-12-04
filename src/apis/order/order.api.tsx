@@ -1,5 +1,5 @@
-import { axiosApi } from "~/common/until/request.until";
-import { CreateOrder, OrderDetail } from "./order.interface.api";
+import { axiosApi } from '~/common/until/request.until';
+import { CreateOrder, OrderDetail, OrderRefundRequest } from './order.interface.api';
 
 export const createOrder = async (data: CreateOrder) => {
   const res = await axiosApi.post('orders', data);
@@ -8,19 +8,17 @@ export const createOrder = async (data: CreateOrder) => {
 
 export const getOrders = async (): Promise<OrderDetail[]> => {
   const res = await axiosApi.get(`orders`);
-  return res.data; 
+  return res.data;
 };
 
 export const getUserOrders = async (lang: string): Promise<OrderDetail[]> => {
   const res = await axiosApi.get(`orders/user/lang/${lang}`);
-  return res.data.post; 
+  return res.data.post;
 };
-
-
 
 export const getOrderDetail = async (id: number | string): Promise<OrderDetail[]> => {
   const res = await axiosApi.get(`orders/${id}`);
-  return res.data.post; 
+  return res.data.post;
 };
 
 export const deleteOrder = async (id: number) => {
@@ -31,4 +29,11 @@ export const deleteOrder = async (id: number) => {
 export const updateOrder = async (id: number, data: Partial<OrderDetail>) => {
   const res = await axiosApi.put(`orders/${id}`, data);
   return res.data;
-}
+};
+
+export const requestOrderRefund = async (data: FormData) => {
+  const res = await axiosApi.post('orders/refund/request', data, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data;
+};

@@ -20,7 +20,7 @@ import { contactApi, userApi } from '~/apis';
 import { TagElement } from '~/components/elements/tag/tag.element';
 import { formatDateTime } from '~/common/until/date-format.until';
 import { getLimitLineCss } from '~/common/until/get-limit-line-css';
-import { StateLabelContact } from './contact.state';
+import { StateLabelContact } from './contact.status';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { User } from '~/apis/user/user.interfaces.api';
 import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';

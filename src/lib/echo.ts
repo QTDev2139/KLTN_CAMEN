@@ -10,12 +10,11 @@ const wsPort = Number(process.env.REACT_APP_REVERB_PORT || 8080);
 
 export const echo = new Echo({
   broadcaster: 'reverb',
-  key: process.env.REACT_APP_REVERB_APP_KEY as string, 
-  wsHost,
-  wsPort,
-  wssPort: wsPort,
-  forceTLS: false,
-  encrypted: false,
+  key: 'erhwbemqnipbunixksiy',   
+  wsHost: '103.249.117.228',
+  wsPort: 45354,
+  wssPort: 45354,
+  forceTLS: false, 
   enabledTransports: ['ws'],
 
   // Auth cho private channel (dùng JWT)

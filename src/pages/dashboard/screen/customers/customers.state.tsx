@@ -5,7 +5,7 @@ export const StatusRole: Record<string, TagType> = {
     root: 'success',
     manager: 'info',
     staff: 'warning',
-    marketing: 'error',
+    // marketing: 'error',
     storekeeper: 'secondary',
 }
 
@@ -13,8 +13,8 @@ export const NameStatusRole: Record<string, string> = {
     admin: 'Admin',
     root: 'ban lãnh đạo',
     manager: 'quản lý',
-    staff: 'staff',
-    marketing: 'marketing',
+    staff: 'nhân viên bán hàng',
+    // marketing: 'marketing',
     storekeeper: 'nhân viên kho',
 }
 

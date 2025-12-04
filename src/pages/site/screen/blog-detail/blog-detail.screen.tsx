@@ -4,6 +4,8 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { blogApi } from '~/apis';
 import { Post } from '~/apis/blog/blog.interface.api';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
+import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
+import ContainerWrapper from '~/components/elements/container/container.element';
 import { useLang } from '~/hooks/use-lang/use-lang';
 
 const BlogDetailPage: React.FC = () => {
@@ -21,7 +23,7 @@ const BlogDetailPage: React.FC = () => {
       try {
         const result = await blogApi.getDetailBlog(lang, slug);
         setBlogDetail(result);
-        
+
         const tr =
           (result.translations || []).find((t: any) => Number(t.language_id) === Number(lang)) ||
           (result.translations || [])[0];
@@ -44,12 +46,14 @@ const BlogDetailPage: React.FC = () => {
   }, [currentLang, slug]);
 
   return (
-    <Stack>
-      <Typography variant="subtitle2">
-        {/* Sanitize content to avoid blocked script errors; strip scripts server-side or use DOMPurify */}
-        <div dangerouslySetInnerHTML={{ __html: blogDetail?.translations?.[0]?.content ?? '' }} />
-      </Typography>
-    </Stack>
+    <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
+      <Stack>
+        <Typography variant="subtitle2">
+          {/* Sanitize content to avoid blocked script errors; strip scripts server-side or use DOMPurify */}
+          <div dangerouslySetInnerHTML={{ __html: blogDetail?.translations?.[0]?.content ?? '' }} />
+        </Typography>
+      </Stack>
+    </ContainerWrapper>
   );
 };
 export default BlogDetailPage;

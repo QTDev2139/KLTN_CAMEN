@@ -5,10 +5,20 @@ import { getListBlog, deletePost } from '~/apis/blog/blog.api';
 import { Post } from '~/apis/blog/blog.interface.api';
 import { DeleteOutline, ModeEditOutlineOutlined } from '@mui/icons-material';
 import { StackRowJustCenter } from '~/components/elements/styles/stack.style';
-import { TagElement } from '~/components/elements/tag/tag.element';
+import { TagElement, type TagType } from '~/components/elements/tag/tag.element';
 import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
+
+const actionName: Record<number, string> = {
+  0: "Không hoạt động",
+  1: "Hoạt động",
+}
+const actionColor: Record<number, TagType> = {
+  0: "error",
+  1: "success",
+}
+
 
 type ListBlogProps = {
   onUpdate: (post: Post) => void;
@@ -80,8 +90,8 @@ export default function ListBlog({ onUpdate }: ListBlogProps) {
             <TableCell sx={{ textAlign: 'center' }}>{(blog as any).created_at}</TableCell>
             <TableCell sx={{ textAlign: 'center' }}>
               <TagElement
-                type={(blog as any).status === 1 ? 'success' : 'error'}
-                content={(blog as any).status === 1 ? 'Hoạt động' : 'Không hoạt động'}
+                type={actionColor[(blog as any).status || 1]}
+                content={actionName[(blog as any).status || 1]}
               />
             </TableCell>
             <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>

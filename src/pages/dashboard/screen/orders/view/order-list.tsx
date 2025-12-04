@@ -12,9 +12,15 @@ import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import OrderViewModal from './order-view';
-import { PaymentMethodLabel, PaymentStatusLabel, PaymentStatusTagType, ORDER_FILTERS, statusColorMap, statusLabelMap } from '../order.state';
-
-
+import {
+  PaymentMethodLabel,
+  PaymentStatusLabel,
+  PaymentStatusTagType,
+  ORDER_FILTERS,
+  statusColorMap,
+  statusLabelMap,
+} from '../order.state';
+import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 
 const ListOrder: React.FC = () => {
   const [listOrder, setListOrder] = useState<OrderDetail[]>([]);
@@ -26,20 +32,21 @@ const ListOrder: React.FC = () => {
   const [openView, setOpenView] = useState(false);
   const [viewOrder, setViewOrder] = useState<OrderDetail | null>(null);
   const [editable, setEditable] = useState<boolean>(false);
+  const [detailOrder, setDetailOrder] = useState<OrderDetail | null>(null);
 
-  const filteredOrders = useMemo(
-    () => (activeFilter === 'all' ? listOrder : listOrder.filter(o => o.status === activeFilter)),
-    [listOrder, activeFilter]
-  );
+  const filteredOrders = useMemo(() => {
+    if (activeFilter === 'all') return listOrder;
+    if (activeFilter === 'refunded') {
+      return listOrder.filter((o) => o.status === 'refund_requested' || o.status === 'refunded');
+    }
+    return listOrder.filter((o) => o.status === activeFilter);
+  }, [listOrder, activeFilter]);
 
   const handleFilterChange = (filterValue: string) => {
     setActiveFilter(filterValue);
   };
 
-  const handleOpenConfirm = (order: OrderDetail) => {
-    setSelectedOrder(order);
-    setOpenConfirm(true);
-  };
+
 
   const handleConfirmDelete = async () => {
     if (!selectedOrder) return;
@@ -56,31 +63,6 @@ const ListOrder: React.FC = () => {
       setLoadingDelete(false);
       setOpenConfirm(false);
       setSelectedOrder(null);
-    }
-  };
-
-  const handleEditClick = async (id: number) => {
-    try {
-      const detail = await getOrderDetail(id);
-      const orderData = Array.isArray(detail) ? detail[0] : detail;
-      setViewOrder(orderData);
-      setEditable(true);
-      setOpenView(true);
-    } catch (e) {
-      console.error(e);
-      snackbar('error', 'Không tải được thông tin đơn hàng');
-    }
-  };
-
-  const handleViewClick = async (id: number) => {
-    try {
-      const detail = await getOrderDetail(id);
-      setViewOrder(Array.isArray(detail) ? detail[0] : detail);
-      setEditable(false);
-      setOpenView(true);
-    } catch (e) {
-      console.error(e);
-      snackbar('error', 'Không tải được chi tiết đơn hàng');
     }
   };
 
@@ -101,11 +83,11 @@ const ListOrder: React.FC = () => {
 
   const columns = [
     { id: 'code', label: 'Mã đơn hàng' },
-    { id: 'grand_total', label: 'Tổng tiền' },
-    { id: 'payment_method', label: 'Phương thức TT' },
-    { id: 'payment_status', label: 'Trạng thái TT' },
-    { id: 'status', label: 'Trạng thái đơn' },
-    { id: 'created_at', label: 'Ngày tạo' },
+    { id: 'grand_total', label: 'Tổng tiền', width: 100 },
+    { id: 'payment_method', label: 'Phương thức TT', width: 165 },
+    { id: 'payment_status', label: 'Trạng thái TT', width: 180 },
+    { id: 'status', label: 'Trạng thái đơn', width: 130 },
+    { id: 'created_at', label: 'Ngày tạo', width: 120 },
     { id: 'action', label: 'Thao tác' },
   ];
 
@@ -120,7 +102,7 @@ const ListOrder: React.FC = () => {
           userSelect: 'none',
         }}
       >
-        {ORDER_FILTERS.map(filter => {
+        {ORDER_FILTERS.map((filter) => {
           const active = activeFilter === filter.value;
           return (
             <Box
@@ -153,9 +135,9 @@ const ListOrder: React.FC = () => {
               <Typography
                 variant="subtitle2"
                 sx={{
-                  fontWeight: 600, 
+                  fontWeight: 600,
                   lineHeight: 1.4,
-                  minWidth: 90, 
+                  minWidth: 90,
                   textAlign: 'center',
                   letterSpacing: 0.15,
                 }}
@@ -182,7 +164,9 @@ const ListOrder: React.FC = () => {
                 <Typography fontWeight={600}>{order.code}</Typography>
               </TableCell>
               <TableCell sx={{ textAlign: 'right' }}>
-                <Typography width={100} fontWeight={600}>{FormatPrice(order.grand_total)}</Typography>
+                <Typography width={100} fontWeight={600}>
+                  {FormatPrice(order.grand_total)}
+                </Typography>
               </TableCell>
               <TableCell sx={{ textAlign: 'center' }}>
                 <Typography width={165}>{PaymentMethodLabel[order.payment_method]}</Typography>
@@ -191,15 +175,11 @@ const ListOrder: React.FC = () => {
                 <TagElement
                   type={PaymentStatusTagType[order.payment_status]}
                   content={PaymentStatusLabel[order.payment_status]}
-                  width={130}
+                  width={180}
                 />
               </TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>
-                <TagElement
-                  type={statusColorMap[order.status]}
-                  content={statusLabelMap[order.status]}
-                  width={130}
-                />
+              <TableCell sx={{ textAlign: 'center', ...getLimitLineCss(1)  }}>
+                <TagElement type={statusColorMap[order.status]} content={statusLabelMap[order.status]} width={130} />
               </TableCell>
               <TableCell>
                 <Typography width={95}>{formatDate(order.created_at)}</Typography>
@@ -207,20 +187,39 @@ const ListOrder: React.FC = () => {
               <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
                 <StackRowJustCenter sx={{ width: '100%', cursor: 'pointer' }}>
                   <Tooltip title="Xem">
-                    <IconButton onClick={() => handleViewClick(order.id)}>
+                    <IconButton
+                      onClick={() => {
+                        // handleViewClick(order.id);
+                        setDetailOrder(order);
+                        setEditable(false);
+                        setOpenView(true);
+                      }}
+                    >
                       <VisibilityOutlinedIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Sửa">
-                    <IconButton onClick={() => handleEditClick(order.id)} disabled={order.status === 'completed' || order.status === 'cancelled'}>
+                    <IconButton
+                      onClick={() => {
+                        setDetailOrder(order);
+                        setEditable(true);
+                        setOpenView(true);
+                      }}
+                      disabled={
+                        order.status === 'completed' ||
+                        order.status === 'cancelled' ||
+                        order.status === 'refunded' ||
+                        order.status === 'refund_requested'
+                      }
+                    >
                       <ModeEditOutlineOutlined />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Xóa">
+                  {/* <Tooltip title="Xóa">
                     <IconButton onClick={() => handleOpenConfirm(order)}>
                       <DeleteOutline />
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip> */}
                 </StackRowJustCenter>
               </TableCell>
             </TableRow>
@@ -243,8 +242,9 @@ const ListOrder: React.FC = () => {
         onClose={() => {
           setOpenView(false);
           setViewOrder(null);
+          setDetailOrder(null);
         }}
-        order={viewOrder}
+        order={detailOrder}
         editable={editable}
         onUpdateSuccess={fetchListOrder}
       />

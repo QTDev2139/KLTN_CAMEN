@@ -16,7 +16,9 @@ import { blogApi, postCategoryApi } from '~/apis';
 import { Post } from '~/apis/blog/blog.interface.api';
 import { PostCategoryTranslationApi } from '~/apis/post-category/post-category.interface.api';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
+import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import { getLimitLineCss } from '~/common/until/get-limit-line-css';
+import ContainerWrapper from '~/components/elements/container/container.element';
 import { StackRow } from '~/components/elements/styles/stack.style';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { SITE_SCREEN } from '~/router/path.route';
@@ -32,7 +34,7 @@ const BlogPage: React.FC = () => {
         (b) =>
           String(b.post_category?.translations?.[0]?.name ?? '')
             .toLowerCase()
-            .trim() === selectedCategory.toLowerCase().trim()
+            .trim() === selectedCategory.toLowerCase().trim(),
       )
     : blogResult;
 
@@ -77,97 +79,100 @@ const BlogPage: React.FC = () => {
   }, [currentLang]);
 
   return (
-    <Stack>
-      <StackRow sx={{ gap: 1, flexWrap: 'wrap', mb: 2 }}>
-        <Typography
-          onClick={() => setSelectedCategory(null)}
-          sx={{
-            cursor: 'pointer',
-            px: 1.5,
-            py: 0.5,
-            borderRadius: 1,
-            bgcolor: selectedCategory ? 'transparent' : 'action.selected',
-            fontWeight: selectedCategory ? 500 : 700,
-          }}
-        >
-          Tất cả
-        </Typography>
-        {categoryList.map((cate) => {
-          const isActive = selectedCategory && String(selectedCategory).toLowerCase().trim() === String(cate.name).toLowerCase().trim();
-          return (
-            <Typography
-              key={cate.id}
-              onClick={() => setSelectedCategory(isActive ? null : cate.name)}
-              sx={{
-                cursor: 'pointer',
-                px: 1.5,
-                py: 0.5,
-                borderRadius: 1,
-                bgcolor: isActive ? 'primary.main' : 'transparent',
-                color: isActive ? 'primary.contrastText' : 'text.primary',
-                '&:hover': { bgcolor: isActive ? 'primary.dark' : 'action.hover' },
-              }}
-            >
-              {cate.name}
-            </Typography>
-          );
-        })}
-      </StackRow>
-      <Grid container spacing={4}>
-        {filteredBlogs.map((blog) => {
-           const title = blog.translations?.[0]?.title ?? blog.title ?? '';
-           const excerpt = blog.translations?.[0]?.meta_description ?? '';
-           const date = (blog as any).created_at ?? '';
-           const author = (blog as any).user?.name ?? '';
- 
-           return (
-             <Grid size={{ xs: 12, md: 6, lg: 4 }} key={blog.id}>
-               <Link to={'' + prefix + '/' + SITE_SCREEN.BLOG + '/' + blog.translations?.[0]?.slug}>
-                 <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                   <CardActionArea sx={{ flex: 1 }}>
-                     <CardMedia
-                       component="div"
-                       sx={{
-                         pt: '56.25%', // 16:9
-                         bgcolor: 'grey.300',
-                         display: 'flex',
-                         alignItems: 'center',
-                         justifyContent: 'center',
-                       }}
-                       image={blog.thumbnail ?? ''}
-                       title={title}
-                     >
-                       {!blog.thumbnail && (
-                         <Typography variant="subtitle1" color="text.secondary">
-                           No Image
-                         </Typography>
-                       )}
-                     </CardMedia>
-                     <CardContent sx={{ flex: 1 }}>
-                       <Typography
-                         variant="h6"
-                         component="div"
-                         noWrap
-                         sx={getLimitLineCss(2)}
-                       >
-                         {title}
-                       </Typography>
-                       <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }} noWrap>
-                         {excerpt}
-                       </Typography>
-                       <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
-                         <Chip label={author} variant="outlined" size="small" />
-                         <Chip label={new Date(date).toLocaleDateString(currentLang === 'vi' ? 'vi-VN' : 'en-US')} variant="outlined" size="small" />
-                       </Stack>
-                     </CardContent>
-                   </CardActionArea>
-                 </Card>
-               </Link>
-             </Grid>
-           );
-         })}
-       </Grid>
-     </Stack>
-   );
- };
- export default BlogPage;
+    <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
+      <Stack>
+        <StackRow sx={{ gap: 1, flexWrap: 'wrap', mb: 2 }}>
+          <Typography
+            onClick={() => setSelectedCategory(null)}
+            sx={{
+              cursor: 'pointer',
+              px: 1.5,
+              py: 0.5,
+              borderRadius: 1,
+              bgcolor: selectedCategory ? 'transparent' : 'action.selected',
+              fontWeight: selectedCategory ? 500 : 700,
+            }}
+          >
+            Tất cả
+          </Typography>
+          {categoryList.map((cate) => {
+            const isActive =
+              selectedCategory &&
+              String(selectedCategory).toLowerCase().trim() === String(cate.name).toLowerCase().trim();
+            return (
+              <Typography
+                key={cate.id}
+                onClick={() => setSelectedCategory(isActive ? null : cate.name)}
+                sx={{
+                  cursor: 'pointer',
+                  px: 1.5,
+                  py: 0.5,
+                  borderRadius: 1,
+                  bgcolor: isActive ? 'primary.main' : 'transparent',
+                  color: isActive ? 'primary.contrastText' : 'text.primary',
+                  '&:hover': { bgcolor: isActive ? 'primary.dark' : 'action.hover' },
+                }}
+              >
+                {cate.name}
+              </Typography>
+            );
+          })}
+        </StackRow>
+        <Grid container spacing={4}>
+          {filteredBlogs.map((blog) => {
+            const title = blog.translations?.[0]?.title ?? blog.title ?? '';
+            const excerpt = blog.translations?.[0]?.meta_description ?? '';
+            const date = (blog as any).created_at ?? '';
+            const author = (blog as any).user?.name ?? '';
+
+            return (
+              <Grid size={{ xs: 12, md: 6, lg: 4 }} key={blog.id}>
+                <Link to={'' + prefix + '/' + SITE_SCREEN.BLOG + '/' + blog.translations?.[0]?.slug}>
+                  <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <CardActionArea sx={{ flex: 1 }}>
+                      <CardMedia
+                        component="div"
+                        sx={{
+                          pt: '56.25%', // 16:9
+                          bgcolor: 'grey.300',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                        image={blog.thumbnail ?? ''}
+                        title={title}
+                      >
+                        {!blog.thumbnail && (
+                          <Typography variant="subtitle1" color="text.secondary">
+                            No Image
+                          </Typography>
+                        )}
+                      </CardMedia>
+                      <CardContent sx={{ flex: 1 }}>
+                        <Typography variant="h6" component="div" noWrap sx={getLimitLineCss(2)}>
+                          {title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }} noWrap>
+                          {excerpt}
+                        </Typography>
+                        <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
+                          <Chip label={author} variant="outlined" size="small" />
+                          <Chip
+                            label={new Date(date).toLocaleDateString(currentLang === 'vi' ? 'vi-VN' : 'en-US')}
+                            variant="outlined"
+                            size="small"
+                          />
+                        </Stack>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                </Link>
+              </Grid>
+            );
+          })}
+        </Grid>
+      </Stack>
+    </ContainerWrapper>
+  );
+};
+export default BlogPage;

@@ -34,6 +34,7 @@
     "react-router-dom": "^7.7.1",
     "react-scripts": "5.0.1",
     "react-slick": "^0.31.0",
+    "recharts": "^3.5.1",
     "slick-carousel": "^1.8.1",
     "tinymce": "^8.1.2",
     "web-vitals": "^2.1.4",
@@ -42,6 +43,7 @@
   "devDependencies": {
     "@types/react-google-recaptcha": "^2.1.9",
     "@types/react-slick": "^0.23.13",
+    "@types/recharts": "^1.8.29",
     "babel-plugin-module-resolver": "^5.0.2",
     "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.2.1",
