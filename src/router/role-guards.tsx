@@ -27,7 +27,7 @@ export const RoleGuardRoute = ({ children, allowedRoles }: RoleGuardRouteProps) 
 
   // Nếu không có quyền, redirect về trang chủ
   if (!hasAccess(allowedRoles)) {
-    return <Navigate to={`/${PATH.PAGE.ERROR}`} replace />;
+    return <Navigate to={`/${PATH.SITE_SCREEN.HOME}`} replace />;
   }
 
   return <>{children}</>;

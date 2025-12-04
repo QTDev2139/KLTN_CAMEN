@@ -47,62 +47,23 @@ const HomePage: React.FC = () => {
     <Box component="main">
       {/* Hero Banner - Full Width */}
       <Box
-        sx={{
-          position: 'relative',
-          width: '100%',
-          height: { xs: '400px', md: '600px' },
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('${Banner}')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden',
-        }}
-      >
-        <Container maxWidth="lg">
-          <Fade in={isVisible} timeout={1000}>
-            <Box
-              sx={{
-                textAlign: 'center',
-                color: '#fff',
-                animation: `${fadeInUp} 1s ease-out`,
-                px: 2,
-              }}
-            >
-              <Typography
-                variant="h2"
-                component="h1"
-                sx={{
-                  fontWeight: 700,
-                  mb: 2,
-                  fontSize: { xs: '2rem', md: '3.5rem' },
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-                }}
-              >
-                Cà Mèn - Hương Vị Đích Thực
-              </Typography>
-              <Typography
-                variant="h5"
-                sx={{
-                  mb: 4,
-                  opacity: 0.95,
-                  fontSize: { xs: '1rem', md: '1.5rem' },
-                  textShadow: '1px 1px 3px rgba(0,0,0,0.5)',
-                }}
-              >
-                Nơi truyền thống và hiện đại gặp gỡ
-              </Typography>
-            </Box>
-          </Fade>
-        </Container>
-      </Box>
-
+          component="img"
+          src={Banner}
+          alt="Banner"
+          sx={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+            display: 'block',
+          }}
+        />
+        
       {/* Sticky Navigation Buttons */}
       <Box
         sx={{
           position: 'sticky',
-          top: 0,
+          top: '66px',
           zIndex: 99,
           bgcolor: 'background.paper',
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)',

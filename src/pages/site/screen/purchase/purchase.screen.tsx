@@ -31,6 +31,8 @@ import { orderApi, paymentApi } from '~/apis';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import { Cached, DeleteOutline } from '@mui/icons-material';
 import { ModalElement } from '~/components/modal/modal-element/modal-element';
+import ContainerWrapper from '~/components/elements/container/container.element';
+import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 
 // Bộ lọc trạng thái đơn hàng
 const ORDER_FILTERS = [
@@ -263,7 +265,7 @@ const PurchasePage: React.FC = () => {
   };
 
   return (
-    <React.Fragment>
+    <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
       <StackRowAlignCenter columnGap={2} sx={{ mb: 2, flexWrap: 'wrap', position: 'relative', userSelect: 'none' }}>
         {ORDER_FILTERS.map((f) => {
           const active = activeFilter === f.value;
@@ -755,7 +757,7 @@ const PurchasePage: React.FC = () => {
         onConfirm={handleConfirmRefund}
         cancelText="Đóng"
       />
-    </React.Fragment>
+    </ContainerWrapper>
   );
 };
 

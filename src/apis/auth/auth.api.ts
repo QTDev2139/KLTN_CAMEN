@@ -26,5 +26,9 @@ export const authApi = {
 
   logout: async (): Promise<void> => {
     try { await axiosApi.post('/auth/logout'); } finally { tokenStore.clear(); }
-  }
+  },
+
+  changePassword: async (payload: { oldPassword: string; newPassword: string }): Promise<void> => {
+    await axiosApi.post('/auth/change-password', payload);
+  },
 };

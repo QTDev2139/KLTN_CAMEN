@@ -31,6 +31,7 @@ import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import { CartItem } from '~/apis/cart/cart.interface.api';
 import { orderSchema } from './order.schema';
+import ContainerWrapper from '~/components/elements/container/container.element';
 
 const OrderPage: React.FC = () => {
   const { palette } = useTheme();
@@ -75,7 +76,7 @@ const OrderPage: React.FC = () => {
     validationSchema: orderSchema,
     onSubmit: async (values) => {
       if (!isInImportantWard) {
-        const MIN_PACKS_OUTSIDE = 10; 
+        const MIN_PACKS_OUTSIDE = 10;
         const totalPacks = items.reduce((sum, it) => {
           const qty = Number(it.qty ?? 0);
           const perPack = Number(it.product_id?.quantity_per_pack ?? 1);
@@ -235,13 +236,40 @@ const OrderPage: React.FC = () => {
   // - Nếu địa chỉ không thuộc Tỉnh/Thành phố "Thành Phố Hồ Chí Minh" và cũng không thuộc các phường được liệt kê => phí cố định 50.000
   // - Nếu phường thuộc danh sách đặc biệt => hiển thị "Thanh toán khi nhận hàng" (không tính phí cố định)
   const IMPORTANT_WARDS = [
-    'Phường Tân Định', 'Phường Sài Gòn', 'Phường Bến Thành', 'Phường Cầu Ông Lãnh', 'Phường Bàn Cờ',
-    'Phường Xuân Hòa', 'Phường Nhiêu Lộc', 'Phường Vĩnh Hội', 'Phường Khánh Hội', 'Phường Xóm Chiếu',
-    'Phường Chợ Quán', 'Phường An Đông', 'Phường Chợ Lớn', 'Phường Bình Tiên', 'Phường Bình Tây',
-    'Phường Phú Lâm', 'Phường Bình Phú', 'Phường Gia Định', 'Phường Bình Thạnh', 'Phường Bình Lợi Trung',
-    'Phường Thạnh Mỹ Tây', 'Phường Bình Quới', 'Phường Hạnh Thông', 'Phường An Nhơn', 'Phường Gò Vấp',
-    'Phường An Hội Tây', 'Phường Thông Tây Hội', 'Phường An Hội Đông', 'Phường Phú Thọ Hòa', 'Phường Tân Phú',
-    'Phường Phú Thạnh', 'Phường Thủ Đức', 'Phường An Khánh', 'Phường Bình Trưng'
+    'Phường Tân Định',
+    'Phường Sài Gòn',
+    'Phường Bến Thành',
+    'Phường Cầu Ông Lãnh',
+    'Phường Bàn Cờ',
+    'Phường Xuân Hòa',
+    'Phường Nhiêu Lộc',
+    'Phường Vĩnh Hội',
+    'Phường Khánh Hội',
+    'Phường Xóm Chiếu',
+    'Phường Chợ Quán',
+    'Phường An Đông',
+    'Phường Chợ Lớn',
+    'Phường Bình Tiên',
+    'Phường Bình Tây',
+    'Phường Phú Lâm',
+    'Phường Bình Phú',
+    'Phường Gia Định',
+    'Phường Bình Thạnh',
+    'Phường Bình Lợi Trung',
+    'Phường Thạnh Mỹ Tây',
+    'Phường Bình Quới',
+    'Phường Hạnh Thông',
+    'Phường An Nhơn',
+    'Phường Gò Vấp',
+    'Phường An Hội Tây',
+    'Phường Thông Tây Hội',
+    'Phường An Hội Đông',
+    'Phường Phú Thọ Hòa',
+    'Phường Tân Phú',
+    'Phường Phú Thạnh',
+    'Phường Thủ Đức',
+    'Phường An Khánh',
+    'Phường Bình Trưng',
   ];
 
   const isInImportantWard = Boolean(formik.values.ward && IMPORTANT_WARDS.includes(formik.values.ward.name));
@@ -261,12 +289,12 @@ const OrderPage: React.FC = () => {
     if (!isInImportantWard && formik.values.paymentMethod === 'cod') {
       formik.setFieldValue('paymentMethod', 'vnpay');
     }
-  }, [isInImportantWard]); 
+  }, [isInImportantWard]);
 
   if (!orderData) return null;
 
   return (
-    <Container maxWidth="lg" sx={{ py: PADDING_GAP_LAYOUT }}>
+    <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
       <Typography variant="h4" sx={{ mb: 3, fontWeight: 700 }}>
         Đặt hàng
       </Typography>
@@ -404,17 +432,18 @@ const OrderPage: React.FC = () => {
               <FormControl>
                 <FormLabel>Phương thức thanh toán</FormLabel>
                 <RadioGroup name="paymentMethod" value={formik.values.paymentMethod} onChange={formik.handleChange}>
-                 {/* Hiện COD chỉ khi địa chỉ thuộc IMPORTANT_WARDS */}
-                 {isInImportantWard && (
-                   <FormControlLabel value="cod" control={<Radio />} label="Thanh toán khi nhận hàng (COD)" />
-                 )}
+                  {/* Hiện COD chỉ khi địa chỉ thuộc IMPORTANT_WARDS */}
+                  {isInImportantWard && (
+                    <FormControlLabel value="cod" control={<Radio />} label="Thanh toán khi nhận hàng (COD)" />
+                  )}
                   <FormControlLabel value="vnpay" control={<Radio />} label="Thanh toán qua VNPay" />
                   {/* <FormControlLabel value="momo" control={<Radio />} label="Ví MoMo" /> */}
                   <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                   <span style={{ color: 'red' }}>*</span> Chỉ có thể thanh toán tiền mặt trong nội địa TP.HCM.
+                    <span style={{ color: 'red' }}>*</span> Chỉ có thể thanh toán tiền mặt trong nội địa TP.HCM.
                   </Typography>
                   <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                   <span style={{ color: 'red' }}>*</span> Tổng số lượng sản phẩm phải lớn hơn 10 nếu ngoài nội địa TP.HCM.
+                    <span style={{ color: 'red' }}>*</span> Tổng số lượng sản phẩm phải lớn hơn 10 nếu ngoài nội địa
+                    TP.HCM.
                   </Typography>
                 </RadioGroup>
               </FormControl>
@@ -501,7 +530,9 @@ const OrderPage: React.FC = () => {
                   </Stack>
                   <Typography variant="caption" color="text.secondary">
                     Đơn tối thiểu: {FormatPrice(parseFloat(option.min_order_amount))} -
-                    {option.discount_type === 'percentage' ? `Giảm tối đa: ${FormatPrice(parseFloat(option.max_discount_amount))}` : ''}
+                    {option.discount_type === 'percentage'
+                      ? `Giảm tối đa: ${FormatPrice(parseFloat(option.max_discount_amount))}`
+                      : ''}
                   </Typography>
                   {option.usage_limit && (
                     <Typography variant="caption" color="text.secondary">
@@ -584,7 +615,7 @@ const OrderPage: React.FC = () => {
           </Paper>
         </Stack>
       </form>
-    </Container>
+    </ContainerWrapper>
   );
 };
 

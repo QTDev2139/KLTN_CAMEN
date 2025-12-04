@@ -12,6 +12,7 @@ import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import { AxiosError } from 'axios';
 import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
+import ContainerWrapper from '~/components/elements/container/container.element';
 
 const DEBOUNCE_MS = 500;
 
@@ -164,151 +165,162 @@ const CartPage: React.FC = () => {
   const selectedItem = cartItems.find((item) => item.id === selectedItemId);
 
   return (
-    <Stack spacing={2} sx={{ paddingTop: PADDING_GAP_LAYOUT }}>
-      {/* Header */}
-      <Grid
-        container
-        spacing={2}
-        sx={{
-          backgroundColor: palette.background.default,
-          padding: PADDING_GAP_LAYOUT,
-          borderBottom: `1px solid ${palette.background.paper}`,
-        }}
-      >
-        <Grid size={{ md: 7 }}>Sản phẩm</Grid>
-        <Grid size={{ md: 1 }}>Đơn giá</Grid>
-        <Grid size={{ md: 2 }}>Số lượng</Grid>
-        <Grid size={{ md: 1 }}>Số tiền</Grid>
-        <Grid size={{ md: 1 }}>Thao tác</Grid>
-      </Grid>
-
-      {/* Cart Items */}
-      {cartItems.length === 0 ? (
-        <Stack
-          sx={{
-            backgroundColor: palette.background.default,
-            padding: PADDING_GAP_LAYOUT,
-            textAlign: 'center',
-          }}
-        >
-          <Typography variant="h6" color="text.secondary">
-            Giỏ hàng trống
-          </Typography>
-        </Stack>
-      ) : (
-        cartItems.map((item) => {
-          const isItemSyncing = syncing.has(item.id);
-
-          return (
-            <Stack
-              key={item.id}
-              spacing={2}
-              sx={{
-                backgroundColor: palette.background.default,
-                padding: PADDING_GAP_LAYOUT,
-                borderBottom: `1px solid ${palette.background.paper}`,
-                opacity: isItemSyncing ? 0.6 : 1,
-                transition: 'opacity 0.2s',
-              }}
-            >
-              <Grid container spacing={2} sx={{ alignItems: 'center' }}>
-                <Grid size={{ md: 7 }}>
-                  <StackRow>
-                    <img
-                      src={item.product_image}
-                      alt={item.product_name}
-                      style={{ width: '80px', height: '80px', marginRight: PADDING_GAP_LAYOUT, objectFit: 'cover' }}
-                    />
-                    <Typography sx={{ ...getLimitLineCss(2) }} variant="subtitle1">
-                      {item.product_name}
-                    </Typography>
-                  </StackRow>
-                </Grid>
-
-                <Grid size={{ md: 1 }}>
-                  <Typography variant="subtitle1">{FormatPrice(parseFloat(item.unit_price))}</Typography>
-                </Grid>
-
-                <Grid size={{ md: 2 }} sx={{ position: 'relative' }}>
-                  <StackRow>
-                    <ButtonGroup variant="outlined" color="inherit" size="small" sx={{ color: palette.text.primary }}>
-                      <Button onClick={() => handlePrev(item.id)} disabled={item.qty === 1 || isItemSyncing}>
-                        -
-                      </Button>
-                      <Button style={{ userSelect: 'text', cursor: 'text' }}>{item.qty}</Button>
-                      <Button onClick={() => handlePlus(item.id)} disabled={isItemSyncing}>
-                        +
-                      </Button>
-                    </ButtonGroup>
-                  </StackRow>
-                  <Typography variant="subtitle2" sx={{ position: 'absolute', bottom: '-20px', right: '38%', color: palette.text.secondary, fontSize: '12px' }}>
-                    Số lượng tồn: {item.product_id.stock_quantity}
-                  </Typography>
-                </Grid>
-
-                <Grid size={{ md: 1 }}>
-                  <Typography variant="subtitle1">{FormatPrice(parseFloat(item.subtotal))}</Typography>
-                </Grid>
-
-                <Grid size={{ md: 1 }}>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{
-                      color: isItemSyncing ? palette.text.disabled : palette.primary.main,
-                      cursor: isItemSyncing ? 'default' : 'pointer',
-                      pointerEvents: isItemSyncing ? 'none' : 'auto',
-                      textAlign: 'center',
-                    }}
-                    onClick={() => handleOpenConfirm(item.id)}
-                  >
-                    Xóa
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Stack>
-          );
-        })
-      )}
-
-      {/* Footer */}
-      {cartItems.length > 0 && (
+    <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
+      <Stack spacing={2} sx={{ paddingTop: PADDING_GAP_LAYOUT }}>
+        {/* Header */}
         <Grid
           container
           spacing={2}
           sx={{
             backgroundColor: palette.background.default,
             padding: PADDING_GAP_LAYOUT,
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            position: 'sticky',
-            bottom: 0,
-            boxShadow: '0 -6px 16px rgba(0,0,0,0.06)',
+            borderBottom: `1px solid ${palette.background.paper}`,
           }}
         >
-          <Grid size={{ md: 2 }}>
-            <Typography variant="body2" sx={{ color: palette.text.secondary }}>
-              Tổng cộng: {FormatPrice(totalAmount)}
-            </Typography>
-          </Grid>
-
-          <Grid size={{ md: 2 }}>
-            <Button variant="contained" disabled={syncing.size > 0} fullWidth onClick={handleCheckout}>
-              Mua Hàng
-            </Button>
-          </Grid>
+          <Grid size={{ md: 7 }}>Sản phẩm</Grid>
+          <Grid size={{ md: 1 }}>Đơn giá</Grid>
+          <Grid size={{ md: 2 }}>Số lượng</Grid>
+          <Grid size={{ md: 1 }}>Số tiền</Grid>
+          <Grid size={{ md: 1 }}>Thao tác</Grid>
         </Grid>
-      )}
 
-      {/* Modal Confirm Delete */}
-      <ModalConfirm
-        open={openConfirm}
-        title="Xác nhận xóa sản phẩm"
-        message={selectedItem ? `Bạn có chắc muốn xóa sản phẩm "${selectedItem.product_name}" khỏi giỏ hàng?` : ''}
-        onClose={() => setOpenConfirm(false)}
-        onConfirm={handleConfirmDelete}
-        loading={loadingDelete}
-      />
-    </Stack>
+        {/* Cart Items */}
+        {cartItems.length === 0 ? (
+          <Stack
+            sx={{
+              backgroundColor: palette.background.default,
+              padding: PADDING_GAP_LAYOUT,
+              textAlign: 'center',
+            }}
+          >
+            <Typography variant="h6" color="text.secondary">
+              Giỏ hàng trống
+            </Typography>
+          </Stack>
+        ) : (
+          cartItems.map((item) => {
+            const isItemSyncing = syncing.has(item.id);
+
+            return (
+              <Stack
+                key={item.id}
+                spacing={2}
+                sx={{
+                  backgroundColor: palette.background.default,
+                  padding: PADDING_GAP_LAYOUT,
+                  borderBottom: `1px solid ${palette.background.paper}`,
+                  opacity: isItemSyncing ? 0.6 : 1,
+                  transition: 'opacity 0.2s',
+                }}
+              >
+                <Grid container spacing={2} sx={{ alignItems: 'center' }}>
+                  <Grid size={{ md: 7 }}>
+                    <StackRow>
+                      <img
+                        src={item.product_image}
+                        alt={item.product_name}
+                        style={{ width: '80px', height: '80px', marginRight: PADDING_GAP_LAYOUT, objectFit: 'cover' }}
+                      />
+                      <Typography sx={{ ...getLimitLineCss(2) }} variant="subtitle1">
+                        {item.product_name}
+                      </Typography>
+                    </StackRow>
+                  </Grid>
+
+                  <Grid size={{ md: 1 }}>
+                    <Typography variant="subtitle1">{FormatPrice(parseFloat(item.unit_price))}</Typography>
+                  </Grid>
+
+                  <Grid size={{ md: 2 }} sx={{ position: 'relative' }}>
+                    <StackRow>
+                      <ButtonGroup variant="outlined" color="inherit" size="small" sx={{ color: palette.text.primary }}>
+                        <Button onClick={() => handlePrev(item.id)} disabled={item.qty === 1 || isItemSyncing}>
+                          -
+                        </Button>
+                        <Button style={{ userSelect: 'text', cursor: 'text' }}>{item.qty}</Button>
+                        <Button onClick={() => handlePlus(item.id)} disabled={isItemSyncing}>
+                          +
+                        </Button>
+                      </ButtonGroup>
+                    </StackRow>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{
+                        position: 'absolute',
+                        bottom: '-20px',
+                        right: '38%',
+                        color: palette.text.secondary,
+                        fontSize: '12px',
+                      }}
+                    >
+                      Số lượng tồn: {item.product_id.stock_quantity}
+                    </Typography>
+                  </Grid>
+
+                  <Grid size={{ md: 1 }}>
+                    <Typography variant="subtitle1">{FormatPrice(parseFloat(item.subtotal))}</Typography>
+                  </Grid>
+
+                  <Grid size={{ md: 1 }}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        color: isItemSyncing ? palette.text.disabled : palette.primary.main,
+                        cursor: isItemSyncing ? 'default' : 'pointer',
+                        pointerEvents: isItemSyncing ? 'none' : 'auto',
+                        textAlign: 'center',
+                      }}
+                      onClick={() => handleOpenConfirm(item.id)}
+                    >
+                      Xóa
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Stack>
+            );
+          })
+        )}
+
+        {/* Footer */}
+        {cartItems.length > 0 && (
+          <Grid
+            container
+            spacing={2}
+            sx={{
+              backgroundColor: palette.background.default,
+              padding: PADDING_GAP_LAYOUT,
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              position: 'sticky',
+              bottom: 0,
+              boxShadow: '0 -6px 16px rgba(0,0,0,0.06)',
+            }}
+          >
+            <Grid size={{ md: 2 }}>
+              <Typography variant="body2" sx={{ color: palette.text.secondary }}>
+                Tổng cộng: {FormatPrice(totalAmount)}
+              </Typography>
+            </Grid>
+
+            <Grid size={{ md: 2 }}>
+              <Button variant="contained" disabled={syncing.size > 0} fullWidth onClick={handleCheckout}>
+                Mua Hàng
+              </Button>
+            </Grid>
+          </Grid>
+        )}
+
+        {/* Modal Confirm Delete */}
+        <ModalConfirm
+          open={openConfirm}
+          title="Xác nhận xóa sản phẩm"
+          message={selectedItem ? `Bạn có chắc muốn xóa sản phẩm "${selectedItem.product_name}" khỏi giỏ hàng?` : ''}
+          onClose={() => setOpenConfirm(false)}
+          onConfirm={handleConfirmDelete}
+          loading={loadingDelete}
+        />
+      </Stack>
+    </ContainerWrapper>
   );
 };
 

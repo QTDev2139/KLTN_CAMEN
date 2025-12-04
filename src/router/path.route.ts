@@ -13,6 +13,7 @@ export const AUTH_SCREEN = {
     LOGIN: 'login',
     SIGN_UP: 'sign-up',
     FORGOT_PW: 'forgot-password',
+    CHANGE_PASSWORD: 'change-password',
 }
 
 export const SITE_SCREEN = {

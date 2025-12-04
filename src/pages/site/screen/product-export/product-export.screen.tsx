@@ -1,4 +1,4 @@
-import { Card, CardContent, CardMedia, Grid,  Typography, useTheme } from '@mui/material';
+import { Card, CardContent, CardMedia, Grid, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { productApi } from '~/apis';
@@ -9,6 +9,8 @@ import { LocationOn } from '@mui/icons-material';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import { PATH } from '~/router';
+import ContainerWrapper from '~/components/elements/container/container.element';
+import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 
 const ProductExportPage: React.FC = () => {
   const [product, setProduct] = useState<Product[]>([]);
@@ -29,50 +31,53 @@ const ProductExportPage: React.FC = () => {
   }, [currentLang]);
 
   return (
-    <Grid container spacing={2}>
-      {product.map((item, idx) => (
-        <Grid key={idx} size={{ md: 4 }}>
-          <Link
-            to={`${prefix}/${PATH.SITE_SCREEN.PRODUCT.ROOT}/${item.product_translations[0].slug}`}
-            style={{ textDecoration: 'none' }}
-          >
-            <Card
-              sx={{
-                maxWidth: 345,
-                maxHeight: 500,
-                border: `1px solid ${palette.background.paper}`,
-                '&:hover': {
-                  border: `1px solid ${palette.primary.main}`,
-                  transform: 'translateY(-2px)',
-                  transition: 'all 500ms ease',
-                },
-              }}
+    <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
+      <Grid container spacing={2}>
+        {product.map((item, idx) => (
+          <Grid key={idx} size={{ md: 4 }}>
+            <Link
+              to={`${prefix}/${PATH.SITE_SCREEN.PRODUCT.ROOT}/${item.product_translations[0].slug}`}
+              style={{ textDecoration: 'none' }}
             >
-              <CardMedia component="img" height="220" image={item.product_images[0].image_url} alt="Product" />
-              <CardContent>
-                <Typography variant="subtitle1" sx={{ ...getLimitLineCss(2), fontWeight: '600', textAlign: 'center' }}>
-                  {item.product_translations[0].description}
-                </Typography>
-                <Typography variant="subtitle2" sx={{ ...getLimitLineCss(2),  textAlign: 'center' }}>
-                  Sản phẩm xuất khẩu
-                </Typography>
-
-                {/* Price intentionally hidden for export page */}
-
-               
-
-                <StackRowAlignCenter gap={1} sx={{ mt: 1, justifyContent: 'center' }}>
-                  <LocationOn sx={{ color: palette.text.secondary, fontSize: '16px' }} />
-                  <Typography variant="subtitle2" sx={{ color: palette.text.secondary, fontSize: '12px' }}>
-                    {item.shipping_from}
+              <Card
+                sx={{
+                  maxWidth: 345,
+                  maxHeight: 500,
+                  border: `1px solid ${palette.background.paper}`,
+                  '&:hover': {
+                    border: `1px solid ${palette.primary.main}`,
+                    transform: 'translateY(-2px)',
+                    transition: 'all 500ms ease',
+                  },
+                }}
+              >
+                <CardMedia component="img" height="220" image={item.product_images[0].image_url} alt="Product" />
+                <CardContent>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ ...getLimitLineCss(2), fontWeight: '600', textAlign: 'center' }}
+                  >
+                    {item.product_translations[0].description}
                   </Typography>
-                </StackRowAlignCenter>
-              </CardContent>
-            </Card>
-          </Link>
-        </Grid>
-      ))}
-    </Grid>
+                  <Typography variant="subtitle2" sx={{ ...getLimitLineCss(2), textAlign: 'center' }}>
+                    Sản phẩm xuất khẩu
+                  </Typography>
+
+                  {/* Price intentionally hidden for export page */}
+
+                  <StackRowAlignCenter gap={1} sx={{ mt: 1, justifyContent: 'center' }}>
+                    <LocationOn sx={{ color: palette.text.secondary, fontSize: '16px' }} />
+                    <Typography variant="subtitle2" sx={{ color: palette.text.secondary, fontSize: '12px' }}>
+                      {item.shipping_from}
+                    </Typography>
+                  </StackRowAlignCenter>
+                </CardContent>
+              </Card>
+            </Link>
+          </Grid>
+        ))}
+      </Grid>
+    </ContainerWrapper>
   );
 };
 

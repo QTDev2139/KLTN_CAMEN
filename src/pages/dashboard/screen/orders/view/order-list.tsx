@@ -20,6 +20,7 @@ import {
   statusColorMap,
   statusLabelMap,
 } from '../order.state';
+import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 
 const ListOrder: React.FC = () => {
   const [listOrder, setListOrder] = useState<OrderDetail[]>([]);
@@ -82,11 +83,11 @@ const ListOrder: React.FC = () => {
 
   const columns = [
     { id: 'code', label: 'Mã đơn hàng' },
-    { id: 'grand_total', label: 'Tổng tiền' },
-    { id: 'payment_method', label: 'Phương thức TT' },
-    { id: 'payment_status', label: 'Trạng thái TT' },
-    { id: 'status', label: 'Trạng thái đơn' },
-    { id: 'created_at', label: 'Ngày tạo' },
+    { id: 'grand_total', label: 'Tổng tiền', width: 100 },
+    { id: 'payment_method', label: 'Phương thức TT', width: 165 },
+    { id: 'payment_status', label: 'Trạng thái TT', width: 180 },
+    { id: 'status', label: 'Trạng thái đơn', width: 130 },
+    { id: 'created_at', label: 'Ngày tạo', width: 120 },
     { id: 'action', label: 'Thao tác' },
   ];
 
@@ -174,10 +175,10 @@ const ListOrder: React.FC = () => {
                 <TagElement
                   type={PaymentStatusTagType[order.payment_status]}
                   content={PaymentStatusLabel[order.payment_status]}
-                  width={130}
+                  width={180}
                 />
               </TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>
+              <TableCell sx={{ textAlign: 'center', ...getLimitLineCss(1)  }}>
                 <TagElement type={statusColorMap[order.status]} content={statusLabelMap[order.status]} width={130} />
               </TableCell>
               <TableCell>

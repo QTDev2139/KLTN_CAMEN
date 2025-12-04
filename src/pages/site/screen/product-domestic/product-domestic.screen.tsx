@@ -13,6 +13,8 @@ import { StackRowAlignCenter } from '~/components/elements/styles/stack.style';
 import { LocationOn } from '@mui/icons-material';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
+import ContainerWrapper from '~/components/elements/container/container.element';
+import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 
 // helper to format sales count (>=1000 -> "1K", "10K", ...)
 const formatSalesCount = (n: number) => {
@@ -69,91 +71,93 @@ const ProductDomesticPage: React.FC = () => {
   }, [slug, currentLang]);
 
   return (
-    <Grid container spacing={2}>
-      <Grid size={{ md: 2 }}>
-        <Stack>
-          <Typography variant="h6">Danh mục</Typography>
-          <Divider />
-          {category.map((item) => (
-            <NavLink
-              key={item.id}
-              to={`${prefix}/${PATH.SITE_SCREEN.PRODUCT.DOMESTIC}/${item.category_translation[0].slug}`}
-              style={({ isActive }: { isActive: boolean }) => ({
-                padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
-                color: isActive ? palette.primary.main : palette.text.primary,
-                textDecoration: 'none',
-              })}
-            >
-              <TypographyHover variant="subtitle1">{item.category_translation[0].name}</TypographyHover>
-            </NavLink>
-          ))}
-        </Stack>
-      </Grid>
-      <Grid container size={{ md: 10 }}>
-        {product.map((item, idx) => (
-          <Grid key={idx} size={{ md: 4 }}>
-            <Link to={`${prefix}/${PATH.SITE_SCREEN.PRODUCT.ROOT}/${item.product_translations[0].slug}`}>
-              <Card
-                sx={{
-                  maxWidth: 345,
-                  maxHeight: 500,
-                  border: `1px solid ${palette.background.paper}`,
-                  '&:hover': {
-                    border: `1px solid ${palette.primary.main}`,
-                    transform: 'translateY(-2px)',
-                    transition: 'all 500ms ease',
-                  },
-                }}
+    <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
+      <Grid container spacing={2}>
+        <Grid size={{ md: 2 }}>
+          <Stack>
+            <Typography variant="h6">Danh mục</Typography>
+            <Divider />
+            {category.map((item) => (
+              <NavLink
+                key={item.id}
+                to={`${prefix}/${PATH.SITE_SCREEN.PRODUCT.DOMESTIC}/${item.category_translation[0].slug}`}
+                style={({ isActive }: { isActive: boolean }) => ({
+                  padding: `0px ${STYLE.PADDING_GAP_ITEM}`,
+                  color: isActive ? palette.primary.main : palette.text.primary,
+                  textDecoration: 'none',
+                })}
               >
-                <CardMedia component="img" height="220" image={item.product_images[0].image_url} alt="Product" />
-                <CardContent>
-                  <Typography variant="subtitle2" sx={{ ...getLimitLineCss(2) }}>
-                    {item.product_translations[0].description}
-                  </Typography>
-                  {/* Hiển thị giá: nếu có giá khuyến mãi (compare_at_price > 0) thì show khuyến mãi (primary)
+                <TypographyHover variant="subtitle1">{item.category_translation[0].name}</TypographyHover>
+              </NavLink>
+            ))}
+          </Stack>
+        </Grid>
+        <Grid container size={{ md: 10 }}>
+          {product.map((item, idx) => (
+            <Grid key={idx} size={{ md: 4 }}>
+              <Link to={`${prefix}/${PATH.SITE_SCREEN.PRODUCT.ROOT}/${item.product_translations[0].slug}`}>
+                <Card
+                  sx={{
+                    maxWidth: 345,
+                    maxHeight: 500,
+                    border: `1px solid ${palette.background.paper}`,
+                    '&:hover': {
+                      border: `1px solid ${palette.primary.main}`,
+                      transform: 'translateY(-2px)',
+                      transition: 'all 500ms ease',
+                    },
+                  }}
+                >
+                  <CardMedia component="img" height="220" image={item.product_images[0].image_url} alt="Product" />
+                  <CardContent>
+                    <Typography variant="subtitle2" sx={{ ...getLimitLineCss(2) }}>
+                      {item.product_translations[0].description}
+                    </Typography>
+                    {/* Hiển thị giá: nếu có giá khuyến mãi (compare_at_price > 0) thì show khuyến mãi (primary)
                       và price gạch ngang, đổi màu secondary. Ngược lại hiển thị price bình thường. */}
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ height: '60px', display: 'flex', alignItems: 'center', gap: 1 }}
-                  >
-                    {item.compare_at_price && Number(item.compare_at_price) > 0 ? (
-                      <>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ height: '60px', display: 'flex', alignItems: 'center', gap: 1 }}
+                    >
+                      {item.compare_at_price && Number(item.compare_at_price) > 0 ? (
+                        <>
+                          <Box component="span" sx={{ color: palette.primary.main }}>
+                            {FormatPrice(item.compare_at_price)}
+                          </Box>
+                          <Box
+                            component="span"
+                            sx={{ textDecoration: 'line-through', color: palette.text.secondary, fontSize: '14px' }}
+                          >
+                            {FormatPrice(item.price)}
+                          </Box>
+                        </>
+                      ) : (
                         <Box component="span" sx={{ color: palette.primary.main }}>
-                          {FormatPrice(item.compare_at_price)}
-                        </Box>
-                        <Box
-                          component="span"
-                          sx={{ textDecoration: 'line-through', color: palette.text.secondary, fontSize: '14px' }}
-                        >
                           {FormatPrice(item.price)}
                         </Box>
-                      </>
-                    ) : (
-                      <Box component="span" sx={{ color: palette.primary.main }}>
-                        {FormatPrice(item.price)}
-                      </Box>
-                    )}
-                  </Typography>
-                  <StackRowAlignCenter gap={1}>
-                    <Rating name="read-only" size="small" value={1} max={1} readOnly />
-                    <Typography variant="subtitle2">5.0</Typography>
-                  </StackRowAlignCenter>
-                  <StackRowAlignCenter gap={1}>
-                    <LocationOn sx={{ color: palette.text.secondary, fontSize: '16px' }} />
-                    <Typography variant="subtitle2" sx={{ color: palette.text.secondary, fontSize: '12px' }}>
-                      {item.shipping_from}
+                      )}
                     </Typography>
-                  </StackRowAlignCenter>
-                  <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontSize: '12px' }}>
-                    Đã bán: {formatSalesCount(salesCountMap[item.id] ?? 0)}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Link>
-          </Grid>
-        ))}
+                    <StackRowAlignCenter gap={1}>
+                      <Rating name="read-only" size="small" value={1} max={1} readOnly />
+                      <Typography variant="subtitle2">5.0</Typography>
+                    </StackRowAlignCenter>
+                    <StackRowAlignCenter gap={1}>
+                      <LocationOn sx={{ color: palette.text.secondary, fontSize: '16px' }} />
+                      <Typography variant="subtitle2" sx={{ color: palette.text.secondary, fontSize: '12px' }}>
+                        {item.shipping_from}
+                      </Typography>
+                    </StackRowAlignCenter>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontSize: '12px' }}>
+                      Đã bán: {formatSalesCount(salesCountMap[item.id] ?? 0)}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Link>
+            </Grid>
+          ))}
+        </Grid>
       </Grid>
-    </Grid>
+    </ContainerWrapper>
   );
 };
 

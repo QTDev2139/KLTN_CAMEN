@@ -114,9 +114,9 @@ const ReviewModal: React.FC<Props> = ({ open, onClose, order, onSubmitted }) => 
         r.images.forEach((img) => formData.append(`images_${key}[]`, img));
       });
 
-      // Array.from(formData.entries()).forEach(([k, v]) => {
-      //   console.log(k, v);
-      // });
+      Array.from(formData.entries()).forEach(([k, v]) => {
+        console.log(k, v);
+      });
       const result = await reviewApi.createReview(formData);
       snackbar('success', result.message || 'Gửi đánh giá thành công');
       if (onSubmitted) await onSubmitted();

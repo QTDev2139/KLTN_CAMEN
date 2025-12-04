@@ -10,7 +10,7 @@ const wsPort = Number(process.env.REACT_APP_REVERB_PORT || 8080);
 
 export const echo = new Echo({
   broadcaster: 'reverb',
-  key: 'erhwbemqnipbunixksiy',   // REVERB_APP_KEY
+  key: 'erhwbemqnipbunixksiy',   
   wsHost: '103.249.117.228',
   wsPort: 45354,
   wssPort: 45354,

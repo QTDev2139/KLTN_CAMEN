@@ -22,15 +22,14 @@ export default function SiteLayout({ children }: SiteLayoutProps) {
           backgroundColor: palette.background.default,
         }}
       >
-        <ContainerWrapper
+        <Stack
           sx={{
-            padding: PADDING_GAP_LAYOUT,
             backgroundColor: palette.background.default,
             minHeight: 'calc(100vh - 160px)',
           }}
         >
           {children}
-        </ContainerWrapper>
+        </Stack>
       </Stack>
       <Footer />
       

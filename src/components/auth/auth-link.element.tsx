@@ -13,7 +13,9 @@ import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { DashboardOutlined } from '@mui/icons-material';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { useProfile } from '~/hooks/use-profile/use-profile.hook';
+import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 
 export default function AuthLink() {
   const { palette } = useTheme();
@@ -96,7 +98,7 @@ export default function AuthLink() {
               onClick={handleClick}
               sx={{
                 ml: 1,
-                p: '5px 20px',
+                p: '5px',
                 '&:hover': {
                   backgroundColor: 'transparent',
                 },
@@ -106,7 +108,7 @@ export default function AuthLink() {
                 <Avatar sx={{ width: 24, height: 24, bgcolor: palette.primary.main }}>
                   {user.name.charAt(0).toUpperCase()}
                 </Avatar>
-                <Typography variant="body2" sx={{ color: palette.text.primary }}>
+                <Typography variant="body2" sx={{ color: palette.text.primary, maxWidth: 200, ...getLimitLineCss(1) }}>
                   {user.name}
                 </Typography>
               </Stack>
@@ -163,6 +165,23 @@ export default function AuthLink() {
                   <LogoutIcon fontSize="small" />
                   <Typography variant="body2">Đăng xuất</Typography>
                 </StackRowAlignCenter>
+              </MenuItem>
+              <MenuItem
+                sx={{
+                  cursor: 'pointer',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main', transform: 'translateX(4px)' },
+                  transition: 'all 200ms ease',
+                  width: '100%',
+                  py: 1,
+                }}
+              >
+                <Link to={`${prefix}/auth/${AUTH_SCREEN.CHANGE_PASSWORD}`}>
+                  <StackRowAlignCenter gap={1} sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}>
+                    <VpnKeyIcon fontSize="small" />
+                    <Typography variant="body2">Đổi mật khẩu</Typography>
+                  </StackRowAlignCenter>
+                </Link>
               </MenuItem>
               {profile?.role?.name !== 'customer' && (
                 <MenuItem

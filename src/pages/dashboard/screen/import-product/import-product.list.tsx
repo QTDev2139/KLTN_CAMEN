@@ -121,8 +121,7 @@ const ListImportProduct: React.FC<ListImportProductProps> = ({
                           onViewMissed && onViewMissed(cat);
                         }}
                       >
-                        {/* <VisibilityOutlined fontSize="small" /> */}
-                        lol
+                        <VisibilityOutlined fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   ) : profile?.role && profile?.role.name !== 'storekeeper' && cat.status === 'supplemented' ? (
@@ -133,8 +132,7 @@ const ListImportProduct: React.FC<ListImportProductProps> = ({
                           onViewDeliveryMissed && onViewDeliveryMissed(cat);
                         }}
                       >
-                        {/* <VisibilityOutlined fontSize="small" /> */}
-                        aka
+                        <VisibilityOutlined fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   ) : (
