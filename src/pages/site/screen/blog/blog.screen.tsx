@@ -70,7 +70,6 @@ const BlogPage: React.FC = () => {
         });
 
         setCategoryList(mapped);
-        console.log('Fetched post categories (mapped):', mapped);
       } catch (err) {
         console.error('Load post categories failed', err);
         setCategoryList([]);

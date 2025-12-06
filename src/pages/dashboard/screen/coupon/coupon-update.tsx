@@ -23,7 +23,7 @@ import { Coupon } from '~/apis/coupon/coupon.interface.api';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 import { formatDate } from '~/common/until/date-format.until';
 import { TagElement } from '~/components/elements/tag/tag.element';
-import { StateLabel, StateTagType } from './coupon.state';
+import { getValidityStatus, StateLabel, StateTagType } from './coupon.state';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 
 type Props = {
@@ -88,7 +88,7 @@ const CouponUpdateModal: React.FC<Props> = ({ open, onClose, coupon, onSubmitted
     }
 
     try {
-      if(activeStatus === 1) {
+      if (activeStatus === 1) {
         setReasonEnd('');
       }
       await updateActiveCoupon(coupon.id, { is_active: activeStatus === 1 ? true : false, reason_end: reasonEnd });
@@ -130,6 +130,12 @@ const CouponUpdateModal: React.FC<Props> = ({ open, onClose, coupon, onSubmitted
                 content={coupon.is_active ? 'Hoạt động' : 'Không hoạt động'}
                 width={120}
               />
+              {(() => {
+                const validity = getValidityStatus(coupon);
+                return validity.label ? (
+                  <TagElement type={validity.type || 'info'} content={validity.label} width={140} />
+                ) : null;
+              })()}
             </Stack>
           </Box>
           {/* Thêm radio Duyệt / Từ chối */}

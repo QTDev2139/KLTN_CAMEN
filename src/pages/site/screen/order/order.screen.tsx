@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Button,
-  Container,
   Divider,
   Paper,
   Stack,
@@ -32,6 +31,7 @@ import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import { CartItem } from '~/apis/cart/cart.interface.api';
 import { orderSchema } from './order.schema';
 import ContainerWrapper from '~/components/elements/container/container.element';
+import { currentTime, formatDateTime } from '~/common/until/date-format.until';
 
 const OrderPage: React.FC = () => {
   const { palette } = useTheme();
@@ -157,7 +157,16 @@ const OrderPage: React.FC = () => {
     const fetchActiveCoupons = async () => {
       try {
         const coupons = await couponApi.getActiveCoupons();
-        setAvailableCoupons(coupons);
+        const validCoupons = coupons.filter(
+          (coupon: { start_date: string | Date; end_date: string | Date }) => { 
+            const startDate = new Date(coupon.start_date);
+            startDate.setHours(startDate.getHours() - 7);
+            const now = new Date();
+
+            return startDate.getTime() <= now.getTime();
+          }
+        );
+        setAvailableCoupons(validCoupons);
       } catch (error) {
         console.error('Không thể tải danh sách mã giảm giá:', error);
       }
@@ -233,8 +242,6 @@ const OrderPage: React.FC = () => {
     snackbar('success', `Áp dụng mã giảm giá thành công! Giảm ${FormatPrice(discountAmount)}`);
   }, [selectedCoupon, totalAmount]);
 
-  // - Nếu địa chỉ không thuộc Tỉnh/Thành phố "Thành Phố Hồ Chí Minh" và cũng không thuộc các phường được liệt kê => phí cố định 50.000
-  // - Nếu phường thuộc danh sách đặc biệt => hiển thị "Thanh toán khi nhận hàng" (không tính phí cố định)
   const IMPORTANT_WARDS = [
     'Phường Tân Định',
     'Phường Sài Gòn',
@@ -273,8 +280,6 @@ const OrderPage: React.FC = () => {
   ];
 
   const isInImportantWard = Boolean(formik.values.ward && IMPORTANT_WARDS.includes(formik.values.ward.name));
-  // Nếu nằm trong danh sách phường đặc biệt => không tính tiền nhưng hiển thị "Thanh toán khi nhận hàng"
-  // Các địa chỉ khác (bao gồm cả Thành Phố Hồ Chí Minh nhưng không thuộc phường đặc biệt) => phí cố định 50.000
   const shippingFee = isInImportantWard ? 0 : 50000;
 
   const finalAmount = totalAmount - discount + shippingFee;
@@ -485,12 +490,10 @@ const OrderPage: React.FC = () => {
               // visually and functionally disable invalid coupons
               getOptionDisabled={(option) => isCouponDisabled(option)}
               onChange={(_, newValue) => {
-                // allow clearing by user or free text => treat as no coupon
                 if (newValue === null || typeof newValue === 'string') {
                   setSelectedCoupon(null);
                   return;
                 }
-                // if user selected an object coupon
                 if (isCouponDisabled(newValue)) {
                   snackbar('warning', 'Mã giảm giá không thỏa điều kiện cho đơn hàng hiện tại');
                   return;
@@ -498,49 +501,53 @@ const OrderPage: React.FC = () => {
                 setSelectedCoupon(newValue);
               }}
               getOptionLabel={(option) => (typeof option === 'string' ? option : option.code)}
-              renderOption={(props, option) => (
-                <Box
-                  component="li"
-                  {...props}
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    py: 1.5,
-                    opacity: isCouponDisabled(option) ? 0.8 : 1,
-                    pointerEvents: isCouponDisabled(option) ? 'none' : 'auto',
-                  }}
-                  aria-disabled={isCouponDisabled(option) ? 'true' : undefined}
-                >
-                  <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%', mb: 0.5 }}>
-                    <CouponIcon sx={{ fontSize: 18, color: palette.primary.main }} />
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                      {option.code}
-                    </Typography>
-                    <Chip
-                      label={
-                        option.discount_type === 'percentage'
-                          ? `${Number(option.discount_value)}%`
-                          : FormatPrice(parseFloat(option.discount_value))
-                      }
-                      size="small"
-                      color="primary"
-                      sx={{ ml: 'auto' }}
-                    />
-                  </Stack>
-                  <Typography variant="caption" color="text.secondary">
-                    Đơn tối thiểu: {FormatPrice(parseFloat(option.min_order_amount))} -
-                    {option.discount_type === 'percentage'
-                      ? `Giảm tối đa: ${FormatPrice(parseFloat(option.max_discount_amount))}`
-                      : ''}
-                  </Typography>
-                  {option.usage_limit && (
+              renderOption={(props, option) => {
+                const { key, ...restProps } = props;
+                return (
+                  <Box
+                    key={key}
+                    component="li"
+                    {...restProps}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      py: 1.5,
+                      opacity: isCouponDisabled(option) ? 0.8 : 1,
+                      pointerEvents: isCouponDisabled(option) ? 'none' : 'auto',
+                    }}
+                    aria-disabled={isCouponDisabled(option) ? 'true' : undefined}
+                  >
+                    <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%', mb: 0.5 }}>
+                      <CouponIcon sx={{ fontSize: 18, color: palette.primary.main }} />
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                        {option.code}
+                      </Typography>
+                      <Chip
+                        label={
+                          option.discount_type === 'percentage'
+                            ? `${Number(option.discount_value)}%`
+                            : FormatPrice(parseFloat(option.discount_value))
+                        }
+                        size="small"
+                        color="primary"
+                        sx={{ ml: 'auto' }}
+                      />
+                    </Stack>
                     <Typography variant="caption" color="text.secondary">
-                      Còn lại: {option.usage_limit - option.used_count}/{option.usage_limit}
+                      Đơn tối thiểu: {FormatPrice(parseFloat(option.min_order_amount))} -
+                      {option.discount_type === 'percentage'
+                        ? `Giảm tối đa: ${FormatPrice(parseFloat(option.max_discount_amount))}`
+                        : ''}
                     </Typography>
-                  )}
-                </Box>
-              )}
+                    {option.usage_limit && (
+                      <Typography variant="caption" color="text.secondary">
+                        Còn lại: {option.usage_limit - option.used_count}/{option.usage_limit}
+                      </Typography>
+                    )}
+                  </Box>
+                );
+              }}
               renderInput={(params) => (
                 <TextField {...params} label="Mã giảm giá" placeholder="Chọn hoặc tìm mã giảm giá" />
               )}

@@ -120,7 +120,6 @@ const ContactList: React.FC = () => {
 
   const handleDelete = async (id: number | string) => {
     try {
-      console.log('Deleting contact with id:', id);
       await contactApi.deleteContact(id);
       snackbar('success', 'Xóa liên hệ thành công');
       await fetchList();

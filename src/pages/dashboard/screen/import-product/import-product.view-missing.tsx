@@ -74,7 +74,6 @@ const ImportProductViewMissed: React.FC<ImportProductViewMissedProps> = ({ item,
 
         quantity_imports: payloadItems as any,
       };
-      console.log('Submitting payload:', payload);
       // await requestImportApi.createDelivery(item.id, payload as DeliveryDetail);
       await requestImportApi.updateStatusImportRequest(item.id!, 'supplemented');
       snackbar('success', 'Gửi yêu cầu giao hàng thành công');
