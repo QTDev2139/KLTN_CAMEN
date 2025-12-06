@@ -109,7 +109,6 @@ export default function ProductDetailPage() {
         : (productDetail?.reviews ?? []).filter((o) => o.rating === Number(activeFilter)),
     [productDetail?.reviews, activeFilter],
   );
-  console.log('filteredRate', filteredRate);
   const filterCounts = useMemo(() => {
     const ratedCount: Record<string | number, number> = { all: productDetail?.reviews?.length || 0 };
     Rated.forEach((rate) => {
@@ -272,20 +271,19 @@ export default function ProductDetailPage() {
             <BoxContent title="Giá trị dinh dưỡng" content={productDetail?.product_translations[0].nutrition_info} />
           </Grid>
           <Grid size={{ md: 6, xs: 12 }}>
-            <BoxContent title="Hướng dẫn sử dụng" content={productDetail?.product_translations[0].usage_instruction} />
-          </Grid>
-
-          {productDetail?.product_translations[0].reason_to_choose && (
-            <>
-              <Grid size={{ md: 6, xs: 12 }}></Grid>
-              <Grid size={{ md: 6, xs: 12 }}>
+            <Stack spacing={2}>
+              <BoxContent
+                title="Hướng dẫn sử dụng"
+                content={productDetail?.product_translations[0].usage_instruction}
+              />
+              {productDetail?.product_translations[0].reason_to_choose && (
                 <BoxContent
                   title="Lý do chọn sản phẩm"
                   content={productDetail?.product_translations[0].reason_to_choose}
                 />
-              </Grid>
-            </>
-          )}
+              )}
+            </Stack>
+          </Grid>
         </Grid>
         {/* Hiển thị panel đánh giá kể cả khi chưa có đánh giá */}
         {productDetail?.reviews !== undefined && (

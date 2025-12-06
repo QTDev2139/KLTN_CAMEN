@@ -18,7 +18,6 @@ const ReviewList: React.FC = () => {
   useEffect(() => {
     (async () => {
       const res = await reviewApi.getReviews();
-      console.log(res);
       setReview(res);
     })();
   }, []);

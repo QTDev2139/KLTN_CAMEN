@@ -105,9 +105,7 @@ const PurchasePage: React.FC = () => {
   const filteredOrders = useMemo(() => {
     if (activeFilter === 'all') return orders;
     if (activeFilter === 'refunded') {
-      return (orders || []).filter(
-        (o) => o.status === 'refund_requested' || o.status === 'refunded'
-      );
+      return (orders || []).filter((o) => o.status === 'refund_requested' || o.status === 'refunded');
     }
     return (orders || []).filter((o) => o.status === activeFilter);
   }, [orders, activeFilter]);
@@ -137,10 +135,10 @@ const PurchasePage: React.FC = () => {
     setLoadingCancel(true);
     try {
       await updateOrder(selectedOrder.id, { status: 'cancelled' });
-      snackbar('success', `Đã hủy đơn hàng #${selectedOrder.code}`);
       if (selectedOrder.payment_status === 'paid' && selectedOrder.payment_method === 'vnpay') {
         await paymentApi.vnpayAutoRefund({ code: selectedOrder.code });
       }
+      snackbar('success', `Đã hủy đơn hàng #${selectedOrder.code}`);
       // Refresh lại danh sách
       const data = await getUserOrders(lang);
       setOrders(data);
@@ -420,7 +418,7 @@ const PurchasePage: React.FC = () => {
                     Thanh toán lại
                   </Button>
                 )}
-                {order.status === 'shipped' ? (
+                {(order.status === 'shipped' || order.status === 'completed') && (
                   <>
                     {order.payment_status === 'paid' && (
                       <Button
@@ -448,7 +446,34 @@ const PurchasePage: React.FC = () => {
                       Đã nhận hàng
                     </Button>
                   </>
-                ) : order.status === 'completed' ? (
+                )}
+                {/* // order.status === 'cancelled' ? (
+                //   <Button
+                //     variant="outlined"
+                //     color="primary"
+                //     startIcon={<ShoppingCartOutlinedIcon />}
+                //     onClick={(e) => {
+                //       e.stopPropagation();
+                //       snackbar('info', `Mua lại đơn hàng #${order.code}`);
+                //       // TODO: Gọi API mua lại
+                //     }}
+                //   >
+                //     Mua lại
+                //   </Button> */}
+                {order.status === 'pending' && (
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    startIcon={<CancelOutlinedIcon />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCancelClick(order);
+                    }}
+                  >
+                    Hủy đơn
+                  </Button>
+                )}
+                {order.status === 'completed' && (
                   <>
                     {order.order_items[0]?.review === null && (
                       <Button
@@ -464,7 +489,7 @@ const PurchasePage: React.FC = () => {
                         Đánh giá
                       </Button>
                     )}
-                    <Button
+                    {/* <Button
                       variant="contained"
                       color="primary"
                       startIcon={<ShoppingCartOutlinedIcon />}
@@ -475,37 +500,10 @@ const PurchasePage: React.FC = () => {
                       }}
                     >
                       Mua lại
-                    </Button>
+                    </Button> */}
                   </>
-                ) : order.status === 'cancelled' ? (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<ShoppingCartOutlinedIcon />}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      snackbar('info', `Mua lại đơn hàng #${order.code}`);
-                      // TODO: Gọi API mua lại
-                    }}
-                  >
-                    Mua lại
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    startIcon={<CancelOutlinedIcon />}
-                    disabled={order.status === 'cancelled' || order.status === 'processing' }
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCancelClick(order);
-                    }}
-                    sx={{ display: (order.status === 'refunded' || order.status === 'refund_requested') ? 'none' : 'inline-flex' }}
-                  >
-                    Hủy đơn
-                  </Button>
                 )}
-                { (order.status === 'refunded' || order.status === 'refund_requested') && (
+                {(order.status === 'refunded' || order.status === 'refund_requested') && (
                   <Button
                     variant="outlined"
                     color="error"

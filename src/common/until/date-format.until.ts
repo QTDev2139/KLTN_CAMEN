@@ -2,23 +2,25 @@ import dayjs from 'dayjs';
 
 export const formatDate = (value?: string | Date | null): string => {
   if (!value) return '';
-  return dayjs(value).format('DD/MM/YYYY');
+  return dayjs(value).subtract(7, 'hour').format('DD/MM/YYYY');
 };
 
 export const formatDateTime = (value?: string | Date | null): string => {
   if (!value) return '';
-  return dayjs(value).format('DD/MM/YYYY HH:mm:ss');
+  return dayjs(value).subtract(7, 'hour').format('DD/MM/YYYY HH:mm:ss');
 };
 
 export const today = dayjs().format('YYYY-MM-DD');
-export const firstDayOfMonth = dayjs().startOf('month').format('YYYY-MM-DD');
+export const todayDateTime = dayjs().format('DD/MM/YYYY HH:mm:ss');
 
-export const currentTime = dayjs().format('DD/MM/YYYY HH:mm:ss');
+export const firstDayOfMonth = dayjs().subtract(7, 'hour').startOf('month').format('YYYY-MM-DD');
+
+export const currentTime = dayjs().subtract(7, 'hour').format('DD/MM/YYYY HH:mm:ss');
 
 export const getDefaultDates = () => {
   const now = dayjs();
-  const startDate = now.add(1, 'day').startOf('day').format('YYYY-MM-DDTHH:mm');
-  const endDate = now.add(7, 'day').endOf('day').format('YYYY-MM-DDTHH:mm');
+  const startDate = now.add(1, 'day').subtract(7, 'hour').startOf('day').format('YYYY-MM-DDTHH:mm');
+  const endDate = now.add(7, 'day').subtract(7, 'hour').endOf('day').format('YYYY-MM-DDTHH:mm');
 
   return { startDate, endDate };
 };

@@ -45,7 +45,6 @@ const DeliveryViewMissed: React.FC<DeliveryViewMissedProps> = ({ item, onClose, 
   useEffect(() => {
     (async () => {
       const res = await requestImportApi.getImportRequestDetail(item?.id || 0);
-      console.log(res);
       setMissedProduct(res);
     })();
   }, [item?.id]);
@@ -74,7 +73,6 @@ const DeliveryViewMissed: React.FC<DeliveryViewMissedProps> = ({ item, onClose, 
       };
       if (!missedProduct?.request_import?.id) return;
       await requestImportApi.updateMissedDelivery(missedProduct?.request_import?.id, payload);
-      console.log('Submit payload:', payload);
       snackbar('success', 'Xác nhận đơn hàng thành công');
       onReload?.(missedProduct?.request_import?.id);
     } catch (err) {

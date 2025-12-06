@@ -1,10 +1,11 @@
 import { Coupon } from "~/apis/coupon/coupon.interface.api";
+import { formatDateTime, todayDateTime } from "~/common/until/date-format.until";
 import { TagType } from "~/components/elements/tag/tag.element";
 
 export const StateTagType: Record<string, TagType> = {
-  pending: 'warning', // Chờ duyệt - màu vàng
-  approved: 'success', // Đã duyệt - màu xanh lá
-  rejected: 'error', // Từ chối - màu đỏ
+  pending: 'warning', 
+  approved: 'success', 
+  rejected: 'error', 
 };
 
 export const StateLabel: Record<string, string> = {
@@ -16,9 +17,13 @@ export const StateLabel: Record<string, string> = {
 export const getValidityStatus = (coupon: Coupon) => {
   if (coupon.state === 'pending' || coupon.state === 'rejected') return { label: null, type: undefined };
 
-  const now = new Date();
-  const start = coupon.start_date ? new Date(coupon.start_date) : null;
-  const end = coupon.end_date ? new Date(coupon.end_date) : null;
+  const now = todayDateTime;
+  const start = formatDateTime(coupon.start_date);
+  const end = formatDateTime(coupon.end_date);
+
+  console.log('now', todayDateTime);
+  console.log('start', start);
+  console.log('end', end);
 
   if (start && now < start) {
     return { label: 'Sắp diễn ra', type: 'info' as TagType };

@@ -60,7 +60,6 @@ export default function CouponViewModal({ open, onClose, coupon }: Props) {
                 content={coupon.is_active ? 'Hoạt động' : 'Không hoạt động'}
                 width={120}
               />
-              {/* Hiển thị trạng thái hiệu lực */}
               {(() => {
                 const validity = getValidityStatus(coupon);
                 return validity.label ? (

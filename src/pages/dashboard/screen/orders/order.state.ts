@@ -9,6 +9,8 @@ export const statusColorMap: Record<string, TagType> = {
   cancelled: 'error',
   refund_requested: 'warning',
   refunded: 'info',
+  partially_refunded: 'info',
+  refund_rejected: 'error',
 };
 
 export const statusLabelMap: Record<string, string> = {
@@ -19,6 +21,8 @@ export const statusLabelMap: Record<string, string> = {
   cancelled: 'Đã hủy',
   refund_requested: 'Yêu cầu hoàn tiền',
   refunded: 'Đã hoàn tiền',
+  partially_refunded: 'Đã hoàn tiền',
+  refund_rejected: 'Từ chối hoàn tiền',
 };
 
 export const paymentStatusColorMap: Record<string, TagType> = {
@@ -53,7 +57,9 @@ export const ORDER_FILTERS = [
 export const PaymentStatusTagType: Record<string, TagType> = {
   unpaid: 'warning',
   paid: 'success',
-  refunded: 'info',
+  refunded: 'success',
+  failed: 'error',
+  partially_refunded: 'success',
 };
 
 export const PaymentStatusLabel: Record<string, string> = {
@@ -61,7 +67,7 @@ export const PaymentStatusLabel: Record<string, string> = {
   paid: 'Đã thanh toán',
   refunded: 'Đã hoàn tiền',
   failed: 'Thanh toán thất bại',
-
+  partially_refunded: 'Đã hoàn tiền',
 };
 
 export const PaymentMethodLabel: Record<string, string> = {

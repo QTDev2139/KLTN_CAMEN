@@ -53,7 +53,6 @@ const ChatBox: React.FC = () => {
     const channel = echo.private(channelName);
 
     channel.listen('.message.sent', (event: BroadcastMessagePayload) => {
-      console.log('Customer realtime event:', event);
       setMessages((prev) => {
         if (prev.some((m) => m.id === event.id)) return prev;
 
