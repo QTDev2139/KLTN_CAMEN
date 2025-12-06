@@ -26,11 +26,11 @@ const OrderScreen: React.FC = () => {
     <Stack spacing={2}>
       <StackRowAlignCenter sx={{ justifyContent: 'space-between' }}>
         <Typography variant="h3">Quản lý đơn hàng</Typography>
-        {mode === OrderMode.LIST && (
+        {/* {mode === OrderMode.LIST && (
           <Button onClick={goCreate}>
             <Typography variant="subtitle2">Thêm đơn hàng mới</Typography>
           </Button>
-        )}
+        )} */}
         {(mode === OrderMode.CREATE || mode === OrderMode.UPDATE) && (
           <Button onClick={goList}>
             <Typography variant="subtitle2">Quay Lại</Typography>

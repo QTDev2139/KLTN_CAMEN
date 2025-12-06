@@ -51,8 +51,7 @@ const ChangePasswordPage: React.FC = () => {
         setSubmitting(true);
         await authApi.changePassword({ oldPassword: values.oldPassword, newPassword: values.newPassword });
         snackbar('success', 'Đổi mật khẩu thành công');
-        // Sau khi đổi mật khẩu thành công, điều hướng về trang đăng nhập
-        // navigate(`/${prefix}/auth/${AUTH_SCREEN.SIGN_IN}`, { replace: true });
+        navigate(`${prefix}/${SITE_SCREEN.HOME}`, { replace: true });
       } catch (error: any) {
         const resp = error?.response?.data;
         let message = error?.message || 'Có lỗi xảy ra';
@@ -122,7 +121,7 @@ const ChangePasswordPage: React.FC = () => {
         />
 
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-          {formik.isSubmitting ? 'Đang xử lý...' : 'Đổi mật khẩu'}
+          {formik.isSubmitting ? 'Đổi mật khẩu' : 'Đổi mật khẩu'}
         </Button>
 
       </BoxForm>

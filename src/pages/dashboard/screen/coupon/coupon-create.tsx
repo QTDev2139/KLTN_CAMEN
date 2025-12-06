@@ -36,7 +36,6 @@ export default function CouponCreate({ onSubmit }: CouponCreateProps) {
     },
     onSubmit: async (values, helpers) => {
       try {
-        console.log('Submitting coupon:', values);
         await couponApi.createCoupon(values as CreateCoupon);
         snackbar('success', 'Tạo mã giảm giá thành công');
         if (onSubmit) onSubmit();

@@ -119,7 +119,7 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
         updatePayload.refund_amount = amountNum;
       }
 
-      console.log('updatePayload', updatePayload);
+      // console.log('updatePayload', updatePayload);
       const res = await updateOrder(order.id, updatePayload);
       if (onUpdateSuccess) await onUpdateSuccess();
       onClose();
@@ -135,7 +135,7 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
     setLoading(true);
     try {
       // Trả trạng thái về processing (hoặc thay đổi theo business rule)
-      const res = await updateOrder(order.id, { status: 'processing', reason_refund: refundNote });
+      const res = await updateOrder(order.id, { status: 'refund_rejected', reason_refund: refundNote });
       snackbar('success', res.message || 'Đã từ chối hoàn tiền');
       if (onUpdateSuccess) await onUpdateSuccess();
       onClose();

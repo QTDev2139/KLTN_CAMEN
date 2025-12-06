@@ -31,7 +31,6 @@ const ListCoupon: React.FC = () => {
   const [updateCoupon, setUpdateCoupon] = useState<Coupon | null>(null);
 
   const [role, setRole] = useState('');
-  console.log('role', role);
   useEffect(() => {
     const fetchProfile = async () => {
       const profile = await userApi.getProfile();

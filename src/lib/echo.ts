@@ -11,11 +11,11 @@ const wsPort = Number(process.env.REACT_APP_REVERB_PORT || 8080);
 export const echo = new Echo({
   broadcaster: 'reverb',
   key: 'erhwbemqnipbunixksiy',   
-  wsHost: '103.249.117.228',
-  wsPort: 45354,
-  wssPort: 45354,
+  wsHost: 'reverb.camenfood.id.vn',
+  wsPort: 45355,
+  wssPort: 45355,
   forceTLS: false, 
-  enabledTransports: ['ws'],
+  enabledTransports: ['ws', 'wss'],
 
   // Auth cho private channel (dùng JWT)
   authEndpoint: `${process.env.REACT_APP_BASE}broadcasting/auth`,

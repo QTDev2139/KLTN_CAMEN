@@ -141,7 +141,6 @@ export default function CreateProduct(props: {
           });
         }
         Array.from(fd.entries()).forEach(([k, v]) => {
-          console.log(k, v);
         });
         // Gọi API tương ứng
         let result;
