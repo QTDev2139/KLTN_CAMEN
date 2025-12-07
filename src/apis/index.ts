@@ -12,3 +12,4 @@ export * as postCategoryApi from './post-category/post-category.api';
 export * as contactApi from './contact/contact.api';
 export * as requestImportApi from './request-import/request-import.api';
 export * as announcementApi from './announcement/announcement.api';
+export * as statisticsApi from './statistics/statistics.api';

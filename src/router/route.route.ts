@@ -33,6 +33,7 @@ import OverviewScreen from '~/pages/dashboard/screen/overview/overview.screen';
 import OrdersScreen from '~/pages/dashboard/screen/orders/orders.screen';
 import ProductScreen from '~/pages/dashboard/screen/product/product.screen';
 import CustomersScreen from '~/pages/dashboard/screen/customers/customers.screen';
+import EmployeesScreen from '~/pages/dashboard/screen/employees/employee.screen';
 import BlogScreen from '~/pages/dashboard/screen/blog/blog-view/blog.screen';
 import BlogCategoryScreen from '~/pages/dashboard/screen/blog/blog-categories/blog-categories.screen';
 import CouponScreen from '~/pages/dashboard/screen/coupon/coupon.screen';
@@ -246,8 +247,14 @@ export const routes: Route[] = [
         allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.MARKETING, UserType.STAFF],
       },
       {
-        path: PATH.DASHBOARD_SCREEN.CUSTOMERS,
+        path: PATH.DASHBOARD_SCREEN.CUSTOMERS.CUSTOMERS,
         element: CustomersScreen,
+        type: RouteType.PROTECTED,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
+      },
+      {
+        path: PATH.DASHBOARD_SCREEN.CUSTOMERS.EMPLOYEES,
+        element: EmployeesScreen,
         type: RouteType.PROTECTED,
         allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE],
       },

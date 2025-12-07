@@ -1,4 +1,5 @@
 import { Stack, Typography, useTheme } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import ContainerWrapper from '~/components/elements/container/container.element';
 import ContactForm from '~/components/elements/forms/contact/contact-form';
@@ -7,22 +8,21 @@ import { StackRow } from '~/components/elements/styles/stack.style';
 // import { HereMap } from '~/components/map/map';
 
 const ContactPage: React.FC = () => {
+  const { t } = useTranslation('contact');
   const { palette } = useTheme();
   return (
     <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
-      <Typography variant="h2">LIÊN HỆ</Typography>
+      <Typography variant="h2">{t('section_title')}</Typography>
       <Typography variant="h5" style={{ color: palette.primary.main, padding: '40px 0' }}>
-        Cà Mèn Quán
+        {t('brand_name')}
       </Typography>
       <Typography variant="subtitle1" style={{ color: palette.text.primary, maxWidth: 800 }}>
-        <b>“Mang Ẩm thực Việt đi muôn phương”</b>, Cà Mèn mong muốn có thể mang những món đặc sản của quê hương Việt Nam
-        đi phục vụ bà con trong và ngoài nước, góp phần quảng bá mảnh đất, con người quê hương Việt Nam đến với bạn bè
-        thế giới.
+        <b>{t('slogan')}</b> {t('slogan_detail')}
       </Typography>
-      <IconLabel icon="Home" title="Cà Mèn Quán: 27B Hoa Sứ, Phường 7, Q.Phú Nhuận, TP.HCM" />
-      <IconLabel icon="Home" title="Văn phòng: 17 Hồ Hảo Hớn, Phường Cô Giang, Quận 1, TP.HCM" />
-      <IconLabel icon="Phone" title="0823 10 74 74" />
-      <IconLabel icon="Email" title="happy@camen.vn" />
+      <IconLabel icon="Home" title={`${t('contact_info.branch_title')}: ${t('contact_info.branch_address')}`} />
+      <IconLabel icon="Home" title={`${t('contact_info.office_title')}: ${t('contact_info.office_address')}`} />
+      <IconLabel icon="Phone" title={t('contact_info.phone')} />
+      <IconLabel icon="Email" title={t('contact_info.email')} />
       <StackRow sx={{ margin: '20px 0', gap: 4 }}>
         <Stack sx={{ width: '500px' }}>
           <div className="embed-map-fixed">

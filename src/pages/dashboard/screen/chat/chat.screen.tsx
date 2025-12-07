@@ -29,6 +29,8 @@ import { TagElement } from '~/components/elements/tag/tag.element';
 import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 import { ModalElement } from '~/components/modal/modal-element/modal-element';
 import { formatDate, formatDateHeader, formatTime } from '~/common/until/date-format.until';
+import { StackRowAlignCenter, StackRowJustBetween } from '~/components/elements/styles/stack.style';
+import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
 
 const ChatScreen: React.FC = () => {
   const [rooms, setRooms] = useState<ChatRoom[]>([]);
@@ -66,6 +68,7 @@ const ChatScreen: React.FC = () => {
   const [pendingRoom, setPendingRoom] = useState<ChatRoom | null>(null);
 
   const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
+  const [openConfirm, setOpenConfirm] = useState(false);
 
   useEffect(() => {
     if (roomModalOpen && roomForModal) {
@@ -124,7 +127,7 @@ const ChatScreen: React.FC = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await userApi.getPersonnel(4);
+        const res = await userApi.getPersonnel(6);
         setDsnv(res);
       } catch (error) {
         console.error('Failed to load profile', error);
@@ -249,6 +252,16 @@ const ChatScreen: React.FC = () => {
     }
   };
 
+  const handleRemoveMessage = async (messageId: number) => {
+    if (!selectedRoom) return;
+    await chatApi.deleteMessage(messageId);
+    // reload rooms and messages
+    await loadRooms();
+    await setMessages([]);
+    setOpenConfirm(false);
+    setSelectedRoom(null);
+  };
+
   const getRoomTitle = (room: ChatRoom) => {
     return room.customer?.name && room.staff?.name
       ? `${room.customer.name} - ${room.staff.name}`
@@ -332,7 +345,6 @@ const ChatScreen: React.FC = () => {
     };
   }, []);
 
-
   // map ngày -> số tin nhắn trong ngày (dùng Date.toDateString để nhóm)
   const countsByDate = messages.reduce<Record<string, number>>((acc, m) => {
     if (!m.created_at) return acc;
@@ -350,7 +362,7 @@ const ChatScreen: React.FC = () => {
       <Paper sx={{ height: '100%', display: 'flex', overflow: 'hidden' }}>
         {/* Sidebar rooms */}
         <Box sx={{ width: 320, borderRight: 1, borderColor: 'divider', display: 'flex', flexDirection: 'column' }}>
-          <Box sx={{ p: 2 }}>
+          <Box sx={{ p: 4 }}>
             <Typography variant="subtitle2">Phòng chat</Typography>
           </Box>
           <Divider />
@@ -363,11 +375,12 @@ const ChatScreen: React.FC = () => {
               <>
                 <List>
                   {(() => {
-                    const filtered = rooms.filter((room) => room.last_message_id && room.last_message_id !== 0);
-                    const total = filtered.length;
-                    const totalPages = Math.max(1, Math.ceil(total / ROOMS_PER_PAGE));
+                    const filtered = rooms.filter(
+                      (room) => room.last_message_id && room.last_message_id !== 0 && room.last_message,
+                    );
                     const start = (roomPage - 1) * ROOMS_PER_PAGE;
                     const paged = filtered.slice(start, start + ROOMS_PER_PAGE);
+                    console.log('paged', paged);
                     return paged.map((room) => (
                       <ListItemButton
                         key={room.id}
@@ -389,7 +402,7 @@ const ChatScreen: React.FC = () => {
                           secondary={getRoomLastMessageSummary(room)}
                           secondaryTypographyProps={{ component: 'span' }}
                         />
-                        <Stack spacing={1} sx={{ alignItems: 'center',  }}>
+                        <Stack spacing={1} sx={{ alignItems: 'center' }}>
                           <TagElement
                             content={room.status}
                             type={StateTagTypeChat[room.status]}
@@ -408,36 +421,33 @@ const ChatScreen: React.FC = () => {
                           )}
                         </Stack>
                       </ListItemButton>
-                     ));
-                 })()}
+                    ));
+                  })()}
                 </List>
 
                 {/* pagination */}
                 {(() => {
-                 const filteredCount = rooms.filter((room) => room.last_message_id && room.last_message_id !== 0).length;
-                 const pages = Math.ceil(filteredCount / ROOMS_PER_PAGE);
-                 if (pages > 1) {
-                   return (
-                     <Box sx={{ display: 'flex', justifyContent: 'center', p: 1 }}>
-                       <Pagination
-                         count={pages}
-                         page={roomPage}
-                         onChange={(_, v) => setRoomPage(v)}
-                         size="small"
-                       />
-                     </Box>
-                   );
-                 }
-                 if (filteredCount === 0) {
-                   return (
-                     <Typography sx={{ p: 2 }} color="text.secondary">
-                       Chưa có phòng chat nào.
-                     </Typography>
-                   );
-                 }
-                 return null;
-               })()}
-             </>
+                  const filteredCount = rooms.filter(
+                    (room) => room.last_message_id && room.last_message_id !== 0,
+                  ).length;
+                  const pages = Math.ceil(filteredCount / ROOMS_PER_PAGE);
+                  if (pages > 1) {
+                    return (
+                      <Box sx={{ display: 'flex', justifyContent: 'center', p: 1 }}>
+                        <Pagination count={pages} page={roomPage} onChange={(_, v) => setRoomPage(v)} size="small" />
+                      </Box>
+                    );
+                  }
+                  if (filteredCount === 0) {
+                    return (
+                      <Typography sx={{ p: 2 }} color="text.secondary">
+                        Chưa có phòng chat nào.
+                      </Typography>
+                    );
+                  }
+                  return null;
+                })()}
+              </>
             )}
           </Box>
         </Box>
@@ -446,23 +456,41 @@ const ChatScreen: React.FC = () => {
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
           {/* Header */}
           <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-            <Typography variant="subtitle1">
-              {selectedRoom ? getRoomTitle(selectedRoom) : 'Chọn một phòng chat'}
-            </Typography>
-
-            {/* Ngày/tóm tắt số tin nhắn cho ngày đầu tiên của conversation (nếu có) */}
-            {messages.length > 0 && (
-              <Box sx={{ position: 'absolute', top: '3%', left: '50%' }}>
-                <Typography variant="caption" color="text.secondary">
-                  {formatDate(messages[0].created_at)}{' '}
+            <StackRowJustBetween>
+              <Stack>
+                <Typography variant="subtitle1">
+                  {selectedRoom ? getRoomTitle(selectedRoom) : 'Chọn một phòng chat'}
                 </Typography>
-              </Box>
-            )}
+                <Typography variant="subtitle2">{selectedRoom ? selectedRoom.customer?.email : ''}</Typography>
+              </Stack>
+
+              {/* Ngày/tóm tắt số tin nhắn cho ngày đầu tiên của conversation (nếu có) */}
+              {messages.length > 0 && (
+                <Box sx={{ position: 'absolute', top: '3%', left: '50%' }}>
+                  <Typography variant="caption" color="text.secondary">
+                    {formatDate(messages[0].created_at)}{' '}
+                  </Typography>
+                </Box>
+              )}
+              {messages.length > 0 && (
+                <IconButton
+                  size="small"
+                  onClick={() => setOpenConfirm(true)}
+                  sx={{
+                    bgcolor: 'background.paper',
+                    boxShadow: 1,
+                    m: 1,
+                    '&:hover': { bgcolor: 'background.paper' },
+                  }}
+                >
+                  <DeleteOutlineIcon fontSize="small" />
+                </IconButton>
+              )}
+            </StackRowJustBetween>
           </Box>
 
           {/* Messages */}
           <Box sx={{ flex: 1, p: 2, overflowY: 'auto', bgcolor: 'background.default' }}>
-            
             {loadingMessages && (
               <Stack alignItems="center" justifyContent="center" sx={{ mt: 2 }}>
                 <CircularProgress size={24} />
@@ -490,7 +518,8 @@ const ChatScreen: React.FC = () => {
                     rows.push(
                       <Box key={`date-${dateKey}`} sx={{ textAlign: 'center', my: 1 }}>
                         <Typography variant="caption" color="text.secondary">
-                          {formatDateHeader(msg.created_at)} {countsByDate[dateKey] ? ` — ${countsByDate[dateKey]} tin nhắn` : ''}
+                          {formatDateHeader(msg.created_at)}{' '}
+                          {countsByDate[dateKey] ? ` — ${countsByDate[dateKey]} tin nhắn` : ''}
                         </Typography>
                       </Box>,
                     );
@@ -708,6 +737,14 @@ const ChatScreen: React.FC = () => {
         confirmText="Đồng ý"
         onConfirm={handleJoinRoomAsStaff}
         cancelText="Đóng"
+      />
+
+      <ModalConfirm
+        open={openConfirm}
+        title="Xóa liên hệ"
+        message={`Bạn có chắc muốn xóa tin nhắn của "${selectedRoom?.customer?.name}" không?`}
+        onClose={() => setOpenConfirm(false)}
+        onConfirm={() => handleRemoveMessage(selectedRoom?.id!)}
       />
     </Box>
   );

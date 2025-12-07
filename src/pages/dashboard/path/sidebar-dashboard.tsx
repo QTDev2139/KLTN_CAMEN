@@ -8,7 +8,7 @@ import ArticleOutlined from '@mui/icons-material/ArticleOutlined';
 import LocalOfferOutlined from '@mui/icons-material/LocalOfferOutlined';
 import StarOutline from '@mui/icons-material/StarOutline';
 import ChatBubbleOutline from '@mui/icons-material/ChatBubbleOutline';
-import { ContactMailOutlined } from '@mui/icons-material';
+import { ContactMailOutlined, BadgeOutlined, GroupOutlined } from '@mui/icons-material';
 import CategoryOutlined from '@mui/icons-material/CategoryOutlined';
 
 export interface SidebarItem {
@@ -24,7 +24,15 @@ export const sidebarsDashboard: SidebarItem[] = [
     to: PATH.DASHBOARD_SCREEN.OVERVIEW,
     title: 'Overview',
     icon: <DashboardOutlined fontSize="small" />,
-    allowUserTypes: [UserType.ROOT, UserType.ADMIN, UserType.MANAGER, UserType.EXECUTIVE, UserType.MARKETING, UserType.STAFF, UserType.STORAGEKEEPER],
+    allowUserTypes: [
+      UserType.ROOT,
+      UserType.ADMIN,
+      UserType.MANAGER,
+      UserType.EXECUTIVE,
+      UserType.MARKETING,
+      UserType.STAFF,
+      UserType.STORAGEKEEPER,
+    ],
   },
   {
     to: PATH.DASHBOARD_SCREEN.ORDERS,
@@ -39,10 +47,24 @@ export const sidebarsDashboard: SidebarItem[] = [
     allowUserTypes: [UserType.ADMIN, UserType.MANAGER, UserType.STAFF],
   },
   {
-    to: PATH.DASHBOARD_SCREEN.CUSTOMERS,
-    title: 'Nhân viên',
-    icon: <PeopleOutline fontSize="small" />,
-    allowUserTypes: [UserType.ROOT, UserType.ADMIN,],
+    to: PATH.DASHBOARD_SCREEN.CUSTOMERS.EMPLOYEES,
+    title: 'Người dùng',
+    icon: <GroupOutlined fontSize="small" />,
+    allowUserTypes: [UserType.ROOT, UserType.ADMIN],
+    children: [
+      {
+        to: PATH.DASHBOARD_SCREEN.CUSTOMERS.EMPLOYEES,
+        title: 'Nhân viên',
+        icon: <BadgeOutlined fontSize="small" />,
+        allowUserTypes: [UserType.ROOT, UserType.ADMIN],
+      },
+      {
+        to: PATH.DASHBOARD_SCREEN.CUSTOMERS.CUSTOMERS,
+        title: 'Khách hàng',
+        icon: <PeopleOutline fontSize="small" />,
+        allowUserTypes: [UserType.ADMIN, UserType.MANAGER],
+      },
+    ],
   },
   {
     to: PATH.DASHBOARD_SCREEN.BLOG.BLOG_VIEW,

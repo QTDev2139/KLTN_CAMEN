@@ -1,0 +1,39 @@
+{
+  "procedure": "Quy Trình Sản Xuất",
+  "title": "Cam Kết Chất Lượng",
+  "subtitle": "Với quy trình sản xuất khép kín và kiểm soát chặt chẽ từng công đoạn, Cà Mèn cam kết mang đến cho bạn những sản phẩm chất lượng cao nhất, giữ trọn hương vị đặc trưng của ẩm thực Việt Nam.",
+  "key_metrics": [
+    {
+      "description": "Nguyên liệu tươi sạch"
+    },
+    {
+      "value": "2 năm",
+      "description": "Thời hạn bảo quản"
+    },
+    {
+      "description": "Chất bảo quản"
+    }
+  ],
+  "production_process_steps": [
+    {
+      "title": "Nguyên liệu đầu vào đạt chuẩn – Tuyển chọn kỹ lưỡng",
+      "description": "Chúng tôi rất chú trọng vào chất lượng nguyên liệu đầu vào. Tất cả thành phần – từ thịt, cá, củ đến rau nấm – đều được kiểm tra kỹ lưỡng về nguồn gốc và tiêu chuẩn an toàn thực phẩm trước khi đưa vào sản xuất."
+    },
+    {
+      "title": "Quy trình kiểm soát chặt chẽ – An tâm trong từng gói",
+      "description": "Từng công đoạn sản xuất tại Cà Mèn đều được giám sát chặt chẽ theo quy trình khép kín. Từ kiểm tra nguyên liệu, chế biến, cấp đông đến đóng gói – mọi công đoạn đều được thực hiện cẩn thận để đảm bảo mỗi thành phẩm khi xuất xưởng đều đạt chất lượng đồng đều, an toàn và ngon miệng."
+    },
+    {
+      "title": "Công nghệ cấp đông sâu – Giữ trọn độ tươi và hương vị",
+      "description": "Tất cả sản phẩm của Cà Mèn đều được bảo quản bằng công nghệ cấp đông sâu hiện đại, giúp giữ được độ tươi ngon gần như ban đầu của nguyên liệu. Nhờ phương pháp này, sản phẩm vẫn đảm bảo được chất lượng, hương vị và giá trị dinh dưỡng, đồng thời có thể bảo quản lên đến 2 năm kể từ ngày sản xuất mà không cần dùng chất bảo quản."
+    },
+    {
+      "title": "Dây chuyền đóng gói hiện đại – Bao bì chỉn chu, an toàn",
+      "description": "Cà Mèn đầu tư hệ thống đóng gói chuyên nghiệp, với thiết kế bao bì đẹp mắt, tiện lợi và an toàn vệ sinh thực phẩm. Bao bì không chỉ giúp bảo vệ sản phẩm tối ưu mà còn thể hiện bản sắc và giá trị của ẩm thực Việt qua từng món ăn."
+    },
+    {
+      "title": "Vận chuyển chuyên biệt – Đảm bảo chuỗi lạnh nghiêm ngặt",
+      "description": "Trong suốt quá trình phân phối, sản phẩm Cà Mèn được vận chuyển bằng container lạnh và tuân thủ nghiêm ngặt các tiêu chuẩn bảo quản lạnh. Điều này đảm bảo sản phẩm luôn giữ được chất lượng ổn định khi đến tay các nhà phân phối trong nước và quốc tế."
+    }
+  ]
+}

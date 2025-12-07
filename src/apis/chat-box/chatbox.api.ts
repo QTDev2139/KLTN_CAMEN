@@ -51,3 +51,7 @@ export const sendMessage = async (
 export const markAsRead = async (roomId: number): Promise<void> => {
     await axiosApi.post(`/chat/rooms/${roomId}/read`);
 };
+
+export const deleteMessage = async (chatroomId: number): Promise<void> => {
+    await axiosApi.delete(`/chat/messages/${chatroomId}`);
+}

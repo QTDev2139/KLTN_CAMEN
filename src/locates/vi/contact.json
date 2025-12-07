@@ -1,0 +1,22 @@
+{
+  "section_title": "LIÊN HỆ",
+  "brand_name": "Cà Mèn Quán",
+  "slogan": "“Mang Ẩm Thực Việt đi muôn phương”.",
+  "slogan_detail": "Cà Mèn mong muốn có thể mang những món đặc sắc của quê hương Việt Nam đi phục vụ bà con trong và ngoài nước, góp phần quảng bá mạnh đất, con người quê hương Việt Nam đến với bạn bè thế giới.",
+  "contact_info": {
+    "branch_title": "Cà Mèn Quán",
+    "branch_address": "27B Hòa Sứ, Phường 7, Q. Phú Nhuận, TP.HCM",
+    "office_title": "Văn phòng",
+    "office_address": "17 Hồ Hảo Hớn, Phường Cô Giang, Quận 1, TP.HCM",
+    "phone": "0823 10 74 74",
+    "email": "happy@camen.vn"
+  },
+  "contact_form": {
+    "name_placeholder": "Tên của bạn",
+    "email_placeholder": "Địa chỉ Email",
+    "phone_placeholder": "Số điện thoại",
+    "service_type_placeholder": "Loại dịch vụ",
+    "content_placeholder": "Nội dung",
+    "submit_button": "Gửi liên hệ"
+  }
+}
