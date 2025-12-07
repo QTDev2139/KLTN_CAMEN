@@ -1,0 +1,22 @@
+{
+  "section_title": "CONTACT",
+  "brand_name": "Cà Mèn Quán",
+  "slogan": "“Bringing Vietnamese Cuisine to the world”.",
+  "slogan_detail": "Cà Mèn wishes to bring the distinctive dishes of the Vietnamese homeland to serve people both domestically and internationally, contributing to the promotion of the land and people of Vietnam to friends around the world.",
+  "contact_info": {
+    "branch_title": "Cà Mèn Quán (Restaurant)",
+    "branch_address": "27B Hoa Su Street, Ward 7, Phu Nhuan District, HCMC",
+    "office_title": "Office",
+    "office_address": "17 Ho Hao Hon Street, Co Giang Ward, District 1, HCMC",
+    "phone": "+84 823 10 74 74",
+    "email": "happy@camen.vn"
+  },
+  "contact_form": {
+    "name_placeholder": "Your Name",
+    "email_placeholder": "Email Address",
+    "phone_placeholder": "Phone Number",
+    "service_type_placeholder": "Service Type",
+    "content_placeholder": "Content",
+    "submit_button": "Send Contact"
+  }
+}

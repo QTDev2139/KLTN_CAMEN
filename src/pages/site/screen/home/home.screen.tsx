@@ -15,10 +15,15 @@ import DSC_9677 from '~/assets/images/DSC_9677.jpg';
 import KHOINGUON from '~/assets/images/khoi-nguon.jpg';
 import VUONMINH from '~/assets/images/vuon-minh.jpg';
 import DOIMOI from '~/assets/images/doi-moi.jpg';
+import TINHTHAN from '~/assets/images/IMG_7626.jpg';
 
-import { fadeInUp, scrollAnimation, slideInLeft, slideInRight, timelineData } from './home.state';
+import { fadeInUp, scrollAnimation, slideInLeft, slideInRight, getTimelineData } from './home.state';
+import { useTranslation } from 'react-i18next';
 
 const HomePage: React.FC = () => {
+  const { t } = useTranslation('home');
+  const timelineData = React.useMemo(() => getTimelineData(t), [t]);
+
   const { palette } = useTheme();
   const [isVisible, setIsVisible] = React.useState(false);
   const [activeSection, setActiveSection] = React.useState<string>('camen');
@@ -47,18 +52,18 @@ const HomePage: React.FC = () => {
     <Box component="main">
       {/* Hero Banner - Full Width */}
       <Box
-          component="img"
-          src={Banner}
-          alt="Banner"
-          sx={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            objectPosition: 'center',
-            display: 'block',
-          }}
-        />
-        
+        component="img"
+        src={Banner}
+        alt="Banner"
+        sx={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'center',
+          display: 'block',
+        }}
+      />
+
       {/* Sticky Navigation Buttons */}
       <Box
         sx={{
@@ -100,7 +105,7 @@ const HomePage: React.FC = () => {
                 },
               }}
             >
-              Về Cà Mèn
+              {t('about_us_section_title')}
             </Button>
             <Button
               variant={activeSection === 'founder' ? 'contained' : 'outlined'}
@@ -122,7 +127,7 @@ const HomePage: React.FC = () => {
                 },
               }}
             >
-              Tinh Thần Người Sáng Lập
+              {t('nav_founder_spirit')}
             </Button>
             <Button
               variant={activeSection === 'history' ? 'contained' : 'outlined'}
@@ -144,7 +149,7 @@ const HomePage: React.FC = () => {
                 },
               }}
             >
-              Lịch Sử Hình Thành
+              {t('nav_history')}
             </Button>
           </Box>
         </Container>
@@ -172,7 +177,7 @@ const HomePage: React.FC = () => {
                   fontSize: { xs: '1.75rem', md: '2.5rem' },
                 }}
               >
-                Đối Tác Của Chúng Tôi
+                {t('partners_section_title')}
               </Typography>
               <Box
                 sx={{
@@ -192,7 +197,7 @@ const HomePage: React.FC = () => {
                   margin: '0 auto',
                 }}
               >
-                Những đối tác tin cậy đồng hành cùng Cà Mèn
+                {t('partners_section_subtitle')}
               </Typography>
             </Box>
           </Zoom>
@@ -326,9 +331,9 @@ const HomePage: React.FC = () => {
           <Box sx={{ textAlign: 'center', mt: 6 }}>
             <Grid container spacing={3} justifyContent="center">
               {[
-                { number: '50+', label: 'Đối Tác Tin Cậy' },
-                { number: '20+', label: 'Quốc Gia' },
-                { number: '100K+', label: 'Khách Hàng Hài Lòng' },
+                { number: t('about_partners_count'), label: t('about_partners_text') },
+                { number: t('about_countries_count'), label: t('about_countries_text') },
+                { number: t('about_customers_count'), label: t('about_countries_text') },
               ].map((stat, index) => (
                 <Grid size={{ xs: 12, sm: 4 }} key={index}>
                   <Box
@@ -417,7 +422,7 @@ const HomePage: React.FC = () => {
                   animation: `${fadeInUp} 0.8s ease-out`,
                 }}
               >
-                Về Cà Mèn
+                {t('about_us_section_title')}
               </Typography>
               <Box
                 sx={{
@@ -472,28 +477,28 @@ const HomePage: React.FC = () => {
                   }}
                 >
                   {/* IMAGE: full cover và nằm giữa */}
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                  }}
-                >
                   <Box
-                    component="img"
-                    src={DSC_9677}
-                    alt="Cà Mèn"
                     sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
                       width: '100%',
                       height: '100%',
-                      objectFit: 'cover',
-                      objectPosition: 'center',
-                      display: 'block',
                     }}
-                  />
-                </Box>
+                  >
+                    <Box
+                      component="img"
+                      src={DSC_9677}
+                      alt="Cà Mèn"
+                      sx={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                        display: 'block',
+                      }}
+                    />
+                  </Box>
                 </Paper>
               </Box>
             </Grid>
@@ -533,10 +538,7 @@ const HomePage: React.FC = () => {
                     },
                   }}
                 >
-                  Bắt đầu từ một quán ăn nhỏ mang hương vị Quảng Trị giữa lòng Sài Gòn từ năm 2015, Cà Mèn từng bước
-                  phát triển với mong muốn lan toả ẩm thực Việt đến nhiều người hơn. Tháng 6/2022, Cà Mèn ra mắt dòng
-                  sản phẩm đặc sản Việt đông lạnh đóng gói, giữ trọn hương vị truyền thống trong hình thức tiện lợi,
-                  hiện đại.
+                  {t('history_paragraph_1')}
                 </Typography>
                 <Typography
                   variant="body1"
@@ -547,29 +549,7 @@ const HomePage: React.FC = () => {
                     textAlign: 'justify',
                   }}
                 >
-                  Năm 2023, Cà Mèn xuất khẩu chính ngạch đơn hàng đầu tiên sang Mỹ, mở ra hành trình vươn ra thế giới.
-                  Đến nay, sản phẩm đã có mặt tại{' '}
-                  <Box
-                    component="span"
-                    sx={{
-                      color: palette.primary.main,
-                      fontWeight: 700,
-                      position: 'relative',
-                      '&::after': {
-                        content: '""',
-                        position: 'absolute',
-                        bottom: -2,
-                        left: 0,
-                        right: 0,
-                        height: '2px',
-                        background: palette.primary.main,
-                        opacity: 0.3,
-                      },
-                    }}
-                  >
-                    Anh, Úc, Canada, Nhật Bản, Hàn Quốc
-                  </Box>
-                  … và tiếp tục mở rộng đến nhiều quốc gia khác.
+                  {t('history_paragraph_2')}
                 </Typography>
               </Box>
             </Grid>
@@ -580,20 +560,20 @@ const HomePage: React.FC = () => {
             {[
               {
                 number: '2015',
-                label: 'Khởi Nguồn',
-                description: 'Quán ăn nhỏ mang hương vị Quảng Trị',
+                label: t('milestone_2015'),
+                description: t('milestone_2015_des'),
                 image: KHOINGUON,
               },
               {
                 number: '2022',
-                label: 'Đổi Mới Sản Phẩm',
-                description: 'Ra mắt đặc sản Việt đóng gói',
+                label: t('milestone_2022'),
+                description: t('milestone_2022_des'),
                 image: DOIMOI,
               },
               {
                 number: '2023',
-                label: 'Vươn Ra Thế Giới',
-                description: 'Xuất khẩu sang Mỹ và các quốc gia',
+                label: t('milestone_2023'),
+                description: t('milestone_2023_des'),
                 image: VUONMINH,
               },
             ].map((item, index) => (
@@ -651,17 +631,17 @@ const HomePage: React.FC = () => {
                     }}
                   >
                     <Box
-                    component="img"
-                    src={item.image}
-                    alt="Cà Mèn"
-                    sx={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      objectPosition: 'center',
-                      display: 'block',
-                    }}
-                  />
+                      component="img"
+                      src={item.image}
+                      alt="Cà Mèn"
+                      sx={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                        display: 'block',
+                      }}
+                    />
                     <Box
                       sx={{
                         position: 'absolute',
@@ -670,6 +650,7 @@ const HomePage: React.FC = () => {
                         right: 0,
                         bottom: 0,
                         background: `linear-gradient(to bottom, transparent 0%, ${palette.primary.main}15 100%)`,
+                        opacity: 0.12,
                       }}
                     />
                   </Box>
@@ -752,7 +733,7 @@ const HomePage: React.FC = () => {
                   fontSize: { xs: '1.75rem', md: '2.5rem' },
                 }}
               >
-                Tinh Thần & Sứ Mệnh
+                {t('mission_section_title')}
               </Typography>
               <Box
                 sx={{
@@ -801,7 +782,7 @@ const HomePage: React.FC = () => {
                     lineHeight: 1.6,
                   }}
                 >
-                  Lan toả ẩm thực Việt đến muôn phương
+                  {t('mission_slogan')}
                 </Typography>
 
                 <Typography
@@ -814,9 +795,7 @@ const HomePage: React.FC = () => {
                     textAlign: 'justify',
                   }}
                 >
-                  Cà Mèn mang trong mình sứ mệnh lan toả ẩm thực Việt đến muôn phương – nơi đâu có người Việt, nơi đó có
-                  hương vị quê nhà. Nhưng hơn thế nữa, Cà Mèn mong muốn đưa tinh hoa ẩm thực Việt vượt qua ranh giới
-                  cộng đồng, chạm đến trái tim của người bản xứ tại khắp các quốc gia.
+                  {t('mission_paragraph_1')}
                 </Typography>
 
                 <Paper
@@ -842,8 +821,7 @@ const HomePage: React.FC = () => {
                       fontSize: { xs: '0.95rem', md: '1rem' },
                     }}
                   >
-                    "Mỗi sản phẩm không chỉ là một bữa ăn, mà còn là cầu nối văn hoá, để bạn bè thế giới hiểu và yêu
-                    thêm ẩm thực Việt."
+                    {t('mission_quote')}
                   </Typography>
                 </Paper>
               </Box>
@@ -906,25 +884,32 @@ const HomePage: React.FC = () => {
                   <Box
                     sx={{
                       height: { xs: '400px', md: '550px' },
-                      background: `linear-gradient(135deg, ${palette.primary.light} 0%, ${palette.primary.main} 100%)`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
                       position: 'relative',
+                      overflow: 'hidden',
                     }}
                   >
-                    <Typography
-                      variant="h6"
+                    <Box
+                      component="img"
+                      src={TINHTHAN}
+                      alt="Cà Mèn"
                       sx={{
-                        color: '#fff',
-                        fontStyle: 'italic',
-                        textAlign: 'center',
-                        px: 3,
-                        zIndex: 3,
+                        position: 'absolute',
+                        inset: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                        display: 'block',
                       }}
-                    >
-                      [Hình ảnh nổi bật sẽ được bổ sung]
-                    </Typography>
+                    />
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        inset: 0,
+                        background: `linear-gradient(135deg, ${palette.primary.light} 0%, ${palette.primary.main} 100%)`,
+                        opacity: 0.12,
+                      }}
+                    />
                   </Box>
 
                   {/* Decorative corner accents */}
@@ -983,7 +968,7 @@ const HomePage: React.FC = () => {
                   fontSize: { xs: '1.75rem', md: '2.5rem' },
                 }}
               >
-                Lịch Sử Hình Thành
+                {t('history_section_title')}
               </Typography>
               <Box
                 sx={{
@@ -1004,9 +989,7 @@ const HomePage: React.FC = () => {
                   fontSize: { xs: '1rem', md: '1.1rem' },
                 }}
               >
-                Là một người con sống xa quê nên Cà Mèn rất thấu hiểu cảm giác thèm những món ăn quê nhà, ngon như mẹ
-                nấu, đặc biệt là kiều bào Việt Nam đang sinh sống tại nước ngoài. Vì vậy, năm 2022, Cà Mèn đã nghiên cứu
-                và cho ra mắt sản phẩm Cháo bột cá lóc (Bánh canh cá lóc) đóng gói.
+                {t('history_intro_paragraph')}
               </Typography>
             </Box>
           </Zoom>

@@ -81,39 +81,32 @@ const BlogPage: React.FC = () => {
     <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
       <Stack>
         <StackRow sx={{ gap: 1, flexWrap: 'wrap', mb: 2 }}>
-          <Typography
+          <Chip
+            label="Tất cả"
             onClick={() => setSelectedCategory(null)}
-            sx={{
-              cursor: 'pointer',
-              px: 1.5,
-              py: 0.5,
-              borderRadius: 1,
-              bgcolor: selectedCategory ? 'transparent' : 'action.selected',
-              fontWeight: selectedCategory ? 500 : 700,
-            }}
-          >
-            Tất cả
-          </Typography>
+            clickable
+            variant={selectedCategory ? 'outlined' : 'filled'}
+            color="primary"
+            sx={{ borderRadius: 2, fontWeight: selectedCategory ? 500 : 700 }}
+          />
           {categoryList.map((cate) => {
             const isActive =
               selectedCategory &&
               String(selectedCategory).toLowerCase().trim() === String(cate.name).toLowerCase().trim();
             return (
-              <Typography
+              <Chip
                 key={cate.id}
+                label={cate.name}
                 onClick={() => setSelectedCategory(isActive ? null : cate.name)}
+                clickable
+                variant={isActive ? 'filled' : 'outlined'}
+                color={isActive ? 'primary' : 'default'}
                 sx={{
-                  cursor: 'pointer',
-                  px: 1.5,
-                  py: 0.5,
-                  borderRadius: 1,
-                  bgcolor: isActive ? 'primary.main' : 'transparent',
-                  color: isActive ? 'primary.contrastText' : 'text.primary',
-                  '&:hover': { bgcolor: isActive ? 'primary.dark' : 'action.hover' },
+                  borderRadius: 2,
+                  fontWeight: isActive ? 600 : 500,
+                  '&:hover': { boxShadow: 1 },
                 }}
-              >
-                {cate.name}
-              </Typography>
+              />
             );
           })}
         </StackRow>
@@ -132,8 +125,8 @@ const BlogPage: React.FC = () => {
                       <CardMedia
                         component="div"
                         sx={{
-                          pt: '56.25%', // 16:9
-                          bgcolor: 'grey.300',
+                          pt: '56.25%' // 16:9
+                          , bgcolor: 'grey.300',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',

@@ -14,7 +14,7 @@ import {
 import { ModeEditOutlineOutlined } from '@mui/icons-material';
 import { User } from '~/apis/user/user.interfaces.api';
 import { userApi } from '~/apis';
-import { ConvertRole, NameStatusRole, StatusRole } from './customers.state';
+import { ConvertRole } from './customers.state';
 import { ModalElement } from '~/components/modal/modal-element/modal-element';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { useFormik } from 'formik';
@@ -31,7 +31,7 @@ const actionColor: Record<number, string> = {
 
 const CustomersList: React.FC = () => {
   const { snackbar } = useSnackbar();
-  const [listPersonnel, setListPersonnel] = useState<User[]>([]);
+  const [listCustomers, setListCustomers] = useState<User[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
@@ -40,26 +40,26 @@ const CustomersList: React.FC = () => {
     try {
       const payload = {
         name: values?.name ?? selectedUser.name,
-        role_id: Number(values?.role_id ?? selectedUser.role_id ?? ''),
         status: Number(values?.status ?? selectedUser.status),
+        role_id: 4,
       };
       await userApi.updatePersonnel(selectedUser.id, payload);
-      snackbar('success', 'Cập nhật nhân viên thành công');
+      snackbar('success', 'Cập nhật khách hàng thành công');
       setOpenModal(false);
       setSelectedUser(null);
-      fetchPersonnel();
+      fetchCustomers();
     } catch (err) {
-      console.error('Lỗi cập nhật nhân viên:', err);
+      console.error('Lỗi cập nhật khách hàng:', err);
       snackbar('error', 'Cập nhật thất bại');
     }
   }
 
-  const fetchPersonnel = async () => {
-    const res = await userApi.getPersonnelList();
-    setListPersonnel(res);
+  const fetchCustomers = async () => {
+    const res = await userApi.getPersonnel(4);
+    setListCustomers(res);
   };
   useEffect(() => {
-    fetchPersonnel();
+    fetchCustomers();
   }, []);
 
   const formik = useFormik({
@@ -76,9 +76,8 @@ const CustomersList: React.FC = () => {
   
   const columns = [
     { id: 'id', label: 'STT' },
-    { id: 'fullName', label: 'Họ tên nhân viên', width: 240 },
+    { id: 'fullName', label: 'Họ tên khách hàng', width: 240 },
     { id: 'email', label: 'Email', width: 260 },
-    { id: 'role', label: 'Vai trò' },
     { id: 'status', label: 'Trạng thái' },
     { id: 'action', label: 'Action', width: 160 },
   ];
@@ -87,7 +86,7 @@ const CustomersList: React.FC = () => {
     <React.Fragment>
       <TableElement
         columns={columns}
-        rows={listPersonnel}
+        rows={listCustomers}
         renderRow={(user, index) => (
           <TableRow hover key={user.id}>
             <TableCell>
@@ -98,9 +97,6 @@ const CustomersList: React.FC = () => {
             </TableCell>
             <TableCell>
               <Typography>{user.email}</Typography>
-            </TableCell>
-            <TableCell>
-              <TagElement type={StatusRole[user.role?.name || '']} content={NameStatusRole[user.role?.name || '']} />
             </TableCell>
             <TableCell>
               <TagElement
@@ -146,20 +142,7 @@ const CustomersList: React.FC = () => {
               value={formik.values.name}
               onChange={formik.handleChange}
             />
-            <TextField
-              select
-              label="Vai trò"
-              name="role_id"
-              value={formik.values.role_id ?? ''}
-              onChange={(e) => formik.setFieldValue('role_id', e.target.value)}
-              fullWidth
-            >
-              <MenuItem value="2">Ban lãnh đạo</MenuItem>
-              <MenuItem value="3">Quản lý</MenuItem>
-              <MenuItem value="5">Marketing</MenuItem>
-              <MenuItem value="6">Staff</MenuItem>
-              <MenuItem value="7">Nhân viên kho</MenuItem>
-            </TextField>
+            
             <TextField
               select
               label="Trạng thái"
