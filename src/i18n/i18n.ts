@@ -14,6 +14,14 @@ import LOGOUT_VI from '~/locates/vi/logout.json';
 import LOGOUT_EN from '~/locates/en/logout.json';
 import FORGOT_PASSWORD_VI from '~/locates/vi/forgot-password.json';
 import FORGOT_PASSWORD_EN from '~/locates/en/forgot-password.json';
+import HOME_VI from '~/locates/vi/home.json';
+import HOME_EN from '~/locates/en/home.json';
+import PRODUCT_PROCESS_EN from '~/locates/en/production-process.json';
+import PRODUCT_PROCESS_VI from '~/locates/vi/production-process.json';
+import DECLARATION_EN from '~/locates/en/declaration.json';
+import DECLARATION_VI from '~/locates/vi/declaration.json';
+import CONTACT_EN from '~/locates/en/contact.json';
+import CONTACT_VI from '~/locates/vi/contact.json';
 
 export const locates = {
   vi: { label: 'Việt Nam', icon: ViIcon },
@@ -28,6 +36,10 @@ export const resources = {
     login: LOGIN_EN,
     logout: LOGOUT_EN,
     'forgot-password': FORGOT_PASSWORD_EN,
+    home: HOME_EN,
+    'production-process': PRODUCT_PROCESS_EN,
+    declaration: DECLARATION_EN,
+    contact: CONTACT_EN,
   },
   vi: {
     blog: BLOG_VI,
@@ -36,6 +48,10 @@ export const resources = {
     login: LOGIN_VI,
     logout: LOGOUT_VI,
     'forgot-password': FORGOT_PASSWORD_VI,
+    home: HOME_VI,
+    'production-process': PRODUCT_PROCESS_VI,
+    declaration: DECLARATION_VI,
+    contact: CONTACT_VI,
   },
 };
 
@@ -44,7 +60,18 @@ export const defaultLanguages = localStorage.getItem('languages')?.replace(/"/g,
 
 i18n.use(initReactI18next).init({
   resources,
-  ns: ['blog', 'sidebar', 'user', 'login', 'logout', 'forgot-password'], // translation, name space
+  ns: [
+    'blog',
+    'sidebar',
+    'user',
+    'login',
+    'logout',
+    'forgot-password',
+    'home',
+    'production-process',
+    'declaration',
+    'contact',
+  ], // translation, name space
   lng: defaultLanguages,
   defaultNS,
   fallbackLng: 'vi', // Khong xac dinh duoc ngon ngu => vi

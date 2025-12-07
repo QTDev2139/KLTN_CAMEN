@@ -21,6 +21,7 @@ import { ExpandMore, PictureAsPdf, Description, VerifiedUser, FilePresent } from
 import { announcementApi } from '~/apis';
 import { CategoryDocument } from '~/apis/announcement/announcement.interface.api';
 import { DECLARATION_CHILDREN_NAME, DECLARATION_NAME } from './declaration.status';
+import { useTranslation } from 'react-i18next';
 
 // Keyframe animations
 const fadeInUp = keyframes`
@@ -59,6 +60,7 @@ interface Product {
 }
 
 const DeclarationPage: React.FC = () => {
+  const { t } = useTranslation('declaration');
   const { palette } = useTheme();
   const [isVisible, setIsVisible] = React.useState(false);
   const [expanded, setExpanded] = React.useState<string | false>(false);
@@ -228,7 +230,7 @@ const DeclarationPage: React.FC = () => {
                     letterSpacing: 1,
                   }}
                 >
-                  Tài liệu chính thức
+                  {t('document_status')}
                 </Typography>
               </Box>
 
@@ -244,7 +246,7 @@ const DeclarationPage: React.FC = () => {
                   animationFillMode: 'both',
                 }}
               >
-                Hồ Sơ Công Bố Sản Phẩm
+                {t('main_title')}
               </Typography>
 
               <Typography
@@ -260,12 +262,12 @@ const DeclarationPage: React.FC = () => {
                   animationFillMode: 'both',
                 }}
               >
-                Toàn bộ giấy tờ, chứng nhận và thông tin minh bạch về các sản phẩm Cà Mèn
+                {t('description')}
               </Typography>
 
               <Chip
                 icon={<FilePresent />}
-                label={`${products.length} Sản phẩm • ${products.length * 4} Tài liệu`}
+                label={t('stats')}
                 sx={{
                   mt: 2,
                   px: 2,
@@ -301,7 +303,7 @@ const DeclarationPage: React.FC = () => {
                   fontSize: { xs: '1.5rem', md: '2rem' },
                 }}
               >
-                Danh Sách Sản Phẩm
+                {t('section_title')}
               </Typography>
               <Typography
                 variant="body1"
@@ -311,7 +313,7 @@ const DeclarationPage: React.FC = () => {
                   margin: '0 auto',
                 }}
               >
-                Click vào từng sản phẩm để xem chi tiết hồ sơ công bố
+                {t('section_instruction')}
               </Typography>
             </Box>
           </Fade>
@@ -533,7 +535,7 @@ const DeclarationPage: React.FC = () => {
                     mb: 1,
                   }}
                 >
-                  Cam Kết Minh Bạch
+                  {t('commitment_title')}
                 </Typography>
                 <Typography
                   variant="body1"
@@ -544,8 +546,7 @@ const DeclarationPage: React.FC = () => {
                     lineHeight: 1.7,
                   }}
                 >
-                  Tất cả sản phẩm của Cà Mèn đều được công bố đầy đủ thông tin, đạt chuẩn an toàn thực phẩm và có giấy
-                  chứng nhận từ các cơ quan có thẩm quyền.
+                  {t('commitment_text')}
                 </Typography>
               </Box>
             </Paper>

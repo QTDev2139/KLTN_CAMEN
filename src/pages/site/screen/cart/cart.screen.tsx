@@ -13,6 +13,7 @@ import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import { AxiosError } from 'axios';
 import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
 import ContainerWrapper from '~/components/elements/container/container.element';
+import NoCart1 from '~/assets/images/NoCart1.png';
 
 const DEBOUNCE_MS = 500;
 
@@ -193,6 +194,11 @@ const CartPage: React.FC = () => {
               textAlign: 'center',
             }}
           >
+            <img
+              src={NoCart1}
+              alt="No items in cart"
+              style={{ width: '400px', height: '200px', margin: '20px auto'}}
+            />
             <Typography variant="h6" color="text.secondary">
               Giỏ hàng trống
             </Typography>

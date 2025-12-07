@@ -1,0 +1,39 @@
+{
+  "procedure": "Production Process",
+  "title": "Quality Commitment",
+  "subtitle": "With a closed production process and strict control over every stage, Cà Mèn is committed to bringing you the highest quality products, fully preserving the distinctive flavor of Vietnamese cuisine.",
+  "key_metrics": [
+    {
+      "description": "Fresh and clean ingredients"
+    },
+    {
+      "value": "2 years",
+      "description": "Shelf life"
+    },
+    {
+      "description": "Preservatives"
+    }
+  ],
+  "production_process_steps": [
+    {
+      "title": "Standardized Input Ingredients – Meticulous Selection",
+      "description": "We place great emphasis on the quality of input ingredients. All components – from meat, fish, root vegetables, to leafy greens – are thoroughly checked for origin and food safety standards before being put into production."
+    },
+    {
+      "title": "Strict Control Process – Confidence in Every Package",
+      "description": "Every production stage at Cà Mèn is closely monitored according to a closed process. From ingredient inspection, processing, deep freezing, to packaging – every step is carefully executed to ensure that each finished product leaving the factory meets uniform quality, safety, and delicious taste standards."
+    },
+    {
+      "title": "Deep Freezing Technology – Preserving Freshness and Flavor",
+      "description": "All Cà Mèn products are preserved using modern deep-freezing technology, which helps retain the fresh flavor almost identical to the original ingredients. This method ensures the product's quality, flavor, and nutritional value are maintained, allowing for storage of up to 2 years from the date of manufacture without the use of preservatives."
+    },
+    {
+      "title": "Modern Packaging Line – Detailed and Safe Packaging",
+      "description": "Cà Mèn invests in a professional packaging system, with packaging designed to be attractive, convenient, and food-safe. The packaging not only helps optimally protect the product but also represents the identity and value of Vietnamese cuisine through each dish."
+    },
+    {
+      "title": "Specialized Transportation – Ensuring a Strict Cold Chain",
+      "description": "Throughout the distribution process, Cà Mèn products are transported in refrigerated containers and strictly adhere to cold storage standards. This ensures that the product maintains stable quality when it reaches domestic and international distributors."
+    }
+  ]
+}

@@ -17,6 +17,7 @@ import {
     VerifiedUser,
     CheckCircleOutline,
 } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 // Keyframe animations
 const fadeInUp = keyframes`
@@ -90,7 +91,14 @@ interface ProcessStep {
     image: string;
 }
 
+interface KeyMetric {
+    value: string;
+    description: string;
+    icon: React.ReactNode;
+}
+
 const ProductionProcessPage: React.FC = () => {
+    const { t } = useTranslation('production-process');
     const { palette } = useTheme();
     const [isVisible, setIsVisible] = React.useState(false);
     const [visibleSteps, setVisibleSteps] = React.useState<boolean[]>([]);
@@ -123,43 +131,61 @@ const ProductionProcessPage: React.FC = () => {
         return () => observer.disconnect();
     }, []);
 
+    const keyMetrics: KeyMetric[] = [
+        {
+            value: String(t('key_metrics.0.value', { defaultValue: '100%' })),
+            description: String(t('key_metrics.0.description', { defaultValue: 'Quality Assurance' })),
+            icon: <VerifiedUser />,
+        },
+        {
+            value: String(t('key_metrics.1.value', { defaultValue: '2 năm' })),
+            description: String(t('key_metrics.1.description', { defaultValue: 'Warranty Period' })),
+            icon: <AcUnit />,
+        },
+        {
+            value: String(t('key_metrics.2.value', { defaultValue: '0%' })),
+            description: String(t('key_metrics.2.description', { defaultValue: 'Defect Rate' })),
+            icon: <CheckCircleOutline />,
+        },
+    ];
+
     const processSteps: ProcessStep[] = [
         {
             icon: <VerifiedUser sx={{ fontSize: 60 }} />,
-            title: 'Nguyên liệu đầu vào đạt chuẩn – Tuyển chọn kỹ lưỡng',
-            description: 'Tụi mình rất chú trọng vào chất lượng nguyên liệu đầu vào. Tất cả thành phần – từ thịt, cá, cua đến rau nấm – đều được kiểm tra kỹ lưỡng về nguồn gốc và tiêu chuẩn an toàn thực phẩm trước khi đưa vào sản xuất.',
+            title: t('production_process_steps.0.title', { defaultValue: 'Material Selection & Quality Check' }),
+            description: t('production_process_steps.0.description', { defaultValue: 'We carefully select premium materials and conduct thorough quality checks' }),
             color: '#4CAF50',
             gradient: 'linear-gradient(135deg, #4CAF50 0%, #81C784 100%)',
             image: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800&auto=format&fit=crop',
         },
         {
             icon: <CheckCircleOutline sx={{ fontSize: 60 }} />,
-            title: 'Quy trình kiểm soát chặt chẽ – An tâm trong từng gói',
-            description: 'Từng công đoạn sản xuất tại Cà Mèn đều được giám sát chặt chẽ theo quy trình khép kín. Từ kiểm tra nguyên liệu, chế biến, cấp đông đến đóng gói – mọi công đoạn đều được thực hiện cẩn thận để đảm bảo mỗi thành phẩm khi xuất xưởng đều đạt chất lượng đồng đều, an toàn và ngon miệng.',
+            title: t('production_process_steps.1.title', { defaultValue: 'Manufacturing Process' }),
+            description: t('production_process_steps.1.description', { defaultValue: 'Advanced manufacturing techniques ensure precision and quality' }),
             color: '#2196F3',
             gradient: 'linear-gradient(135deg, #2196F3 0%, #64B5F6 100%)',
             image: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=800&auto=format&fit=crop',
         },
         {
             icon: <AcUnit sx={{ fontSize: 60 }} />,
-            title: 'Công nghệ cấp đông sâu – Giữ trọn độ tươi và hương vị',
-            description: 'Tất cả sản phẩm của Cà Mèn đều được bảo quản bằng công nghệ cấp đông sâu hiện đại, giúp giữ được độ tươi ngon gần như ban đầu của nguyên liệu. Nhờ phương pháp này, sản phẩm vẫn đảm bảo được chất lượng, hương vị và giá trị dinh dưỡng, đồng thời có thể bảo quản lên đến 2 năm kể từ ngày sản xuất mà không cần dùng chất bảo quản.',
+            title: t('production_process_steps.2.title', { defaultValue: 'Testing & Inspection' }),
+            description: t('production_process_steps.2.description', { defaultValue: 'Rigorous testing and inspection protocols ensure reliability' }),
             color: '#00BCD4',
             gradient: 'linear-gradient(135deg, #00BCD4 0%, #4DD0E1 100%)',
             image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&auto=format&fit=crop',
         },
         {
             icon: <Inventory sx={{ fontSize: 60 }} />,
-            title: 'Dây chuyền đóng gói hiện đại – Bao bì chỉn chu, an toàn',
-            description: 'Cà Mèn đầu tư hệ thống đóng gói chuyên nghiệp, với thiết kế bao bì đẹp mắt, tiện lợi và an toàn vệ sinh thực phẩm. Bao bì không chỉ giúp bảo vệ sản phẩm tối ưu mà còn thể hiện bản sắc và giá trị của ẩm thực Việt qua từng món ăn.',
+            title: t('production_process_steps.3.title', { defaultValue: 'Packaging & Storage' }),
+            description: t('production_process_steps.3.description', { defaultValue: 'Professional packaging and climate-controlled storage' }),
             color: '#FF9800',
             gradient: 'linear-gradient(135deg, #FF9800 0%, #FFB74D 100%)',
             image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&auto=format&fit=crop',
         },
         {
             icon: <LocalShipping sx={{ fontSize: 60 }} />,
-            title: 'Vận chuyển chuyên biệt – Đảm bảo chuỗi lạnh nghiêm ngặt',
-            description: 'Trong suốt quá trình phân phối, sản phẩm Cà Mèn được vận chuyển bằng container lạnh và tuân thủ nghiêm ngặt các tiêu chuẩn bảo quản lạnh. Điều này đảm bảo sản phẩm luôn giữ được chất lượng ổn định khi đến tay các nhà phân phối trong nước và quốc tế.',
+            title: t('production_process_steps.4.title', { defaultValue: 'Delivery & Support' }),
+            description: t('production_process_steps.4.description', { defaultValue: 'Reliable delivery with comprehensive after-sales support' }),
             color: '#9C27B0',
             gradient: 'linear-gradient(135deg, #9C27B0 0%, #BA68C8 100%)',
             image: 'https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?w=800&auto=format&fit=crop',
@@ -248,7 +274,7 @@ const ProductionProcessPage: React.FC = () => {
                                         letterSpacing: 1,
                                     }}
                                 >
-                                    Quy Trình Sản Xuất
+                                    {t('procedure')}
                                 </Typography>
                             </Box>
 
@@ -264,7 +290,7 @@ const ProductionProcessPage: React.FC = () => {
                                     animationFillMode: 'both',
                                 }}
                             >
-                                Cam Kết Chất Lượng
+                                {t('title')}
                             </Typography>
 
                             <Typography
@@ -280,9 +306,7 @@ const ProductionProcessPage: React.FC = () => {
                                     animationFillMode: 'both',
                                 }}
                             >
-                                Với quy trình sản xuất khép kín và kiểm soát chặt chẽ từng công đoạn,
-                                Cà Mèn cam kết mang đến cho bạn những sản phẩm chất lượng cao nhất,
-                                giữ trọn hương vị đặc trưng của ẩm thực Việt Nam.
+                                {t('subtitle')}
                             </Typography>
 
                             {/* Stats Cards */}
@@ -295,10 +319,8 @@ const ProductionProcessPage: React.FC = () => {
                                     animationFillMode: 'both',
                                 }}
                             >
-                                {[
-                                    { number: '100%', label: 'Nguyên liệu tươi sạch', icon: <VerifiedUser /> },
-                                    { number: '2 năm', label: 'Thời hạn bảo quản', icon: <AcUnit /> },
-                                    { number: '0%', label: 'Chất bảo quản', icon: <CheckCircleOutline /> },
+                                {[ // use translated metrics
+                                    ...keyMetrics
                                 ].map((stat, index) => (
                                     <Grid size={{ xs: 12, sm: 4 }} key={index}>
                                         <Paper
@@ -341,7 +363,7 @@ const ProductionProcessPage: React.FC = () => {
                                                     fontSize: { xs: '2rem', md: '2.5rem' },
                                                 }}
                                             >
-                                                {stat.number}
+                                                {stat.value}
                                             </Typography>
                                             <Typography
                                                 variant="body1"
@@ -350,7 +372,7 @@ const ProductionProcessPage: React.FC = () => {
                                                     fontWeight: 600,
                                                 }}
                                             >
-                                                {stat.label}
+                                                {stat.description}
                                             </Typography>
                                         </Paper>
                                     </Grid>

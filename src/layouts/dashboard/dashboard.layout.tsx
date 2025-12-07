@@ -62,7 +62,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   return (
-    <StackRow sx={{ minHeight: '100vh', gap: 4, backgroundColor: 'background.paper' }}>
+    <StackRow sx={{ minHeight: '100vh', gap: 4, backgroundColor: 'background.default' }}>
       <Stack
         sx={{
           borderRight: `1px solid ${palette.divider}`,
