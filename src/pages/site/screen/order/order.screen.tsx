@@ -31,7 +31,6 @@ import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import { CartItem } from '~/apis/cart/cart.interface.api';
 import { orderSchema } from './order.schema';
 import ContainerWrapper from '~/components/elements/container/container.element';
-import { currentTime, formatDateTime } from '~/common/until/date-format.until';
 
 const OrderPage: React.FC = () => {
   const { palette } = useTheme();
@@ -150,6 +149,7 @@ const OrderPage: React.FC = () => {
       }
     };
     loadUserProfile();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Load active coupons
@@ -204,6 +204,7 @@ const OrderPage: React.FC = () => {
         snackbar('error', 'Không tải được phường/xã');
       }
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.province]);
 
   useEffect(() => {
@@ -240,6 +241,7 @@ const OrderPage: React.FC = () => {
 
     setDiscount(discountAmount);
     snackbar('success', `Áp dụng mã giảm giá thành công! Giảm ${FormatPrice(discountAmount)}`);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCoupon, totalAmount]);
 
   const IMPORTANT_WARDS = [
@@ -294,6 +296,7 @@ const OrderPage: React.FC = () => {
     if (!isInImportantWard && formik.values.paymentMethod === 'cod') {
       formik.setFieldValue('paymentMethod', 'vnpay');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isInImportantWard]);
 
   if (!orderData) return null;

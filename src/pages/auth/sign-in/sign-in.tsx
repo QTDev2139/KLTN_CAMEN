@@ -55,24 +55,24 @@ export default function LoginPage() {
           navigate('/dashboard/' + DASHBOARD_SCREEN.OVERVIEW, { replace: true });
         }
       } catch (error: any) {
-        const resp = error?.response?.data;
-        let message = error?.message || 'Có lỗi xảy ra';
+        // const resp = error?.response?.data;
+        // let message = error?.message || 'Có lỗi xảy ra';
 
-        if (resp) {
-          if (typeof resp === 'string') {
-            message = resp;
-          } else if (typeof resp.message === 'string') {
-            message = resp.message;
-          } else if (resp.errors) {
-            if (Array.isArray(resp.errors)) {
-              message = resp.errors.join(', ');
-            } else if (typeof resp.errors === 'object') {
-              message = Object.values(resp.errors).flat().join(', ');
-            }
-          }
-        }
+        // if (resp) {
+        //   if (typeof resp === 'string') {
+        //     message = resp;
+        //   } else if (typeof resp.message === 'string') {
+        //     message = resp.message;
+        //   } else if (resp.errors) {
+        //     if (Array.isArray(resp.errors)) {
+        //       message = resp.errors.join(', ');
+        //     } else if (typeof resp.errors === 'object') {
+        //       message = Object.values(resp.errors).flat().join(', ');
+        //     }
+        //   }
+        // }
 
-        snackbar('error', message);
+        snackbar('error', "Tài khoản hoặc mật khẩu không đúng");
       } finally {
         setSubmitting(false);
       }

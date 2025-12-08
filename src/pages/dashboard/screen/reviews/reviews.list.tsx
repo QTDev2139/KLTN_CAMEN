@@ -1,19 +1,22 @@
 import TableElement from '~/components/elements/table-element/table-element';
-import { StackRow, StackRowJustCenter } from '~/components/elements/styles/stack.style';
-import { TableRow, TableCell, IconButton, Tooltip, Typography, Rating, Stack, Box, useTheme } from '@mui/material';
-import VisibilityOutlined from '@mui/icons-material/VisibilityOutlined';
-import { ModeEditOutlineOutlined, DeleteOutline, ArrowForwardIosOutlined } from '@mui/icons-material';
+import { StackRow } from '~/components/elements/styles/stack.style';
+import { TableRow, TableCell, Typography, Rating, Stack, Box, useTheme, Tooltip, IconButton } from '@mui/material';
+import { DeleteOutline } from '@mui/icons-material';
 import React, { useEffect, useState } from 'react';
-import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
 import { reviewApi } from '~/apis';
 import { Review } from '~/apis/review/review.interface.api';
 import ModalImage from '~/components/modal/modal-image/modal-image.element';
+import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
+import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 
 const ReviewList: React.FC = () => {
   const [review, setReview] = useState<Review[]>([]);
   const { palette } = useTheme();
   const [open, setOpen] = useState(false);
   const [modalSrc, setModalSrc] = useState('');
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [comment, setComment] = useState<number | null>(null);
+  const { snackbar } = useSnackbar();
 
   useEffect(() => {
     (async () => {
@@ -21,6 +24,15 @@ const ReviewList: React.FC = () => {
       setReview(res);
     })();
   }, []);
+
+  const handleConfirmDelete = async () => {
+    if (comment === null) return;
+    await reviewApi.deleteReview(comment);
+    setReview((prev) => prev.filter((rev) => rev.id !== comment));
+    setOpenConfirm(false);
+    setComment(null);
+    snackbar('success', "Xóa đánh giá thành công");
+  }
 
   const columns = [
     { id: 'index', label: 'Mã đơn hàng' },
@@ -78,17 +90,27 @@ const ReviewList: React.FC = () => {
                 </StackRow>
               </TableCell>
 
-              <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
-                <StackRow gap={1} sx={{ cursor: 'pointer' }}>
-                  <Typography>Trả lời</Typography>
-                  <ArrowForwardIosOutlined fontSize="small" />
-                </StackRow>
+              <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default', textAlign: 'center' }}>
+                <Tooltip title="Xóa">
+                  <IconButton onClick={() => {setOpenConfirm(true); setComment(rev.id ?? null);}}>
+                    <DeleteOutline />
+                  </IconButton>
+                </Tooltip>
               </TableCell>
             </TableRow>
           );
         }}
       />
       <ModalImage open={open} onClose={() => setOpen(false)} src={modalSrc} alt="Sản phẩm" />
+
+      <ModalConfirm
+        open={openConfirm}
+        title="Xóa sản phẩm"
+        message={`Bạn có chắc muốn xóa đánh giá không?`}
+        onClose={() => setOpenConfirm(false)}
+        onConfirm={handleConfirmDelete}
+        // loading={loadingDelete}
+      />
     </React.Fragment>
   );
 };

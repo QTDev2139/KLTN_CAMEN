@@ -11,3 +11,8 @@ export const getReviews = async () => {
     const res = await axiosApi.get('review');
     return res.data;
 }
+
+export const deleteReview = async (id: number) => {
+    const res = await axiosApi.delete(`review/${id}`);
+    return res.data;
+}

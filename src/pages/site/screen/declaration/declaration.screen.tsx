@@ -158,6 +158,7 @@ const DeclarationPage: React.FC = () => {
         files,
       } as Product;
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [announcements, palette.primary.main]);
 
   return (

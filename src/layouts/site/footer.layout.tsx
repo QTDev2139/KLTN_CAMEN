@@ -1,4 +1,4 @@
-import { Box, Container, Divider, IconButton, Stack, Typography, Link as MuiLink, useTheme, useMediaQuery, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Box, Container, Divider, IconButton, Stack, Typography, useTheme, useMediaQuery, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { Facebook, YouTube, Instagram, LocationOn, Phone, Email } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';

@@ -22,7 +22,7 @@ export interface SidebarItem {
 export const sidebarsDashboard: SidebarItem[] = [
   {
     to: PATH.DASHBOARD_SCREEN.OVERVIEW,
-    title: 'Overview',
+    title: 'Thống kê',
     icon: <DashboardOutlined fontSize="small" />,
     allowUserTypes: [
       UserType.ROOT,

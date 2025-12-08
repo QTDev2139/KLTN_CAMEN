@@ -1,4 +1,4 @@
-import { DeleteOutline, ModeEditOutlineOutlined } from '@mui/icons-material';
+import { DeleteOutline, ModeEditOutlineOutlined, Search as SearchIcon } from '@mui/icons-material';
 import { IconButton, TableCell, TableRow, Tooltip, TextField, MenuItem, Box } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { productApi } from '~/apis';
@@ -21,6 +21,7 @@ const ListProduct: React.FC<ListProductProps> = ({ onEdit }) => {
   const { snackbar } = useSnackbar();
   // filter for product type: 'domestic' or 'export'
   const [filterType, setFilterType] = useState<'domestic' | 'export'>('domestic');
+  const [searchName, setSearchName] = useState<string>('');
 
   const handleOpenConfirm = (product: Product) => {
     setSelectedProduct(product);
@@ -64,6 +65,7 @@ const ListProduct: React.FC<ListProductProps> = ({ onEdit }) => {
       }
     };
     fetchListProduct();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterType]); // reload when filter type changes
 
   const columns = [
@@ -77,9 +79,20 @@ const ListProduct: React.FC<ListProductProps> = ({ onEdit }) => {
   return (
     <React.Fragment>
       {/* Filter: domestic / export */}
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
         <TextField
-        sx={{ minWidth: 160 }}
+          placeholder="Tìm kiếm theo tên sản phẩm..."
+          size="small"
+          variant="outlined"
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+          sx={{ minWidth: 200 }}
+          InputProps={{
+            startAdornment: <SearchIcon sx={{ mr: 1, color: 'action.active' }} />,
+          }}
+        />
+        <TextField
+          sx={{ minWidth: 160 }}
           select
           size="small"
           label="Loại sản phẩm"

@@ -29,7 +29,7 @@ import { TagElement } from '~/components/elements/tag/tag.element';
 import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 import { ModalElement } from '~/components/modal/modal-element/modal-element';
 import { formatDate, formatDateHeader, formatTime } from '~/common/until/date-format.until';
-import { StackRowAlignCenter, StackRowJustBetween } from '~/components/elements/styles/stack.style';
+import { StackRowJustBetween } from '~/components/elements/styles/stack.style';
 import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
 
 const ChatScreen: React.FC = () => {
@@ -65,7 +65,6 @@ const ChatScreen: React.FC = () => {
 
   // separate modal for non-admin when clicking a pending room
   const [addStaffModalOpen, setAddStaffModalOpen] = useState(false);
-  const [pendingRoom, setPendingRoom] = useState<ChatRoom | null>(null);
 
   const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -109,6 +108,7 @@ const ChatScreen: React.FC = () => {
 
   useEffect(() => {
     loadRooms();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -157,6 +157,7 @@ const ChatScreen: React.FC = () => {
     };
 
     fetchMessages();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedRoom?.id]);
 
   // Lắng nghe realtime với Echo
@@ -228,6 +229,7 @@ const ChatScreen: React.FC = () => {
       channel.stopListening('.message.sent');
       echo.leave(`private-${channelName}`);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedRoom?.id]);
 
   const handleSend = async () => {
@@ -312,7 +314,7 @@ const ChatScreen: React.FC = () => {
 
   const handleJoinRoomAsStaff = async () => {
     if (!roomForModal) {
-      setRoomModalOpen(false);
+      setAddStaffModalOpen(false);
       setRoomForModal(null);
       setSelectedStaffId(null);
       return;
@@ -320,19 +322,29 @@ const ChatScreen: React.FC = () => {
 
     try {
       if (selectedStaffId === null) return;
-
+      console.log('Joining room as staff', roomForModal.id, selectedStaffId);
       await chatApi.joinRoomAsStaff(roomForModal.id, selectedStaffId);
+      
       if (isAdmin) {
         snackbar('success', 'Cập nhật nhân viên hỗ trợ thành công');
       } else {
         snackbar('success', 'Tham gia phòng chat thành công');
       }
 
-      setRoomModalOpen(false);
+      await loadRooms();
+      
+      const updatedRooms = await chatApi.getRooms();
+      const updatedRoom = updatedRooms.find(r => r.id === roomForModal.id);
+      
+      if (updatedRoom) {
+        setSelectedRoom(updatedRoom);
+      }
+      
+      // Close modal and reset state
+      setAddStaffModalOpen(false);
       setRoomForModal(null);
       setSelectedStaffId(null);
 
-      await loadRooms();
     } catch (error) {
       console.error('Failed to assign staff', error);
       snackbar('error', 'Cập nhật thất bại');
@@ -343,6 +355,7 @@ const ChatScreen: React.FC = () => {
     return () => {
       previews.forEach((u) => URL.revokeObjectURL(u));
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // map ngày -> số tin nhắn trong ngày (dùng Date.toDateString để nhóm)
@@ -362,7 +375,7 @@ const ChatScreen: React.FC = () => {
       <Paper sx={{ height: '100%', display: 'flex', overflow: 'hidden' }}>
         {/* Sidebar rooms */}
         <Box sx={{ width: 320, borderRight: 1, borderColor: 'divider', display: 'flex', flexDirection: 'column' }}>
-          <Box sx={{ p: 4 }}>
+          <Box sx={{ p: 3 }}>
             <Typography variant="subtitle2">Phòng chat</Typography>
           </Box>
           <Divider />
@@ -386,14 +399,21 @@ const ChatScreen: React.FC = () => {
                         key={room.id}
                         selected={selectedRoom?.id === room.id}
                         onClick={() => {
-                          if (!isAdmin && room.status === 'pending') {
-                            setPendingRoom(room);
+                          const isCurrentStaff = room.staff?.id === profile?.id;
+                          const isPending = room.status === 'pending';
+                          const isDifferentStaff = !isAdmin && room.staff && !isCurrentStaff;
+                          
+                          // Hiển thị modal nếu:
+                          // 1. Phòng đang pending và user không phải admin
+                          // 2. User là nhân viên khác (không phải staff được assign)
+                          if ((!isAdmin && isPending) || isDifferentStaff) {
                             setRoomForModal(room);
                             const defaultStaffId = profile?.id ?? room.staff?.id ?? dsnv[0]?.id ?? null;
                             setSelectedStaffId(defaultStaffId);
                             setAddStaffModalOpen(true);
                             return;
                           }
+                          
                           setSelectedRoom(room);
                         }}
                       >
@@ -408,7 +428,7 @@ const ChatScreen: React.FC = () => {
                             type={StateTagTypeChat[room.status]}
                             sx={{ padding: '5px 10px' }}
                           />
-                          {isAdmin && (
+                          {/* {isAdmin && (
                             <SettingsOutlined
                               fontSize="small"
                               sx={{ color: 'text.secondary', cursor: 'pointer' }}
@@ -418,7 +438,7 @@ const ChatScreen: React.FC = () => {
                                 setRoomModalOpen(true);
                               }}
                             />
-                          )}
+                          )} */}
                         </Stack>
                       </ListItemButton>
                     ));
@@ -502,16 +522,10 @@ const ChatScreen: React.FC = () => {
                 const rows: React.ReactNode[] = [];
                 let lastDateKey = '';
                 messages.forEach((msg) => {
-                  const currentUserId = profile?.id;
-                  const isAdminUser = profile?.role?.name === 'admin';
-
-                  let isMine = false;
-                  if (isAdminUser && selectedRoom) {
-                    const staffId = selectedRoom.staff?.id;
-                    isMine = msg.sender_id === staffId;
-                  } else {
-                    isMine = msg.sender_id === currentUserId;
-                  }
+                  // Kiểm tra nếu sender là khách hàng (role_id = 4) thì hiển thị bên trái
+                  // Ngược lại (nhân viên/staff) thì hiển thị bên phải
+                  const isCustomerMessage = msg.sender?.role_id === 4;
+                  const isMine = !isCustomerMessage;
 
                   const dateKey = msg.created_at ? new Date(msg.created_at).toDateString() : 'unknown';
                   if (dateKey !== lastDateKey) {
@@ -579,7 +593,6 @@ const ChatScreen: React.FC = () => {
                           </Stack>
                         )}
 
-                        {/* chỉ hiển thị giờ (HH:MM) */}
                         {msg.created_at && (
                           <Typography
                             variant="caption"
@@ -689,7 +702,7 @@ const ChatScreen: React.FC = () => {
       </Paper>
       {/*  */}
       <ModalImage open={open} onClose={() => setOpen(false)} src={modalSrc} alt="Sản phẩm" />
-      <ModalElement
+      {/* <ModalElement
         open={roomModalOpen}
         onClose={() => {
           setRoomModalOpen(false);
@@ -721,13 +734,12 @@ const ChatScreen: React.FC = () => {
         maxWidth="sm"
         confirmText="Lưu"
         cancelText="Đóng"
-      />
+      /> */}
       {/* modal cho user khi click vào phòng pending */}
       <ModalElement
         open={addStaffModalOpen}
         onClose={() => {
           setAddStaffModalOpen(false);
-          setPendingRoom(null);
           setRoomForModal(null);
           setSelectedStaffId(null);
         }}

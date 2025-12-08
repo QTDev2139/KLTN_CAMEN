@@ -34,7 +34,7 @@ import { DetailRow } from '~/components/elements/table-element/row-element';
 
 import Placeholder from '~/assets/images/placeholder.png';
 import { StackRowJustBetween } from '~/components/elements/styles/stack.style';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { updateOrder } from '~/apis/order/order.api';
 import { vnpayManualRefund } from '~/apis/payment/payment.api';
@@ -120,7 +120,7 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
       }
 
       // console.log('updatePayload', updatePayload);
-      const res = await updateOrder(order.id, updatePayload);
+      await updateOrder(order.id, updatePayload);
       if (onUpdateSuccess) await onUpdateSuccess();
       onClose();
     } catch (e) {
