@@ -156,7 +156,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </StackRowAlignCenter>
 
             <StackRowAlignCenter
-              onClick={() => navigate('/dashboard/change-password')}
+              onClick={() => navigate('/auth/change-password')}
               sx={{
                 cursor: 'pointer',
                 color: 'text.secondary',

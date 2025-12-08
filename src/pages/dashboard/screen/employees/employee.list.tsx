@@ -40,6 +40,7 @@ const EmployeesList: React.FC = () => {
     try {
       const payload = {
         name: values?.name ?? selectedUser.name,
+        email: values?.email ?? selectedUser.email,
         role_id: Number(values?.role_id ?? selectedUser.role_id ?? ''),
         status: Number(values?.status ?? selectedUser.status),
       };
@@ -66,6 +67,7 @@ const EmployeesList: React.FC = () => {
     enableReinitialize: true,
     initialValues: {
       name: selectedUser?.name ?? '',
+      email: selectedUser?.email ?? '',
       role_id: selectedUser?.role?.name ? ConvertRole[selectedUser.role?.name] : '',
       status: selectedUser ? String(selectedUser.status) : '1',
     },
@@ -104,8 +106,8 @@ const EmployeesList: React.FC = () => {
             </TableCell>
             <TableCell>
               <TagElement
-                type={actionColor[user.status || 1] as any}
-                content={actionName[user.status || 1]}
+                type={actionColor[user.status || 0] as any}
+                content={actionName[user.status || 0]}
               />
             </TableCell>
             <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
@@ -147,6 +149,13 @@ const EmployeesList: React.FC = () => {
               onChange={formik.handleChange}
             />
             <TextField
+              label="Email"
+              fullWidth
+              name="email"
+              value={formik.values.email ?? ''}
+              onChange={formik.handleChange}
+            />
+            <TextField
               select
               label="Vai trò"
               name="role_id"
@@ -156,7 +165,6 @@ const EmployeesList: React.FC = () => {
             >
               <MenuItem value="2">Ban lãnh đạo</MenuItem>
               <MenuItem value="3">Quản lý</MenuItem>
-              <MenuItem value="5">Marketing</MenuItem>
               <MenuItem value="6">Staff</MenuItem>
               <MenuItem value="7">Nhân viên kho</MenuItem>
             </TextField>

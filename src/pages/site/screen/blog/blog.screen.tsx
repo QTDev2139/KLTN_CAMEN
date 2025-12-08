@@ -4,10 +4,8 @@ import {
   CardMedia,
   Grid,
   Typography,
-  Box,
   Chip,
   Stack,
-  Avatar,
   CardActionArea,
 } from '@mui/material';
 import { useEffect, useState } from 'react';

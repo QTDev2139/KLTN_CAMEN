@@ -3,7 +3,7 @@ import { StackRow, StackRowAlignCenter } from '~/components/elements/styles/stac
 import { FONT_SIZE, PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import React, { useEffect, useMemo, useState } from 'react';
 import ModalImage from '~/components/modal/modal-image/modal-image.element';
-import { SliderProduct, SliderProductItems } from '~/components/elements/slider/slider.element';
+import { SliderProductItems } from '~/components/elements/slider/slider.element';
 
 import ProductChao from '~/assets/images/product-chao.png';
 import ProductMien from '~/assets/images/product-mien.png';
@@ -86,13 +86,13 @@ export default function ProductDetailPage() {
       setIsAddingToCart(false);
     }
   };
-  const items: SliderProductItems[] = [
-    { src: ProductChao, title: 'Cháo bột cá lóc' },
-    { src: ProductMien, title: 'Miến cá lóc' },
-    { src: ProductChao, title: 'Cháo tôm' },
-    { src: ProductMien, title: 'Cháo tôm thịt' },
-    { src: ProductMien, title: 'Miến cá lóc' },
-  ];
+  // const items: SliderProductItems[] = [
+  //   { src: ProductChao, title: 'Cháo bột cá lóc' },
+  //   { src: ProductMien, title: 'Miến cá lóc' },
+  //   { src: ProductChao, title: 'Cháo tôm' },
+  //   { src: ProductMien, title: 'Cháo tôm thịt' },
+  //   { src: ProductMien, title: 'Miến cá lóc' },
+  // ];
 
   const Rated = [
     { label: 'Tất cả', value: 'all' },

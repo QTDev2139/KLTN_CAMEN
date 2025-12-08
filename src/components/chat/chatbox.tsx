@@ -76,6 +76,7 @@ const ChatBox: React.FC = () => {
       channel.stopListening('.message.sent');
       echo.leave(`private-${channelName}`);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room?.id]);
 
   // Lắng nghe sự kiện mở chat từ nơi khác trong app
@@ -150,6 +151,7 @@ const ChatBox: React.FC = () => {
       }
     };
     fetchMessages();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room?.id]);
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
@@ -186,6 +188,7 @@ const ChatBox: React.FC = () => {
     return () => {
       previews.forEach((u) => URL.revokeObjectURL(u));
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSend = async () => {

@@ -1,41 +1,60 @@
-import { Button, Divider, Stack, Typography, useTheme } from "@mui/material";
+import { Button, Divider, Stack, Typography, useTheme, TextField, Select, MenuItem } from "@mui/material";
 import { StackRowAlignCenter } from "~/components/elements/styles/stack.style";
 import { OrderMode } from "./order.enum";
 import { useState } from "react";
 import ListOrder from "./view/order-list";
 import CreateOrder from "./view/order-create";
-import { Order } from "~/apis/order/order.interface.api";
+import SearchIcon from '@mui/icons-material/Search';
 
 const OrderScreen: React.FC = () => {
   const { palette } = useTheme();
   const [mode, setMode] = useState<OrderMode>(OrderMode.LIST);
-  const [editingOrder, setEditingOrder] = useState<Order | undefined>(undefined);
 
-  const goList = () => {
-    setEditingOrder(undefined);
-    setMode(OrderMode.LIST);
-  };
-  
-  const goCreate = () => {
-    setEditingOrder(undefined);
-    setMode(OrderMode.CREATE);
-  };
-  
 
   return (
     <Stack spacing={2}>
       <StackRowAlignCenter sx={{ justifyContent: 'space-between' }}>
         <Typography variant="h3">Quản lý đơn hàng</Typography>
-        {/* {mode === OrderMode.LIST && (
-          <Button onClick={goCreate}>
-            <Typography variant="subtitle2">Thêm đơn hàng mới</Typography>
+        <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+          <TextField
+            placeholder="Mã đơn hàng..."
+            size="small"
+            variant="outlined"
+            sx={{ width: 200 }}
+            InputProps={{
+              startAdornment: <SearchIcon sx={{ mr: 1, color: 'action.active' }} />,
+            }}
+          />
+          <Select
+            size="small"
+            displayEmpty
+            sx={{ width: 180 }}
+            defaultValue=""
+          >
+            <MenuItem value="">Loại thanh toán</MenuItem>
+            <MenuItem value="cash">Tiền mặt</MenuItem>
+            <MenuItem value="e_wallet">Chuyển khoản</MenuItem>
+          </Select>
+          <TextField
+            type="date"
+            size="small"
+            variant="outlined"
+            label="Từ ngày"
+            InputLabelProps={{ shrink: true }}
+            sx={{ width: 150 }}
+          />
+          <TextField
+            type="date"
+            size="small"
+            variant="outlined"
+            label="Đến ngày"
+            InputLabelProps={{ shrink: true }}
+            sx={{ width: 150 }}
+          />
+          <Button variant="contained" size="small">
+            Lọc
           </Button>
-        )} */}
-        {(mode === OrderMode.CREATE || mode === OrderMode.UPDATE) && (
-          <Button onClick={goList}>
-            <Typography variant="subtitle2">Quay Lại</Typography>
-          </Button>
-        )}
+        </Stack>
       </StackRowAlignCenter>
       <Divider sx={{ color: palette.divider }} />
       

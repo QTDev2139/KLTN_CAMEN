@@ -100,8 +100,8 @@ const CustomersList: React.FC = () => {
             </TableCell>
             <TableCell>
               <TagElement
-                type={actionColor[user.status || 1] as any}
-                content={actionName[user.status || 1]}
+                type={actionColor[user.status || 0] as any}
+                content={actionName[user.status || 0]}
               />
             </TableCell>
             <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
@@ -132,7 +132,7 @@ const CustomersList: React.FC = () => {
           setOpenModal(false);
           setSelectedUser(null);
         }}
-        title="Cập nhật thông tin nhân viên"
+        title="Cập nhật thông tin khách hàng"
         message={
           <Stack spacing={2} sx={{ width: '100%', pt: 1 }}>
             <TextField
@@ -141,6 +141,7 @@ const CustomersList: React.FC = () => {
               name="name"
               value={formik.values.name}
               onChange={formik.handleChange}
+              disabled
             />
             
             <TextField

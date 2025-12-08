@@ -11,7 +11,7 @@ import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import CouponViewModal from './coupon-view';
-import { TagElement, TagType } from '~/components/elements/tag/tag.element';
+import { TagElement } from '~/components/elements/tag/tag.element';
 import CouponUpdateModal from './coupon-update';
 import { getValidityStatus, StateLabel, StateTagType } from './coupon.state';
 

@@ -1,9 +1,7 @@
 import { ReactNode } from 'react';
 import Header from './header.layout';
 import Footer from './footer.layout';
-import ContainerWrapper from '~/components/elements/container/container.element';
 import { Stack, useTheme } from '@mui/material';
-import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import ChatBox from '~/components/chat/chatbox';
 
 interface SiteLayoutProps {

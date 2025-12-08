@@ -13,13 +13,11 @@ import {
   Cell,
   PieChart,
   Pie,
-  FunnelChart,
-  Funnel,
   ComposedChart,
 } from 'recharts';
 import { KPICard } from './kpi-card';
 import { OverviewFilterProps } from './overview.screen';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { getDateRange } from '~/common/until/date-format.until';
 import { statisticsApi } from '~/apis';
 
@@ -27,7 +25,7 @@ const COLORS = ['#1976d2', '#ed6c02', '#9c27b0', '#2e7d32', '#d32f2f', '#0288d1'
 
 interface KPIData {
   value: number;
-  comparisonValue: number;
+  comparison: number;
   comparisonText: string;
   previousRange?: {
     startDate: string;
@@ -98,11 +96,24 @@ const ChartCard: React.FC<{
   );
 };
 
-export const ListOverview = ({ filter }: { filter: OverviewFilterProps }) => {
+export const ListOverview = ({ 
+  filter, 
+  onDataChange 
+}: { 
+  filter: OverviewFilterProps,
+  onDataChange?: (stats: any, dashboard: any) => void
+}) => {
   const theme = useTheme();
   const [statisticsData, setStatisticsData] = useState<StatisticsData | null>(null);
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  // Wrap onDataChange with useCallback to prevent dependency changes
+  const handleDataChange = useCallback(() => {
+    if (statisticsData && dashboardData && onDataChange) {
+      onDataChange(statisticsData, dashboardData);
+    }
+  }, [statisticsData, dashboardData, onDataChange]);
 
   // Memoize filtered data based on filter type and dashboardData
   const filteredData = useMemo(() => {
@@ -159,6 +170,7 @@ export const ListOverview = ({ filter }: { filter: OverviewFilterProps }) => {
       }) ?? fallback.topProducts;
 
     return { revenueAndOrders, topProducts, paymentStatus, orderStatusFunnel };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dashboardData, filter]);
 
   useEffect(() => {
@@ -166,8 +178,6 @@ export const ListOverview = ({ filter }: { filter: OverviewFilterProps }) => {
       try {
         setLoading(true);
         const dateRange = getDateRange(filter);
-
-        console.log('Fetching statistics with date range:', dateRange);
 
         const res = await statisticsApi.getStatisticsOverview({
           startDate: dateRange.startDate,
@@ -180,14 +190,24 @@ export const ListOverview = ({ filter }: { filter: OverviewFilterProps }) => {
 
         setStatisticsData(res.data);
         setDashboardData(dashRes.data);
-        console.log('Dashboard Data:', dashRes.data);
+        
+        // Pass data to parent component
+        if (onDataChange) {
+          onDataChange(res.data, dashRes.data);
+        }
       } catch (error) {
         console.error('Error fetching statistics:', error);
       } finally {
         setLoading(false);
       }
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
+
+  // Call onDataChange after data is loaded
+  useEffect(() => {
+    handleDataChange();
+  }, [handleDataChange]);
 
   if (loading) {
     return (
@@ -208,11 +228,11 @@ export const ListOverview = ({ filter }: { filter: OverviewFilterProps }) => {
             gradient="linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)"
             icon={<AttachMoney />}
             trend={
-              statisticsData?.current_year_sales?.comparisonValue !== undefined
-                ? parseFloat(formatComparison(statisticsData.current_year_sales.comparisonValue))
+              statisticsData?.current_year_sales?.comparison !== undefined
+                ? parseFloat(formatComparison(statisticsData.current_year_sales.comparison *100))
                 : 0
             }
-            trendLabel={statisticsData?.current_year_sales?.comparisonText}
+            trendLabel={"So với kỳ trước"}
           />
         </Box>
         <Box sx={{ flex: 1, minWidth: 220 }}>
@@ -222,8 +242,8 @@ export const ListOverview = ({ filter }: { filter: OverviewFilterProps }) => {
             gradient="linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%)"
             icon={<AttachMoney />}
             trend={
-              statisticsData?.paid_revenue?.comparisonValue !== undefined
-                ? parseFloat(formatComparison(statisticsData.paid_revenue.comparisonValue))
+              statisticsData?.paid_revenue?.comparison !== undefined
+                ? parseFloat(formatComparison(statisticsData.paid_revenue.comparison *100))
                 : 0
             }
             trendLabel={statisticsData?.paid_revenue?.comparisonText}
@@ -236,11 +256,11 @@ export const ListOverview = ({ filter }: { filter: OverviewFilterProps }) => {
             gradient="linear-gradient(135deg, #f57c00 0%, #ffb74d 100%)"
             icon={<PendingActions />}
             trend={
-              statisticsData?.unpaid_revenue?.comparisonValue !== undefined
-                ? parseFloat(formatComparison(statisticsData.unpaid_revenue.comparisonValue))
+              statisticsData?.unpaid_revenue?.comparison !== undefined
+                ? parseFloat(formatComparison(statisticsData.unpaid_revenue.comparison *100))
                 : 0
             }
-            trendLabel={statisticsData?.unpaid_revenue?.comparisonText}
+            trendLabel={"So với kỳ trước"}
           />
         </Box>
         <Box sx={{ flex: 1, minWidth: 220 }}>
@@ -250,11 +270,11 @@ export const ListOverview = ({ filter }: { filter: OverviewFilterProps }) => {
             gradient="linear-gradient(135deg, #388e3c 0%, #7cb342 100%)"
             icon={<ShoppingCart />}
             trend={
-              statisticsData?.total_orders?.comparisonValue !== undefined
-                ? parseFloat(formatComparison(statisticsData.total_orders.comparisonValue))
+              statisticsData?.total_orders?.comparison !== undefined
+                ? parseFloat(formatComparison(statisticsData.total_orders.comparison *100))
                 : 0
             }
-            trendLabel={statisticsData?.total_orders?.comparisonText}
+            trendLabel={"So với kỳ trước"}
           />
         </Box>
         <Box sx={{ flex: 1, minWidth: 220 }}>
@@ -264,11 +284,11 @@ export const ListOverview = ({ filter }: { filter: OverviewFilterProps }) => {
             gradient="linear-gradient(135deg, #d32f2f 0%, #ef5350 100%)"
             icon={<PendingActions />}
             trend={
-              statisticsData?.pending_orders?.comparisonValue !== undefined
-                ? parseFloat(formatComparison(statisticsData.pending_orders.comparisonValue))
+              statisticsData?.pending_orders?.comparison !== undefined
+                ? parseFloat(formatComparison(statisticsData.pending_orders.comparison))
                 : 0
             }
-            trendLabel={statisticsData?.pending_orders?.comparisonText}
+            trendLabel={"So với kỳ trước"}
           />
         </Box>
       </Stack>
@@ -282,7 +302,7 @@ export const ListOverview = ({ filter }: { filter: OverviewFilterProps }) => {
       >
         {/* Pie Chart: Cơ cấu Trạng thái Thanh toán */}
         <ChartCard
-          title="Cơ cấu Trạng thái Đơn hàng/Thanh toán"
+          title="Trạng thái thanh toán"
           height={350}
           subtitle="Đánh giá rủi ro về doanh thu (mục tiêu: giảm tỷ trọng Chưa thanh toán)"
         >
@@ -311,7 +331,7 @@ export const ListOverview = ({ filter }: { filter: OverviewFilterProps }) => {
 
         {/* Funnel Chart: Luồng Chuyển đổi Trạng thái Đơn hàng */}
         <ChartCard
-          title="Luồng Chuyển đổi Trạng thái Đơn hàng"
+          title="Trạng thái đơn hàng"
           height={350}
           subtitle="Tìm kiếm nút thắt cổ chai và tối ưu hóa quy trình xử lý đơn hàng"
         >
@@ -386,7 +406,7 @@ export const ListOverview = ({ filter }: { filter: OverviewFilterProps }) => {
 
       {/* 2. Horizontal Bar Chart: Top Sản phẩm theo Doanh thu */}
       <ChartCard
-        title="Top Sản phẩm/Danh mục theo Doanh thu"
+        title="Top Sản phẩm theo Doanh thu"
         height={350}
         subtitle="Xác định sản phẩm chủ lực (best-seller) để tập trung nguồn lực (Quy tắc 80/20)"
       >

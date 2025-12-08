@@ -1,4 +1,4 @@
-import { Box, Button, Divider, List, Stack, Typography, useTheme } from '@mui/material';
+import { Button, Divider, Stack, Typography, useTheme } from '@mui/material';
 import { requestImportApi } from '~/apis';
 import CreateImportProduct from './import-product.create';
 import ListImportProduct from './import-product.list';

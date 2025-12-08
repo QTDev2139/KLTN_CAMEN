@@ -5,17 +5,25 @@ import { baseURL } from '~/common/until/request.until';
 
 (window as any).Pusher = Pusher;
 
-const wsHost = process.env.REACT_APP_REVERB_HOST || 'localhost';
-const wsPort = Number(process.env.REACT_APP_REVERB_PORT || 8080);
+// const wsHost = process.env.REACT_APP_REVERB_HOST || 'localhost';
+// const wsPort = Number(process.env.REACT_APP_REVERB_PORT || 8080);
 
 export const echo = new Echo({
   broadcaster: 'reverb',
   key: 'erhwbemqnipbunixksiy',   
-  wsHost: 'reverb.camenfood.id.vn',
-  wsPort: 45355,
-  wssPort: 45355,
-  forceTLS: false, 
-  enabledTransports: ['ws', 'wss'],
+  // wsHost: wsHost,
+  // wsPort: wsPort,
+  // wssPort: wsPort,
+  // forceTLS: false, 
+  // enabledTransports: ['ws'],
+
+  // Cấu hình cho VPS
+  wsHost: 'vlssoft.id.vn', 
+  wsPort: 45354,            
+  wssPort: 45354,           
+  forceTLS: true, 
+  // scheme: 'wss', 
+  enabledTransports: ['ws'],
 
   // Auth cho private channel (dùng JWT)
   authEndpoint: `${process.env.REACT_APP_BASE}broadcasting/auth`,

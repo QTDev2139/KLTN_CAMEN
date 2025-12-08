@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import OtpInput from 'react-otp-input';
 
 // OtpInputComponent.tsx

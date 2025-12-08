@@ -10,7 +10,6 @@ import ContainerWrapper from '~/components/elements/container/container.element'
 import { TypographyHover } from '~/components/elements/styles/link.style';
 import { StackRow, StackRowJustBetweenAlignCenter, StackRowJustCenter } from '~/components/elements/styles/stack.style';
 import Logo from '~/components/logo/logo';
-import SearchInput from '~/components/search-input/search-input';
 import { sidebars } from '~/pages/site/part/sidebar';
 import { SITE_SCREEN } from '~/router/path.route';
 import { useLang } from '~/hooks/use-lang/use-lang';

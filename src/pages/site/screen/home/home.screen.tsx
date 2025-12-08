@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Container, Typography, useTheme, Grid, Paper, Fade, Zoom, Button } from '@mui/material';
+import { Box, Container, Typography, useTheme, Grid, Paper, Zoom, Button } from '@mui/material';
 
 import Banner from '~/assets/images/banner.jpg';
 import AEON from '~/assets/images/aeon.jpg';

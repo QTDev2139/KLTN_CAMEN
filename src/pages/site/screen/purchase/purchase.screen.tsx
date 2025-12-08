@@ -5,7 +5,6 @@ import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import {
   StackRowJustBetween,
   StackRowJustEnd,

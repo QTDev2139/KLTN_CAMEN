@@ -1,7 +1,7 @@
-import { DeleteOutline, ModeEditOutlineOutlined } from '@mui/icons-material';
+import { ModeEditOutlineOutlined } from '@mui/icons-material';
 import { IconButton, TableCell, TableRow, Tooltip, Typography, Box, useTheme } from '@mui/material';
 import React, { useEffect, useState, useMemo } from 'react';
-import { getOrderDetail, getOrders } from '~/apis/order/order.api';
+import { getOrders } from '~/apis/order/order.api';
 import { OrderDetail } from '~/apis/order/order.interface.api';
 import { formatDate } from '~/common/until/date-format.until';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
@@ -30,7 +30,6 @@ const ListOrder: React.FC = () => {
   const [loadingDelete, setLoadingDelete] = useState(false);
   const { snackbar } = useSnackbar();
   const [openView, setOpenView] = useState(false);
-  const [viewOrder, setViewOrder] = useState<OrderDetail | null>(null);
   const [editable, setEditable] = useState<boolean>(false);
   const [detailOrder, setDetailOrder] = useState<OrderDetail | null>(null);
 
@@ -79,6 +78,7 @@ const ListOrder: React.FC = () => {
 
   useEffect(() => {
     fetchListOrder();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const columns = [
@@ -87,7 +87,7 @@ const ListOrder: React.FC = () => {
     { id: 'payment_method', label: 'Phương thức TT', width: 165 },
     { id: 'payment_status', label: 'Trạng thái TT', width: 180 },
     { id: 'status', label: 'Trạng thái đơn', width: 130 },
-    { id: 'created_at', label: 'Ngày tạo', width: 120 },
+    { id: 'created_at', label: 'Ngày tạo', width: 95},
     { id: 'action', label: 'Thao tác' },
   ];
 
@@ -179,10 +179,10 @@ const ListOrder: React.FC = () => {
                 />
               </TableCell>
               <TableCell sx={{ textAlign: 'center', ...getLimitLineCss(1)  }}>
-                <TagElement type={statusColorMap[order.status]} content={statusLabelMap[order.status]} width={130} />
+                <TagElement type={statusColorMap[order.status]} content={statusLabelMap[order.status]} width={130}  sx={{ margin: '8px 0' }} />
               </TableCell>
               <TableCell>
-                <Typography width={95}>{formatDate(order.created_at)}</Typography>
+                <Typography width={95} sx={{ textAlign: 'center' }}>{formatDate(order.created_at)}</Typography>
               </TableCell>
               <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
                 <StackRowJustCenter sx={{ width: '100%', cursor: 'pointer' }}>
@@ -241,7 +241,6 @@ const ListOrder: React.FC = () => {
         open={openView}
         onClose={() => {
           setOpenView(false);
-          setViewOrder(null);
           setDetailOrder(null);
         }}
         order={detailOrder}

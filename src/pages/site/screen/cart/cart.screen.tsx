@@ -46,11 +46,13 @@ const CartPage: React.FC = () => {
 
   useEffect(() => {
     fetchCart();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLang]);
 
   useEffect(() => {
     return () => {
       debounceTimers.current.forEach(clearTimeout);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       debounceTimers.current.clear();
     };
   }, []);
