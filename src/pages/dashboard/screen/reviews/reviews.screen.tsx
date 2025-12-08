@@ -1,13 +1,10 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { Divider, Stack, useTheme } from '@mui/material';
 import ReviewList from './reviews.list';
 
 const BlogCategoriesScreen: React.FC = () => {
-  const { snackbar } = useSnackbar();
   const { palette } = useTheme();
 
   return (

@@ -8,6 +8,7 @@ export interface CreateReview {
     images: File[];
 }
 export interface Review {
+    id?: number;
     order_item_id: number;
     rating: number;
     comment: string;

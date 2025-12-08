@@ -1,7 +1,7 @@
 import { CancelOutlined, DeleteOutline, ModeEditOutlineOutlined, VisibilityOutlined } from '@mui/icons-material';
 import { IconButton, Stack, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { requestImportApi, userApi } from '~/apis';
+import { requestImportApi } from '~/apis';
 import { RequestImportPayload } from '~/apis/request-import/request-import.interface.api';
 import { formatDateTime } from '~/common/until/date-format.until';
 import { getLimitLineCss } from '~/common/until/get-limit-line-css';

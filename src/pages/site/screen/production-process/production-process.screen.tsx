@@ -31,27 +31,6 @@ const fadeInUp = keyframes`
     }
 `;
 
-const slideInLeft = keyframes`
-    from {
-        opacity: 0;
-        transform: translateX(-60px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-`;
-
-const slideInRight = keyframes`
-    from {
-        opacity: 0;
-        transform: translateX(60px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-`;
 
 const float = keyframes`
     0%, 100% {
@@ -73,14 +52,6 @@ const pulse = keyframes`
     }
 `;
 
-const rotate = keyframes`
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-`;
 
 interface ProcessStep {
     icon: React.ReactNode;

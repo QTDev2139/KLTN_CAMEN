@@ -1,4 +1,4 @@
-import { Stack, Typography, useTheme, Menu, MenuItem, IconButton, Avatar, Button } from '@mui/material';
+import { Stack, Typography, useTheme, Menu, MenuItem, Avatar, Button } from '@mui/material';
 import { StackRowAlignCenter, StackRowJustEnd } from '../elements/styles/stack.style';
 import BtnSwitchLanguage from '../btn-switch-language/btn-switch-language';
 import { useTranslation } from 'react-i18next';

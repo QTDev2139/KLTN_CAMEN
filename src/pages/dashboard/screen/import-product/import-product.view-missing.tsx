@@ -62,18 +62,18 @@ const ImportProductViewMissed: React.FC<ImportProductViewMissedProps> = ({ item,
     if (!item?.id) return;
     setSubmitting(true);
     try {
-      const payloadItems = missedProduct?.missing_items.map((it: any) => ({
-        product_id: it.product_id,
-        quantity: it.missing_qty,
-        sent_qty: Number(receivedQuantities[it.product_id] ?? it.sent_qty ?? it.missing_qty ?? 0),
-      }));
+      // const payloadItems = missedProduct?.missing_items.map((it: any) => ({
+      //   product_id: it.product_id,
+      //   quantity: it.missing_qty,
+      //   sent_qty: Number(receivedQuantities[it.product_id] ?? it.sent_qty ?? it.missing_qty ?? 0),
+      // }));
 
-      const payload: Partial<RequestImportPayload> = {
-        note: note || null,
-        request_import_id: item.id,
+      // const payload: Partial<RequestImportPayload> = {
+      //   note: note || null,
+      //   request_import_id: item.id,
 
-        quantity_imports: payloadItems as any,
-      };
+      //   quantity_imports: payloadItems as any,
+      // };
       // await requestImportApi.createDelivery(item.id, payload as DeliveryDetail);
       await requestImportApi.updateStatusImportRequest(item.id!, 'supplemented');
       snackbar('success', 'Gửi yêu cầu giao hàng thành công');

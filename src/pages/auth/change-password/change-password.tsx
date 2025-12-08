@@ -1,13 +1,12 @@
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import { Box, Button, Divider, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import { getIn } from 'formik';
 import Logo from '~/components/logo/logo';
 import { FONT_SIZE } from '~/common/constant/style.constant';
 
-import { StackRowAlignCenter } from '~/components/elements/styles/stack.style';
-import { Link, useNavigate } from 'react-router-dom';
-import { AUTH_SCREEN, DASHBOARD_SCREEN, SITE_SCREEN } from '~/router/path.route';
+import {  useNavigate } from 'react-router-dom';
+import { SITE_SCREEN } from '~/router/path.route';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { BoxForm } from '~/components/elements/forms/box/box-form';
 import { authApi } from '~/apis/auth/auth.api';
