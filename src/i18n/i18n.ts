@@ -22,6 +22,12 @@ import DECLARATION_EN from '~/locates/en/declaration.json';
 import DECLARATION_VI from '~/locates/vi/declaration.json';
 import CONTACT_EN from '~/locates/en/contact.json';
 import CONTACT_VI from '~/locates/vi/contact.json';
+import MENU_USER_EN from '~/locates/en/menu-user.json';
+import MENU_USER_VI from '~/locates/vi/menu-user.json';
+import FOOTER_EN from '~/locates/en/footer.json';
+import FOOTER_VI from '~/locates/vi/footer.json';
+import CATEGORY_EN from '~/locates/en/category.json';
+import CATEGORY_VI from '~/locates/vi/category.json';
 
 export const locates = {
   vi: { label: 'Việt Nam', icon: ViIcon },
@@ -40,6 +46,9 @@ export const resources = {
     'production-process': PRODUCT_PROCESS_EN,
     declaration: DECLARATION_EN,
     contact: CONTACT_EN,
+    'menu-user': MENU_USER_EN,
+    footer: FOOTER_EN,
+    category: CATEGORY_EN,
   },
   vi: {
     blog: BLOG_VI,
@@ -52,6 +61,9 @@ export const resources = {
     'production-process': PRODUCT_PROCESS_VI,
     declaration: DECLARATION_VI,
     contact: CONTACT_VI,
+    'menu-user': MENU_USER_VI,
+    footer: FOOTER_VI,
+    category: CATEGORY_VI,
   },
 };
 
@@ -71,6 +83,9 @@ i18n.use(initReactI18next).init({
     'production-process',
     'declaration',
     'contact',
+    'menu-user',
+    'footer',
+    'category',
   ], // translation, name space
   lng: defaultLanguages,
   defaultNS,

@@ -1,6 +1,6 @@
 import { CancelOutlined, DeleteOutline, ModeEditOutlineOutlined, VisibilityOutlined } from '@mui/icons-material';
-import { IconButton, Stack, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { IconButton, Stack, TableCell, TableRow, Tooltip, Typography, Box, Pagination } from '@mui/material';
+import { useEffect, useState, useMemo } from 'react';
 import { requestImportApi } from '~/apis';
 import { RequestImportPayload } from '~/apis/request-import/request-import.interface.api';
 import { formatDateTime } from '~/common/until/date-format.until';
@@ -21,6 +21,8 @@ type ListImportProductProps = {
   onViewDeliveryMissed?: (item: RequestImportPayload) => void;
 };
 
+const IMPORT_PRODUCTS_PER_PAGE = 6;
+
 const ListImportProduct: React.FC<ListImportProductProps> = ({
   onEdit,
   onView,
@@ -34,6 +36,7 @@ const ListImportProduct: React.FC<ListImportProductProps> = ({
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openConfirmCancel, setOpenConfirmCancel] = useState(false);
   const [selected, setSelected] = useState<RequestImportPayload | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { profile } = useProfile();
 
@@ -42,6 +45,7 @@ const ListImportProduct: React.FC<ListImportProductProps> = ({
     const res = await requestImportApi.getImportRequests();
     setListProduct(res);
     snackbar('success', 'Xóa yêu cầu nhập hàng thành công');
+    setCurrentPage(1); // Reset pagination after delete
   };
 
   const handleCancel = async (item: RequestImportPayload) => {
@@ -49,14 +53,21 @@ const ListImportProduct: React.FC<ListImportProductProps> = ({
     const res = await requestImportApi.getImportRequests();
     setListProduct(res);
     snackbar('success', 'Hủy yêu cầu nhập hàng thành công');
+    setCurrentPage(1); // Reset pagination after cancel
   };
 
   useEffect(() => {
     (async () => {
       const res = await requestImportApi.getImportRequests();
       setListProduct(res);
+      setCurrentPage(1); // Reset pagination when fetching new data
     })();
   }, []);
+
+  // Paginate import products
+  const paginatedProducts = useMemo(() => {
+    return listProduct.slice((currentPage - 1) * IMPORT_PRODUCTS_PER_PAGE, currentPage * IMPORT_PRODUCTS_PER_PAGE);
+  }, [listProduct, currentPage]);
 
   const columns = [
     { id: 'index', label: 'STT', width: 40 },
@@ -72,12 +83,12 @@ const ListImportProduct: React.FC<ListImportProductProps> = ({
     <Stack>
       <TableElement
         columns={columns}
-        rows={listProduct}
+        rows={paginatedProducts}
         renderRow={(cat, idx) => {
           return (
             <TableRow hover key={idx}>
               <TableCell sx={{ width: 40 }}>
-                <Typography sx={{ textAlign: 'center' }}>{idx + 1}</Typography>
+                <Typography sx={{ textAlign: 'center' }}>{(currentPage - 1) * IMPORT_PRODUCTS_PER_PAGE + idx + 1}</Typography>
               </TableCell>
               <TableCell>
                 <Typography textAlign={'center'}>{formatDateTime(cat.created_at)}</Typography>
@@ -200,6 +211,17 @@ const ListImportProduct: React.FC<ListImportProductProps> = ({
           );
         }}
       />
+
+      {Math.ceil(listProduct.length / IMPORT_PRODUCTS_PER_PAGE) > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Pagination
+            count={Math.ceil(listProduct.length / IMPORT_PRODUCTS_PER_PAGE)}
+            page={currentPage}
+            variant="outlined"
+            onChange={(event, value) => setCurrentPage(value)}
+          />
+        </Box>
+      )}
 
       <ModalConfirm
         open={openConfirm}

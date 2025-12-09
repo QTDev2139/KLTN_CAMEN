@@ -19,9 +19,10 @@ import { FormContact } from './contact-type';
 import { ContactSchema } from './contact-schema';
 import { contactApi } from '~/apis';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { useTranslation } from 'react-i18next';
 
 export default function ContactForm() {
-  
+  const { t } = useTranslation('contact');
   const { snackbar } = useSnackbar();
 
   const { palette } = useTheme();
@@ -50,9 +51,8 @@ export default function ContactForm() {
         }
         const data = { ...values, recaptcha_token: recaptchaToken };
         // Gửi values + recaptcha token về server để verify với secret
-        console.log('Contact form data:', data);
         const res = await contactApi.createContact(data);
-        snackbar('success', res?.data?.message || 'Gửi liên hệ thành côngg');
+        snackbar('success', res?.data?.message || 'Gửi liên hệ thành công');
         formik.resetForm();
         recaptchaRef.current?.reset();
         setRecaptchaToken(null);
@@ -82,7 +82,7 @@ export default function ContactForm() {
     >
       <StackRow sx={{ gap: 2 }}>
         <TextField
-          label="Tên của bạn"
+          label={t('contact_form.name_placeholder')}
           variant="standard"
           fullWidth
           {...formik.getFieldProps('name')}
@@ -90,7 +90,7 @@ export default function ContactForm() {
           helperText={helperText('name')}
         />
         <TextField
-          label="Địa chỉ Email"
+          label={t('contact_form.email_placeholder')}
           variant="standard"
           fullWidth
           {...formik.getFieldProps('email')}
@@ -100,36 +100,32 @@ export default function ContactForm() {
       </StackRow>
       <StackRow sx={{ gap: 2 }}>
         <TextField
-          label="Số điện thoại"
+          label={t('contact_form.phone_placeholder')}
           variant="standard"
           fullWidth
           {...formik.getFieldProps('phone')}
           error={showError('phone')}
           helperText={helperText('phone')}
         />
-        {/* <TextField
-          label="Tiêu đề"
-          variant="standard"
-          fullWidth
-          {...formik.getFieldProps('title')}
-          error={showError('title')}
-          helperText={helperText('title')}
-        /> */}
         <FormControl variant="standard" fullWidth error={showError('title')}>
-          <InputLabel id="contact-title-label">Loại dịch vụ</InputLabel>
-          <Select labelId="contact-title-label" label="Loại dịch vụ" {...formik.getFieldProps('title')}>
+          <InputLabel id="contact-title-label">{t('contact_form.service_type_placeholder')}</InputLabel>
+          <Select
+            labelId="contact-title-label"
+            label={t('contact_form.service_type_placeholder')}
+            {...formik.getFieldProps('title')}
+          >
             <MenuItem value="">
-              <em>Chọn</em>
+              <em>{t('contact_form.select_option_placeholder')}</em>
             </MenuItem>
-            <MenuItem value="export">Xuất khẩu</MenuItem>
-            <MenuItem value="agency">Đại lý</MenuItem>
-            <MenuItem value="media">Truyền thông</MenuItem>
+            <MenuItem value="export">{t('contact_form.service_export')}</MenuItem>
+            <MenuItem value="agency">{t('contact_form.service_agency')}</MenuItem>
+            <MenuItem value="media">{t('contact_form.service_media')}</MenuItem>
           </Select>
           <FormHelperText>{helperText('title')}</FormHelperText>
         </FormControl>
       </StackRow>
       <TextField
-        label="Nội dung"
+        label={t('contact_form.content_placeholder')}
         variant="standard"
         fullWidth
         multiline
@@ -149,7 +145,7 @@ export default function ContactForm() {
       </Box>
 
       <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-        {formik.isSubmitting ? 'Gửi liên hệ' : 'Gửi liên hệ'}
+        {formik.isSubmitting ? t('contact_form.submit_button') : t('contact_form.submit_button')}
       </Button>
     </Box>
   );

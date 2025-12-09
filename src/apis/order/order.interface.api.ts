@@ -56,6 +56,7 @@ export interface OrderDetail {
   created_at: string; // ISO timestamp
   updated_at: string; // ISO timestamp
   note: string | null;
+  ship_fee: string; // "0.00"
   discount_total: string; // "0.00"
   subtotal: string; // "50000.00"
   grand_total: string; // "50000.00"

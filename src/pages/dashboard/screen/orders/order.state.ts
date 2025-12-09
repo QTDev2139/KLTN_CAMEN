@@ -29,6 +29,7 @@ export const paymentStatusColorMap: Record<string, TagType> = {
   unpaid: 'warning',
   paid: 'success',
   refunded: 'info',
+  partially_refunded: 'info',
 };
 
 export const paymentStatusLabelMap: Record<string, string> = {
@@ -36,6 +37,7 @@ export const paymentStatusLabelMap: Record<string, string> = {
   paid: 'Đã thanh toán',
   refunded: 'Đã hoàn tiền',
   failed: 'Thanh toán thất bại',
+  partially_refunded: 'Đã hoàn tiền',
 };
 
 export const paymentMethodMap: Record<string, string> = {

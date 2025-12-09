@@ -101,7 +101,6 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
         amount: amountNum,
         reason: refundNote || undefined,
       };
-      console.log('refund payload', payload);
       const payRes = await vnpayManualRefund(payload);
       // tùy backend trả về gì, giả sử trả về success
       snackbar('success', payRes.message || 'Yêu cầu hoàn tiền đã gửi');

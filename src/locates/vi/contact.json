@@ -17,6 +17,10 @@
     "phone_placeholder": "Số điện thoại",
     "service_type_placeholder": "Loại dịch vụ",
     "content_placeholder": "Nội dung",
-    "submit_button": "Gửi liên hệ"
+    "submit_button": "Gửi liên hệ",
+    "select_option_placeholder": "Chọn",
+    "service_export": "Xuất khẩu",
+    "service_agency": "Đại lý",
+    "service_media": "Truyền thông"
   }
 }

@@ -11,14 +11,13 @@ import {
   TextField,
   IconButton,
   CircularProgress,
-  Button,
   Pagination,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { chatApi, userApi } from '~/apis';
 import { ChatMessage, ChatRoom } from '~/apis/chat-box/chatbox.interface';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { InsertPhotoOutlined, SettingsOutlined } from '@mui/icons-material';
+import { InsertPhotoOutlined } from '@mui/icons-material';
 import { User } from '~/apis/user/user.interfaces.api';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { echo } from '~/lib/echo';
@@ -42,7 +41,7 @@ const ChatScreen: React.FC = () => {
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const MAX_IMAGES = 5;
+  const MAX_IMAGES = 7;
   const ROOMS_PER_PAGE = 8;
   const [roomPage, setRoomPage] = useState(1);
   // reset page when rooms change (or filter changes)
@@ -322,7 +321,6 @@ const ChatScreen: React.FC = () => {
 
     try {
       if (selectedStaffId === null) return;
-      console.log('Joining room as staff', roomForModal.id, selectedStaffId);
       await chatApi.joinRoomAsStaff(roomForModal.id, selectedStaffId);
       
       if (isAdmin) {
@@ -393,7 +391,6 @@ const ChatScreen: React.FC = () => {
                     );
                     const start = (roomPage - 1) * ROOMS_PER_PAGE;
                     const paged = filtered.slice(start, start + ROOMS_PER_PAGE);
-                    console.log('paged', paged);
                     return paged.map((room) => (
                       <ListItemButton
                         key={room.id}

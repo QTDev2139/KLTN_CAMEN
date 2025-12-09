@@ -22,7 +22,7 @@ export default function TableElement<T>({ title, columns, rows, renderRow }: Tab
           {title}
         </Typography>
       )}
-      <TableContainer component={Paper} sx={{ maxWidth: '100%', overflowX: 'auto' }}>
+      <TableContainer component={Paper} sx={{ maxWidth: '100%', overflowX: 'auto', border: '1px solid #eee', borderColor: 'divider' }}>
         <Table sx={{ minWidth: 650, width: '100%' }} aria-label="simple table">
 
           <TableHead sx={{ backgroundColor: 'background.paper', border: '1px solid #eee', borderColor: 'divider' }}>

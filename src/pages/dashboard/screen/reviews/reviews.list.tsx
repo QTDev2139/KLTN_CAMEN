@@ -1,13 +1,15 @@
 import TableElement from '~/components/elements/table-element/table-element';
 import { StackRow } from '~/components/elements/styles/stack.style';
-import { TableRow, TableCell, Typography, Rating, Stack, Box, useTheme, Tooltip, IconButton } from '@mui/material';
+import { TableRow, TableCell, Typography, Rating, Stack, Box, useTheme, Tooltip, IconButton, Pagination } from '@mui/material';
 import { DeleteOutline } from '@mui/icons-material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { reviewApi } from '~/apis';
 import { Review } from '~/apis/review/review.interface.api';
 import ModalImage from '~/components/modal/modal-image/modal-image.element';
 import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
+
+const REVIEWS_PER_PAGE = 6;
 
 const ReviewList: React.FC = () => {
   const [review, setReview] = useState<Review[]>([]);
@@ -17,13 +19,20 @@ const ReviewList: React.FC = () => {
   const [openConfirm, setOpenConfirm] = useState(false);
   const [comment, setComment] = useState<number | null>(null);
   const { snackbar } = useSnackbar();
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     (async () => {
       const res = await reviewApi.getReviews();
       setReview(res);
+      setCurrentPage(1); // Reset pagination when fetching new data
     })();
   }, []);
+
+  // Paginate reviews
+  const paginatedReviews = useMemo(() => {
+    return review.slice((currentPage - 1) * REVIEWS_PER_PAGE, currentPage * REVIEWS_PER_PAGE);
+  }, [review, currentPage]);
 
   const handleConfirmDelete = async () => {
     if (comment === null) return;
@@ -32,9 +41,11 @@ const ReviewList: React.FC = () => {
     setOpenConfirm(false);
     setComment(null);
     snackbar('success', "Xóa đánh giá thành công");
+    setCurrentPage(1); // Reset pagination after delete
   }
 
   const columns = [
+    { id: 'stt', label: 'STT' },
     { id: 'index', label: 'Mã đơn hàng' },
     { id: 'name', label: 'Sản phẩm', width: 200 },
     { id: 'slug', label: 'Đánh giá' },
@@ -46,10 +57,13 @@ const ReviewList: React.FC = () => {
     <React.Fragment>
       <TableElement
         columns={columns}
-        rows={review}
+        rows={paginatedReviews}
         renderRow={(rev, idx) => {
           return (
-            <TableRow hover key={idx}>
+            <TableRow hover key={idx}>              
+              <TableCell>
+                <Typography sx={{ textAlign: 'center' }}>{idx + 1}</Typography>
+              </TableCell>
               <TableCell>
                 <Typography sx={{ textAlign: 'center' }}>{rev.order_item?.order?.code}</Typography>
               </TableCell>
@@ -101,6 +115,18 @@ const ReviewList: React.FC = () => {
           );
         }}
       />
+
+      {Math.ceil(review.length / REVIEWS_PER_PAGE) > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Pagination
+            count={Math.ceil(review.length / REVIEWS_PER_PAGE)}
+            page={currentPage}
+            variant="outlined"
+            onChange={(event, value) => setCurrentPage(value)}
+          />
+        </Box>
+      )}
+
       <ModalImage open={open} onClose={() => setOpen(false)} src={modalSrc} alt="Sản phẩm" />
 
       <ModalConfirm

@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { AUTH_SCREEN } from '~/router/path.route';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   setMode: (mode: ForgotPasswordMode) => void;
@@ -29,6 +30,7 @@ const schema = Yup.object({
 });
 
 export default function RequestOtpForgottenPassword({ setMode, setEmail }: Props) {
+  const { t } = useTranslation('forgot-password');
   const { snackbar } = useSnackbar();
   const currentLang = useLang();
   const prefix = getLangPrefix(currentLang);
@@ -75,17 +77,17 @@ export default function RequestOtpForgottenPassword({ setMode, setEmail }: Props
         </Link>
         <Logo />
         <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, padding: '10px' }}>
-          Forgot Password to CamenFood
+          {t('title')}
         </Typography>
         <TextField
-          label="Email"
+          label={t('email_placeholder')}
           fullWidth
           {...formik.getFieldProps('email')}
           error={showError('email')}
           helperText={helperText('email')}
         />
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-          {formik.isSubmitting ? 'Xác nhận' : 'Xác nhận'}
+          {formik.isSubmitting ? t('confirm_button') : t('confirm_button')}
         </Button>
       </BoxForm>
     </Box>

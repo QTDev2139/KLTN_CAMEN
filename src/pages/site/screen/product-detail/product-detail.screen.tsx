@@ -3,10 +3,7 @@ import { StackRow, StackRowAlignCenter } from '~/components/elements/styles/stac
 import { FONT_SIZE, PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
 import React, { useEffect, useMemo, useState } from 'react';
 import ModalImage from '~/components/modal/modal-image/modal-image.element';
-import { SliderProductItems } from '~/components/elements/slider/slider.element';
 
-import ProductChao from '~/assets/images/product-chao.png';
-import ProductMien from '~/assets/images/product-mien.png';
 import { useNavigate, useParams } from 'react-router-dom';
 import { productApi, cartApi } from '~/apis';
 import { ProductDetail } from '~/apis/product/product.interface.api';
@@ -37,7 +34,7 @@ export default function ProductDetailPage() {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string | number>('all');
   const [commentPage, setCommentPage] = useState(1);
-  const COMMENTS_PER_PAGE = 2; // số comment mỗi trang
+  const COMMENTS_PER_PAGE = 5; // số comment mỗi trang
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -117,6 +114,7 @@ export default function ProductDetailPage() {
       ratedCount[rate.value] = count;
     });
     return ratedCount;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productDetail?.reviews]);
 
   // Reset comment page when filter or reviews change
@@ -286,7 +284,7 @@ export default function ProductDetailPage() {
           </Grid>
         </Grid>
         {/* Hiển thị panel đánh giá kể cả khi chưa có đánh giá */}
-        {productDetail?.reviews !== undefined && (
+        {productDetail?.reviews !== undefined && productDetail.type === 'domestic' && (
           <Stack
             spacing={2}
             sx={{ borderRadius: PADDING_GAP_LAYOUT, boxShadow: '0 2px 8px rgba(0,0,0,0.2)', p: 3, flex: 1 }}

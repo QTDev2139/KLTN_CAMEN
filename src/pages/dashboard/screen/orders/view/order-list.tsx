@@ -1,5 +1,5 @@
 import { ModeEditOutlineOutlined } from '@mui/icons-material';
-import { IconButton, TableCell, TableRow, Tooltip, Typography, Box, useTheme } from '@mui/material';
+import { IconButton, TableCell, TableRow, Tooltip, Typography, Box, useTheme, Pagination } from '@mui/material';
 import React, { useEffect, useState, useMemo } from 'react';
 import { getOrders } from '~/apis/order/order.api';
 import { OrderDetail } from '~/apis/order/order.interface.api';
@@ -32,6 +32,8 @@ const ListOrder: React.FC = () => {
   const [openView, setOpenView] = useState(false);
   const [editable, setEditable] = useState<boolean>(false);
   const [detailOrder, setDetailOrder] = useState<OrderDetail | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ORDERS_PER_PAGE = 12;
 
   const filteredOrders = useMemo(() => {
     if (activeFilter === 'all') return listOrder;
@@ -41,11 +43,15 @@ const ListOrder: React.FC = () => {
     return listOrder.filter((o) => o.status === activeFilter);
   }, [listOrder, activeFilter]);
 
+  // Paginate filtered orders
+  const paginatedOrders = useMemo(() => {
+    return filteredOrders.slice((currentPage - 1) * ORDERS_PER_PAGE, currentPage * ORDERS_PER_PAGE);
+  }, [filteredOrders, currentPage]);
+
   const handleFilterChange = (filterValue: string) => {
     setActiveFilter(filterValue);
+    setCurrentPage(1); // Reset to first page when filter changes
   };
-
-
 
   const handleConfirmDelete = async () => {
     if (!selectedOrder) return;
@@ -70,6 +76,7 @@ const ListOrder: React.FC = () => {
     try {
       const result = await getOrders();
       setListOrder(result || []);
+      setCurrentPage(1); // Reset pagination when fetching new data
     } catch (error) {
       console.error(error);
       snackbar('error', 'Không tải được danh sách đơn hàng');
@@ -78,16 +85,17 @@ const ListOrder: React.FC = () => {
 
   useEffect(() => {
     fetchListOrder();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const columns = [
+    { id: 'stt', label: 'STT' },
     { id: 'code', label: 'Mã đơn hàng' },
     { id: 'grand_total', label: 'Tổng tiền', width: 100 },
     { id: 'payment_method', label: 'Phương thức TT', width: 165 },
     { id: 'payment_status', label: 'Trạng thái TT', width: 180 },
     { id: 'status', label: 'Trạng thái đơn', width: 130 },
-    { id: 'created_at', label: 'Ngày tạo', width: 95},
+    { id: 'created_at', label: 'Ngày tạo' },
     { id: 'action', label: 'Thao tác' },
   ];
 
@@ -157,39 +165,50 @@ const ListOrder: React.FC = () => {
       >
         <TableElement
           columns={columns}
-          rows={filteredOrders}
+          rows={paginatedOrders}
           renderRow={(order, index) => (
             <TableRow hover key={order.id ?? index}>
-              <TableCell>
+              <TableCell sx={{ padding: '0 16px' }} >
+                <Typography sx={{ textAlign: 'center' }}>{(currentPage - 1) * ORDERS_PER_PAGE + index + 1}</Typography>
+              </TableCell>
+              <TableCell sx={{ padding: '0 16px' }}>
                 <Typography fontWeight={600}>{order.code}</Typography>
               </TableCell>
-              <TableCell sx={{ textAlign: 'right' }}>
+              <TableCell sx={{ textAlign: 'right', padding: '0 16px' }}>
                 <Typography width={100} fontWeight={600}>
                   {FormatPrice(order.grand_total)}
                 </Typography>
               </TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>
+              <TableCell sx={{ textAlign: 'center', padding: '0 16px' }}>
                 <Typography width={165}>{PaymentMethodLabel[order.payment_method]}</Typography>
               </TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>
+              <TableCell sx={{ textAlign: 'center', padding: '0 16px' }}>
                 <TagElement
                   type={PaymentStatusTagType[order.payment_status]}
                   content={PaymentStatusLabel[order.payment_status]}
                   width={180}
                 />
               </TableCell>
-              <TableCell sx={{ textAlign: 'center', ...getLimitLineCss(1)  }}>
-                <TagElement type={statusColorMap[order.status]} content={statusLabelMap[order.status]} width={130}  sx={{ margin: '8px 0' }} />
+              <TableCell sx={{ textAlign: 'center', ...getLimitLineCss(1), padding: '0 16px' }}>
+                <TagElement
+                  type={statusColorMap[order.status]}
+                  content={statusLabelMap[order.status]}
+                  width={130}
+                  sx={{ margin: '7px 0' }}
+                />
               </TableCell>
-              <TableCell>
-                <Typography width={95} sx={{ textAlign: 'center' }}>{formatDate(order.created_at)}</Typography>
+              <TableCell sx={{ padding: '0 16px' }}>
+                <Typography width={95} sx={{ textAlign: 'center', padding: '0 16px' }}>
+                  {formatDate(order.created_at)}
+                </Typography>
               </TableCell>
-              <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
+              <TableCell
+                sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default', padding: '0 16px' }}
+              >
                 <StackRowJustCenter sx={{ width: '100%', cursor: 'pointer' }}>
                   <Tooltip title="Xem">
                     <IconButton
                       onClick={() => {
-                        // handleViewClick(order.id);
                         setDetailOrder(order);
                         setEditable(false);
                         setOpenView(true);
@@ -215,17 +234,24 @@ const ListOrder: React.FC = () => {
                       <ModeEditOutlineOutlined />
                     </IconButton>
                   </Tooltip>
-                  {/* <Tooltip title="Xóa">
-                    <IconButton onClick={() => handleOpenConfirm(order)}>
-                      <DeleteOutline />
-                    </IconButton>
-                  </Tooltip> */}
                 </StackRowJustCenter>
               </TableCell>
             </TableRow>
           )}
         />
       </Box>
+
+      {Math.ceil(filteredOrders.length / ORDERS_PER_PAGE) > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Pagination
+            count={Math.ceil(filteredOrders.length / ORDERS_PER_PAGE)}
+            page={currentPage}
+            variant="outlined"
+            onChange={(event, value) => setCurrentPage(value)}
+          />
+        </Box>
+      )}
+
       <ModalConfirm
         open={openConfirm}
         title="Xóa đơn hàng"

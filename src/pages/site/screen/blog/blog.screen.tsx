@@ -9,6 +9,7 @@ import {
   CardActionArea,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { blogApi, postCategoryApi } from '~/apis';
 import { Post } from '~/apis/blog/blog.interface.api';
@@ -22,6 +23,7 @@ import { useLang } from '~/hooks/use-lang/use-lang';
 import { SITE_SCREEN } from '~/router/path.route';
 
 const BlogPage: React.FC = () => {
+  const { t } = useTranslation('category');
   const [blogResult, setBlogResult] = useState<Post[]>([]);
   const currentLang = useLang();
   const prefix = getLangPrefix(currentLang);
@@ -80,7 +82,7 @@ const BlogPage: React.FC = () => {
       <Stack>
         <StackRow sx={{ gap: 1, flexWrap: 'wrap', mb: 2 }}>
           <Chip
-            label="Tất cả"
+            label={t('all')}
             onClick={() => setSelectedCategory(null)}
             clickable
             variant={selectedCategory ? 'outlined' : 'filled'}

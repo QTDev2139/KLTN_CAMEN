@@ -48,6 +48,9 @@ const BlogDetailPage: React.FC = () => {
   return (
     <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
       <Stack>
+        <Typography variant="h4">
+          {blogDetail?.translations?.[0]?.title ?? ''}
+        </Typography>
         <Typography variant="subtitle2">
           {/* Sanitize content to avoid blocked script errors; strip scripts server-side or use DOMPurify */}
           <div dangerouslySetInnerHTML={{ __html: blogDetail?.translations?.[0]?.content ?? '' }} />

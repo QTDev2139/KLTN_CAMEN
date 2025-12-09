@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import TableElement from '~/components/elements/table-element/table-element';
 import { TagElement } from '~/components/elements/tag/tag.element';
 import {
@@ -10,6 +10,8 @@ import {
   TextField,
   MenuItem,
   Stack,
+  Box,
+  Pagination,
 } from '@mui/material';
 import { ModeEditOutlineOutlined } from '@mui/icons-material';
 import { User } from '~/apis/user/user.interfaces.api';
@@ -28,12 +30,14 @@ const actionColor: Record<number, string> = {
   1: "success",
 }
 
+const EMPLOYEES_PER_PAGE = 9;
 
 const EmployeesList: React.FC = () => {
   const { snackbar } = useSnackbar();
   const [listPersonnel, setListPersonnel] = useState<User[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleUpdate = async (values?: any) => {
     if (!selectedUser || typeof selectedUser.id !== 'number') return;
@@ -58,10 +62,17 @@ const EmployeesList: React.FC = () => {
   const fetchPersonnel = async () => {
     const res = await userApi.getPersonnelList();
     setListPersonnel(res);
+    setCurrentPage(1); // Reset pagination when fetching new data
   };
+  
   useEffect(() => {
     fetchPersonnel();
   }, []);
+
+  // Paginate employees
+  const paginatedEmployees = useMemo(() => {
+    return listPersonnel.slice((currentPage - 1) * EMPLOYEES_PER_PAGE, currentPage * EMPLOYEES_PER_PAGE);
+  }, [listPersonnel, currentPage]);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -89,11 +100,11 @@ const EmployeesList: React.FC = () => {
     <React.Fragment>
       <TableElement
         columns={columns}
-        rows={listPersonnel}
+        rows={paginatedEmployees}
         renderRow={(user, index) => (
           <TableRow hover key={user.id}>
             <TableCell>
-              <Typography sx={{ textAlign: 'center' }}>{index + 1}</Typography>
+              <Typography sx={{ textAlign: 'center' }}>{(currentPage - 1) * EMPLOYEES_PER_PAGE + index + 1}</Typography>
             </TableCell>
             <TableCell>
               <Typography>{user.name}</Typography>
@@ -131,6 +142,18 @@ const EmployeesList: React.FC = () => {
           </TableRow>
         )}
       />
+
+      {Math.ceil(listPersonnel.length / EMPLOYEES_PER_PAGE) > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Pagination
+            count={Math.ceil(listPersonnel.length / EMPLOYEES_PER_PAGE)}
+            page={currentPage}
+            variant="outlined"
+            onChange={(event, value) => setCurrentPage(value)}
+          />
+        </Box>
+      )}
+
       {/* modal cho user khi click vào phòng pending */}
       <ModalElement
         open={openModal}

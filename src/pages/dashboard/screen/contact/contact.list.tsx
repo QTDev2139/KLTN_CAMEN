@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import TableElement from '~/components/elements/table-element/table-element';
 import {
   TableRow,
@@ -13,6 +13,7 @@ import {
   Button,
   Box,
   TextField,
+  Pagination,
 } from '@mui/material';
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
 import EditOutlined from '@mui/icons-material/EditOutlined';
@@ -40,6 +41,8 @@ type ContactItem = {
   user?: User;
 };
 
+const CONTACTS_PER_PAGE = 6;
+
 const ContactList: React.FC = () => {
   const [items, setItems] = useState<ContactItem[]>([]);
   const [dsnv, setDsnv] = useState<any[]>([]);
@@ -52,6 +55,7 @@ const ContactList: React.FC = () => {
 
   const [role, setRole] = useState('');
   const [note, setNote] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -71,6 +75,7 @@ const ContactList: React.FC = () => {
     try {
       const data = await contactApi.listContacts();
       setItems(data);
+      setCurrentPage(1); // Reset pagination when fetching new data
     } catch (err) {
       console.error(err);
     }
@@ -88,6 +93,11 @@ const ContactList: React.FC = () => {
 
     fetchProfile();
   }, []);
+
+  // Paginate contacts
+  const paginatedItems = useMemo(() => {
+    return items.slice((currentPage - 1) * CONTACTS_PER_PAGE, currentPage * CONTACTS_PER_PAGE);
+  }, [items, currentPage]);
 
   const handleUpdate = (row: ContactItem) => {
     setSelected(row);
@@ -124,6 +134,7 @@ const ContactList: React.FC = () => {
       snackbar('success', 'Xóa liên hệ thành công');
       await fetchList();
       setOpenConfirm(false);
+      setCurrentPage(1); // Reset pagination after delete
     } catch (e) {
       console.error(e);
     }
@@ -132,13 +143,13 @@ const ContactList: React.FC = () => {
   // Columns for TableElement
   const columns = [
     { id: 'stt', label: 'STT' },
-    { id: 'name', label: 'Tên khách hàng', width: 240 },
+    { id: 'name', label: 'Tên khách hàng', width: 200 },
     { id: 'email', label: 'Địa chỉ email', width: 260 },
     { id: 'phone', label: 'Số điện thoại', width: 140 },
     { id: 'title', label: 'Dịch vụ', width: 140 },
+    { id: 'status', label: 'Trạng thái', width: 120 },
     { id: 'content', label: 'Nội dung', width: 320 },
     { id: 'created_at', label: 'Ngày gửi', width: 180 },
-    { id: 'status', label: 'Trạng thái', width: 120 },
     { id: 'user_id', label: 'Người phụ trách', width: 180 },
     { id: 'action', label: 'Action', width: 140 },
   ];
@@ -147,14 +158,20 @@ const ContactList: React.FC = () => {
     <Stack>
       <TableElement
         columns={columns}
-        rows={items}
+        rows={paginatedItems}
         renderRow={(row: ContactItem, index: number) => (
           <TableRow key={row.id} hover>
-            <TableCell sx={{ textAlign: 'center' }}>{index + 1}</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>{(currentPage - 1) * CONTACTS_PER_PAGE + index + 1}</TableCell>
             <TableCell>{row.name}</TableCell>
             <TableCell>{row.email}</TableCell>
             <TableCell sx={{ textAlign: 'center' }}>{row.phone || '-'}</TableCell>
             <TableCell sx={{ textAlign: 'center' }}>{(row.title && StateLabelContact[row.title]) || '-'}</TableCell>
+            <TableCell>
+              <TagElement
+                type={row.status === 1 ? 'success' : 'error'}
+                content={row.status === 1 ? 'Đã liên hệ' : 'Chưa liên hệ'}
+              />
+            </TableCell>
             <TableCell sx={{ maxWidth: 320, overflow: 'hidden' }}>
               <Typography
                 sx={{
@@ -165,12 +182,6 @@ const ContactList: React.FC = () => {
               </Typography>
             </TableCell>
             <TableCell sx={{ textAlign: 'center' }}>{formatDateTime(row.created_at)}</TableCell>
-            <TableCell>
-              <TagElement
-                type={row.status === 1 ? 'success' : 'error'}
-                content={row.status === 1 ? 'Đã liên hệ' : 'Chưa liên hệ'}
-              />
-            </TableCell>
             <TableCell sx={{ textAlign: 'center' }}>{row.user?.name || '-'}</TableCell>
             <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
               <Stack direction="row" spacing={1} justifyContent="center">
@@ -182,7 +193,7 @@ const ContactList: React.FC = () => {
                     size="small"
                     title="Xóa"
                     onClick={() => {
-                      setSelected(row);      
+                      setSelected(row);
                       setOpenConfirm(true);
                     }}
                   >
@@ -194,6 +205,17 @@ const ContactList: React.FC = () => {
           </TableRow>
         )}
       />
+
+      {Math.ceil(items.length / CONTACTS_PER_PAGE) > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Pagination
+            count={Math.ceil(items.length / CONTACTS_PER_PAGE)}
+            page={currentPage}
+            variant="outlined"
+            onChange={(event, value) => setCurrentPage(value)}
+          />
+        </Box>
+      )}
 
       <ModalConfirm
         open={openConfirm}

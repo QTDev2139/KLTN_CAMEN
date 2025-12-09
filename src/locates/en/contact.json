@@ -17,6 +17,10 @@
     "phone_placeholder": "Phone Number",
     "service_type_placeholder": "Service Type",
     "content_placeholder": "Content",
-    "submit_button": "Send Contact"
+    "submit_button": "Send Contact",
+    "select_option_placeholder": "Select",
+    "service_export": "Export",
+    "service_agency": "Agency",
+    "service_media": "Media"
   }
 }

@@ -53,15 +53,18 @@ const ProductExportPage: React.FC = () => {
               >
                 <CardMedia component="img" height="220" image={item.product_images[0].image_url} alt="Product" />
                 <CardContent>
+                  <Typography variant="h6" sx={{ ...getLimitLineCss(1), textAlign: 'center' }}>
+                    {item.product_translations[0].name}
+                  </Typography>
                   <Typography
                     variant="subtitle1"
-                    sx={{ ...getLimitLineCss(2), fontWeight: '600', textAlign: 'center' }}
+                    sx={{ ...getLimitLineCss(2), textAlign: 'center' }}
                   >
                     {item.product_translations[0].description}
                   </Typography>
-                  <Typography variant="subtitle2" sx={{ ...getLimitLineCss(2), textAlign: 'center' }}>
+                  {/* <Typography variant="subtitle2" sx={{ ...getLimitLineCss(2), textAlign: 'center' }}>
                     Sản phẩm xuất khẩu
-                  </Typography>
+                  </Typography> */}
 
                   {/* Price intentionally hidden for export page */}
 

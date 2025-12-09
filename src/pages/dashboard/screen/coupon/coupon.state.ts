@@ -21,10 +21,6 @@ export const getValidityStatus = (coupon: Coupon) => {
   const start = formatDateTime(coupon.start_date);
   const end = formatDateTime(coupon.end_date);
 
-  console.log('now', todayDateTime);
-  console.log('start', start);
-  console.log('end', end);
-
   if (start && now < start) {
     return { label: 'Sắp diễn ra', type: 'info' as TagType };
   }

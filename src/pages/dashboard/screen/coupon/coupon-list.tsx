@@ -1,6 +1,6 @@
 import { DeleteOutline, ModeEditOutlineOutlined } from '@mui/icons-material';
-import { IconButton, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { IconButton, TableCell, TableRow, Tooltip, Typography, Box, Pagination } from '@mui/material';
+import React, { useEffect, useState, useMemo } from 'react';
 import { couponApi, userApi } from '~/apis';
 import { Coupon } from '~/apis/coupon/coupon.interface.api';
 import { formatDate } from '~/common/until/date-format.until';
@@ -16,6 +16,7 @@ import CouponUpdateModal from './coupon-update';
 import { getValidityStatus, StateLabel, StateTagType } from './coupon.state';
 
 // thêm hàm tính Hiệu lực
+const COUPONS_PER_PAGE = 7;
 
 const ListCoupon: React.FC = () => {
   const [listCoupon, setListCoupon] = useState<Coupon[]>([]);
@@ -26,11 +27,11 @@ const ListCoupon: React.FC = () => {
   const [openView, setOpenView] = useState(false);
   const [viewCoupon, setViewCoupon] = useState<Coupon | null>(null);
   const [loadingView, setLoadingView] = useState(false);
-
   const [openUpdate, setOpenUpdate] = useState(false);
   const [updateCoupon, setUpdateCoupon] = useState<Coupon | null>(null);
-
   const [role, setRole] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
     const fetchProfile = async () => {
       const profile = await userApi.getProfile();
@@ -38,6 +39,7 @@ const ListCoupon: React.FC = () => {
     };
     fetchProfile();
   }, []);
+
   const handleOpenConfirm = (coupon: Coupon) => {
     setSelectedCoupon(coupon);
     setOpenConfirm(true);
@@ -50,6 +52,7 @@ const ListCoupon: React.FC = () => {
       await couponApi.deleteCoupon(selectedCoupon.id);
       setListCoupon((prev) => prev.filter((p) => p.id !== selectedCoupon.id));
       snackbar('success', 'Xóa mã giảm giá thành công');
+      setCurrentPage(1); // Reset pagination after delete
     } catch (error) {
       console.error(error);
       snackbar('error', 'Xóa sản phẩm thất bại');
@@ -92,19 +95,26 @@ const ListCoupon: React.FC = () => {
     const fetchListCoupon = async () => {
       const result = await couponApi.getCoupons();
       setListCoupon(result);
+      setCurrentPage(1); // Reset pagination when fetching new data
     };
     fetchListCoupon();
   }, []);
 
+  // Paginate coupons
+  const paginatedCoupons = useMemo(() => {
+    return listCoupon.slice((currentPage - 1) * COUPONS_PER_PAGE, currentPage * COUPONS_PER_PAGE);
+  }, [listCoupon, currentPage]);
+
   const columns = [
+    { id: 'stt', label: 'STT', width: 30 },
     { id: 'code', label: 'Mã giảm', width: 80 },
     { id: 'discount_value', label: 'Giá trị giảm', width: 120 },
     { id: 'min_order_amount', label: 'Đơn hàng tối thiểu', width: 180 },
     { id: 'usage_limit', label: 'Giới hạn sử dụng', width: 180 },
     { id: 'used_count', label: 'Đã sử dụng', width: 120 },
+    { id: 'state', label: 'Trạng thái duyệt', width: 142 },
     { id: 'start_date', label: 'Ngày bắt đầu', width: 140 },
     { id: 'end_date', label: 'Ngày kết thúc', width: 140 },
-    { id: 'state', label: 'Trạng thái duyệt', width: 142 },
     { id: 'validity', label: 'Hiệu lực', width: 100 },
     { id: 'is_active', label: 'Trạng thái hoạt động', width: 182 },
     { id: 'action', label: 'Action', width: 200 },
@@ -114,9 +124,12 @@ const ListCoupon: React.FC = () => {
     <React.Fragment>
       <TableElement
         columns={columns}
-        rows={listCoupon}
+        rows={paginatedCoupons}
         renderRow={(coupon, index) => (
           <TableRow hover key={index} sx={{ position: 'sticky' }}>
+            <TableCell>
+              <Typography sx={{ textAlign: 'center' }}>{index + 1}</Typography>
+            </TableCell>
             <TableCell>
               <Typography>{coupon.code}</Typography>
             </TableCell>
@@ -137,13 +150,13 @@ const ListCoupon: React.FC = () => {
               <Typography>{coupon.used_count}</Typography>
             </TableCell>
             <TableCell>
-              <Typography>{formatDate(coupon.start_date)}</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography>{formatDate(coupon.end_date)}</Typography>
-            </TableCell>
-            <TableCell>
               <TagElement type={StateTagType[coupon.state]} content={StateLabel[coupon.state]} />
+            </TableCell>
+            <TableCell>
+              <Typography sx={{ width: '140px', textAlign: 'center' }}>{formatDate(coupon.start_date)}</Typography>
+            </TableCell>
+            <TableCell>
+              <Typography sx={{ width: '140px', textAlign: 'center' }}>{formatDate(coupon.end_date)}</Typography>
             </TableCell>
 
             <TableCell>
@@ -173,7 +186,9 @@ const ListCoupon: React.FC = () => {
                   <IconButton
                     onClick={() => handleEditClick(coupon.id)}
                     disabled={
-                      (role !== 'root' && coupon.state === 'rejected') || (role === 'root' && coupon.state !== 'pending') || (role !== 'root' && coupon.state === 'pending')
+                      (role !== 'root' && coupon.state === 'rejected') ||
+                      (role === 'root' && coupon.state !== 'pending') ||
+                      (role !== 'root' && coupon.state === 'pending')
                     }
                   >
                     {/* Thay root bằng giám đốc  */}
@@ -190,6 +205,18 @@ const ListCoupon: React.FC = () => {
           </TableRow>
         )}
       />
+
+      {Math.ceil(listCoupon.length / COUPONS_PER_PAGE) > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Pagination
+            count={Math.ceil(listCoupon.length / COUPONS_PER_PAGE)}
+            page={currentPage}
+            variant="outlined"
+            onChange={(event, value) => setCurrentPage(value)}
+          />
+        </Box>
+      )}
+
       <ModalConfirm
         open={openConfirm}
         title="Xóa mã giảm giá"
@@ -216,6 +243,7 @@ const ListCoupon: React.FC = () => {
         onSubmitted={async () => {
           const data = await couponApi.getCoupons();
           setListCoupon(data);
+          setCurrentPage(1); // Reset pagination after update
         }}
         role={role}
       />

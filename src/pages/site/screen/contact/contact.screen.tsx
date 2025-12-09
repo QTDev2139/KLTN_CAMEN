@@ -12,8 +12,14 @@ const ContactPage: React.FC = () => {
   const { palette } = useTheme();
   return (
     <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
-      <Typography variant="h2">{t('section_title')}</Typography>
-      <Typography variant="h5" style={{ color: palette.primary.main, padding: '40px 0' }}>
+      <Typography
+            variant="h2"
+            sx={{
+              fontWeight: 700,
+              color: palette.text.primary,
+            }}
+          >{t('section_title')}</Typography>
+      <Typography variant="h5" style={{ color: palette.primary.main, padding: '40px 0', fontWeight: 700, }}>
         {t('brand_name')}
       </Typography>
       <Typography variant="subtitle1" style={{ color: palette.text.primary, maxWidth: 800 }}>

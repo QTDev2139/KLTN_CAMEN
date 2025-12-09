@@ -117,8 +117,8 @@ const ChatBox: React.FC = () => {
     fetchProfile();
   }, []);
 
+
   useEffect(() => {
-    // cố gắng lấy room đầu tiên (customer) nếu có
     const init = async () => {
       try {
         setLoading(true);
@@ -155,6 +155,12 @@ const ChatBox: React.FC = () => {
   }, [room?.id]);
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
+    // Kiểm tra profile có null không
+    if (!profile) {
+      snackbar('warning', 'Vui lòng đăng nhập để chat với nhân viên');
+      return;
+    }
+
     setAnchorEl(e.currentTarget);
     setIsOpen((prev) => !prev);
   };
@@ -248,225 +254,227 @@ const ChatBox: React.FC = () => {
         <ChatIcon />
       </Fab>
 
-      <Popper
-        open={isOpen}
-        anchorEl={anchorEl}
-        placement="top-end"
-        popperOptions={{
-          strategy: 'fixed',
-          modifiers: [
-            { name: 'offset', options: { offset: [0, 8] } },
-            { name: 'preventOverflow', enabled: true, options: { padding: 8 } },
-            { name: 'computeStyles', options: { adaptive: false } },
-          ],
-        }}
-        sx={{ 
-          zIndex: 1000,
-         }}
-      >
-        <Paper
-          elevation={6}
-          sx={{
-            width: 360,
-            height: 400,
-            p: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            zIndex: (theme) => theme.zIndex.tooltip + 1,
+      {isOpen && profile && (
+        <Popper
+          open={isOpen}
+          anchorEl={anchorEl}
+          placement="top-end"
+          popperOptions={{
+            strategy: 'fixed',
+            modifiers: [
+              { name: 'offset', options: { offset: [0, 8] } },
+              { name: 'preventOverflow', enabled: true, options: { padding: 8 } },
+              { name: 'computeStyles', options: { adaptive: false } },
+            ],
           }}
+          sx={{ 
+            zIndex: 1000,
+           }}
         >
-          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <Box sx={{ p: 1.5, borderBottom: 1, borderColor: 'divider' }}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-                <Typography variant="subtitle1" sx={{ flex: 1 }}>
-                  {room ? `Chat` : 'Chat'}
-                </Typography>
-                {/* Thu lại (minimize) - khi bấm sẽ thu lại popover */}
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    setAnchorEl(null);
-                    setIsOpen(false);
-                  }}
-                  aria-label="thu-lai"
-                >
-                  <MinimizeIcon fontSize="small" sx={{ marginTop: '-6px', paddingBottom: '5px' }} />
-                </IconButton>
-              </Stack>
-            </Box>
-
-            {/* previews */}
-            {previews.length > 0 && (
-              <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap', p: 1 }}>
-                {previews.map((src, idx) => (
-                  <Box key={src} sx={{ width: 60, height: 60, position: 'relative' }}>
-                    <img
-                      src={src}
-                      alt={files[idx]?.name || `file-${idx}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 4 }}
-                      onClick={() => {
-                        setModalSrc(src);
-                        setImageOpen(true);
-                      }}
-                    />
-                    <IconButton
-                      size="small"
-                      onClick={() => handleRemoveFile(idx)}
-                      sx={{
-                        position: 'absolute',
-                        top: -6,
-                        right: -6,
-                        bgcolor: 'background.paper',
-                        boxShadow: 1,
-                        '&:hover': { bgcolor: 'background.paper' },
-                      }}
-                    >
-                      <DeleteOutlineIcon fontSize="small" />
-                    </IconButton>
-                  </Box>
-                ))}
-              </Stack>
-            )}
-
-            <Box sx={{ flex: 1, p: 1, overflowY: 'auto', bgcolor: 'background.default' }}>
-              {loading ? (
-                <Stack alignItems="center" justifyContent="center" sx={{ height: '100%' }}>
-                  <CircularProgress size={20} />
+          <Paper
+            elevation={6}
+            sx={{
+              width: 360,
+              height: 400,
+              p: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              zIndex: (theme) => theme.zIndex.tooltip + 1,
+            }}
+          >
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <Box sx={{ p: 1.5, borderBottom: 1, borderColor: 'divider' }}>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+                  <Typography variant="subtitle1" sx={{ flex: 1 }}>
+                    {room ? `Chat` : 'Chat'}
+                  </Typography>
+                  {/* Thu lại (minimize) - khi bấm sẽ thu lại popover */}
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      setAnchorEl(null);
+                      setIsOpen(false);
+                    }}
+                    aria-label="thu-lai"
+                  >
+                    <MinimizeIcon fontSize="small" sx={{ marginTop: '-6px', paddingBottom: '5px' }} />
+                  </IconButton>
                 </Stack>
-              ) : messages.length === 0 ? (
-                <Typography sx={{ p: 1 }} color="text.secondary">
-                  Chưa có tin nhắn.
-                </Typography>
-              ) : (
-                (() => {
-                  const rows: React.ReactNode[] = [];
-                  let lastDateKey = '';
-                  messages.forEach((m) => {
-                    const currentUserId = profile?.id;
-                    const isMine = m.sender_id === currentUserId;
-                    const imgCount = m.images?.length || 0;
-                    const columns = Math.min(imgCount, 2); // tối đa 2 cột
-                    const dateKey = m.created_at ? new Date(m.created_at).toDateString() : 'unknown';
+              </Box>
 
-                    // nếu là ngày mới, chèn header ngày cùng số tin nhắn trong ngày
-                    if (dateKey !== lastDateKey) {
-                      rows.push(
-                        <Box key={`date-${dateKey}`} sx={{ textAlign: 'center', my: 1 }}>
-                          <Typography variant="caption" color="text.secondary">
-                            {formatDateHeader(m.created_at)} {countsByDate[dateKey] ? ` — ${countsByDate[dateKey]} tin nhắn` : ''}
-                          </Typography>
-                        </Box>
-                      );
-                      lastDateKey = dateKey;
-                    }
-
-                    rows.push(
-                      <Box key={m.id} sx={{ mb: 1, display: 'flex', justifyContent: isMine ? 'flex-end' : 'flex-start' }}>
-                        <Paper
-                          elevation={1}
-                          sx={{
-                            p: '8px 12px 12px 12px',
-                            minWidth: 24,
-                            maxWidth: '70%',
-                            bgcolor: isMine ? '#514ad1a6' : 'grey.100',
-                            color: isMine ? 'white' : 'black',
-                            borderRadius: 2,
-                            position: 'relative',
-                          }}
-                        >
-                          {m.message && <Typography variant="body2">{m.message}</Typography>}
-
-                          {m.images && imgCount > 0 && (
-                            <Box
-                              sx={{
-                                display: 'grid',
-                                gridTemplateColumns: `repeat(${columns}, 60px)`,
-                                gap: 1,
-                                mt: 1,
-                              }}
-                            >
-                              {m.images.map((img, idx) => (
-                                <Box
-                                  key={idx}
-                                  sx={{ width: 60, height: 60, cursor: 'pointer' }}
-                                  onClick={() => {
-                                    setModalSrc(`${process.env.REACT_APP_BASE}storage/${img}`);
-                                    setImageOpen(true);
-                                  }}
-                                >
-                                  <img
-                                    src={`${process.env.REACT_APP_BASE}storage/${img}`}
-                                    alt={m.message ? `${m.message} (image ${idx + 1})` : `Image ${idx + 1}`}
-                                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 4 }}
-                                  />
-                                </Box>
-                              ))}
-                            </Box>
-                          )}
-
-                          {/* chỉ hiển thị giờ (HH:MM) */}
-                          {m.created_at && (
-                            <Typography variant="caption" sx={{ position: 'absolute',  opacity: 0.6, bottom: 2, fontSize: 10, right: 12, lineHeight: 1 }}>
-                              {formatTime(m.created_at)}
-                            </Typography>
-                          )}
-                        </Paper>
-                      </Box>
-                    );
-                  });
-                  return rows;
-                })()
+              {/* previews */}
+              {previews.length > 0 && (
+                <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap', p: 1 }}>
+                  {previews.map((src, idx) => (
+                    <Box key={src} sx={{ width: 60, height: 60, position: 'relative' }}>
+                      <img
+                        src={src}
+                        alt={files[idx]?.name || `file-${idx}`}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 4 }}
+                        onClick={() => {
+                          setModalSrc(src);
+                          setImageOpen(true);
+                        }}
+                      />
+                      <IconButton
+                        size="small"
+                        onClick={() => handleRemoveFile(idx)}
+                        sx={{
+                          position: 'absolute',
+                          top: -6,
+                          right: -6,
+                          bgcolor: 'background.paper',
+                          boxShadow: 1,
+                          '&:hover': { bgcolor: 'background.paper' },
+                        }}
+                      >
+                        <DeleteOutlineIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  ))}
+                </Stack>
               )}
 
-              <div ref={messagesEndRef} />
+              <Box sx={{ flex: 1, p: 1, overflowY: 'auto', bgcolor: 'background.default' }}>
+                {loading ? (
+                  <Stack alignItems="center" justifyContent="center" sx={{ height: '100%' }}>
+                    <CircularProgress size={20} />
+                  </Stack>
+                ) : messages.length === 0 ? (
+                  <Typography sx={{ p: 1 }} color="text.secondary">
+                    Chưa có tin nhắn.
+                  </Typography>
+                ) : (
+                  (() => {
+                    const rows: React.ReactNode[] = [];
+                    let lastDateKey = '';
+                    messages.forEach((m) => {
+                      const currentUserId = profile?.id;
+                      const isMine = m.sender_id === currentUserId;
+                      const imgCount = m.images?.length || 0;
+                      const columns = Math.min(imgCount, 2); // tối đa 2 cột
+                      const dateKey = m.created_at ? new Date(m.created_at).toDateString() : 'unknown';
+
+                      // nếu là ngày mới, chèn header ngày cùng số tin nhắn trong ngày
+                      if (dateKey !== lastDateKey) {
+                        rows.push(
+                          <Box key={`date-${dateKey}`} sx={{ textAlign: 'center', my: 1 }}>
+                            <Typography variant="caption" color="text.secondary">
+                              {formatDateHeader(m.created_at)} {countsByDate[dateKey] ? ` — ${countsByDate[dateKey]} tin nhắn` : ''}
+                            </Typography>
+                          </Box>
+                        );
+                        lastDateKey = dateKey;
+                      }
+
+                      rows.push(
+                        <Box key={m.id} sx={{ mb: 1, display: 'flex', justifyContent: isMine ? 'flex-end' : 'flex-start' }}>
+                          <Paper
+                            elevation={1}
+                            sx={{
+                              p: '8px 12px 12px 12px',
+                              minWidth: 24,
+                              maxWidth: '70%',
+                              bgcolor: isMine ? '#514ad1a6' : 'grey.100',
+                              color: isMine ? 'white' : 'black',
+                              borderRadius: 2,
+                              position: 'relative',
+                            }}
+                          >
+                            {m.message && <Typography variant="body2">{m.message}</Typography>}
+
+                            {m.images && imgCount > 0 && (
+                              <Box
+                                sx={{
+                                  display: 'grid',
+                                  gridTemplateColumns: `repeat(${columns}, 60px)`,
+                                  gap: 1,
+                                  mt: 1,
+                                }}
+                              >
+                                {m.images.map((img, idx) => (
+                                  <Box
+                                    key={idx}
+                                    sx={{ width: 60, height: 60, cursor: 'pointer' }}
+                                    onClick={() => {
+                                      setModalSrc(`${process.env.REACT_APP_BASE}storage/${img}`);
+                                      setImageOpen(true);
+                                    }}
+                                  >
+                                    <img
+                                      src={`${process.env.REACT_APP_BASE}storage/${img}`}
+                                      alt={m.message ? `${m.message} (image ${idx + 1})` : `Image ${idx + 1}`}
+                                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 4 }}
+                                    />
+                                  </Box>
+                                ))}
+                              </Box>
+                            )}
+
+                            {/* chỉ hiển thị giờ (HH:MM) */}
+                            {m.created_at && (
+                              <Typography variant="caption" sx={{ position: 'absolute',  opacity: 0.6, bottom: 2, fontSize: 10, right: 12, lineHeight: 1 }}>
+                                {formatTime(m.created_at)}
+                              </Typography>
+                            )}
+                          </Paper>
+                        </Box>
+                      );
+                    });
+                    return rows;
+                  })()
+                )}
+
+                <div ref={messagesEndRef} />
+              </Box>
+
+              <Box sx={{ p: 1, borderTop: 1, borderColor: 'divider' }}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    multiple
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                      handleFiles(e.target.files);
+                      if (e.target) e.target.value = '';
+                    }}
+                  />
+
+                  <IconButton
+                    onClick={() => fileInputRef.current?.click()}
+                    color={files.length > 0 ? 'primary' : 'default'}
+                  >
+                    <InsertPhotoOutlined />
+                  </IconButton>
+
+                  <TextField
+                    fullWidth
+                    size="small"
+                    placeholder="Nhập tin..."
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend();
+                      }
+                    }}
+                  />
+                  <IconButton
+                    color="primary"
+                    onClick={handleSend}
+                    disabled={!room || sending || (!input.trim() && files.length === 0)}
+                  >
+                    <SendIcon />
+                  </IconButton>
+                </Stack>
+              </Box>
             </Box>
-
-            <Box sx={{ p: 1, borderTop: 1, borderColor: 'divider' }}>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  multiple
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  onChange={(e) => {
-                    handleFiles(e.target.files);
-                    if (e.target) e.target.value = '';
-                  }}
-                />
-
-                <IconButton
-                  onClick={() => fileInputRef.current?.click()}
-                  color={files.length > 0 ? 'primary' : 'default'}
-                >
-                  <InsertPhotoOutlined />
-                </IconButton>
-
-                <TextField
-                  fullWidth
-                  size="small"
-                  placeholder="Nhập tin..."
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSend();
-                    }
-                  }}
-                />
-                <IconButton
-                  color="primary"
-                  onClick={handleSend}
-                  disabled={!room || sending || (!input.trim() && files.length === 0)}
-                >
-                  <SendIcon />
-                </IconButton>
-              </Stack>
-            </Box>
-          </Box>
-        </Paper>
-      </Popper>
+          </Paper>
+        </Popper>
+      )}
 
       <ModalImage open={imageOpen} onClose={() => setImageOpen(false)} src={modalSrc} alt="Ảnh" />
     </>

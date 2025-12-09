@@ -395,6 +395,15 @@ const PurchasePage: React.FC = () => {
 
               <Divider sx={{ mt: 1, mb: 1 }} />
 
+              {/* Phí giao hàng */}
+              {order.ship_fee && Number(order.ship_fee) > 0 && (
+                <StackRowJustEnd sx={{ mb: 0.5 }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Phí giao hàng: <span style={{ fontWeight: 600 }}>{FormatPrice(order.ship_fee)}</span>
+                  </Typography>
+                </StackRowJustEnd>
+              )}
+
               {/* Tổng tiền đơn */}
               <StackRowJustEnd>
                 <Typography fontWeight={700}>
@@ -502,7 +511,7 @@ const PurchasePage: React.FC = () => {
                     </Button> */}
                   </>
                 )}
-                {(order.status === 'refunded' || order.status === 'refund_requested') && (
+                {/* {(order.status === 'refunded' || order.status === 'refund_requested') && (
                   <Button
                     variant="outlined"
                     color="error"
@@ -514,7 +523,7 @@ const PurchasePage: React.FC = () => {
                   >
                     Chi tiết hoàn tiền
                   </Button>
-                )}
+                )} */}
                 <Button
                   variant="outlined"
                   color="primary"
@@ -553,77 +562,211 @@ const PurchasePage: React.FC = () => {
       {/* Order detail drawer */}
       <Drawer anchor="right" open={openDetail} onClose={closeOrderDetail}>
         <Box sx={{ width: 480, p: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
-          <StackRowJustBetween sx={{ mb: 1 }}>
-            <Typography variant="h6">Chi tiết đơn hàng</Typography>
-            <IconButton onClick={closeOrderDetail} size="small">
+          {/* Header */}
+          <StackRowJustBetween sx={{ mb: 2 }}>
+            <Typography variant="h6" fontWeight={700}>
+              Chi tiết đơn hàng
+            </Typography>
+            <IconButton onClick={closeOrderDetail} size="small" sx={{ color: 'text.secondary' }}>
               <CloseIcon />
             </IconButton>
           </StackRowJustBetween>
-          <Divider sx={{ mb: 2 }} />
+
           {!detailOrder ? (
-            <Typography color="text.secondary">Không có dữ liệu</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+              <Typography color="text.secondary">Không có dữ liệu</Typography>
+            </Box>
           ) : (
-            <Box sx={{ overflowY: 'auto' }}>
-              <Typography fontWeight={700} sx={{ mb: 1 }}>
-                Mã đơn: {detailOrder.code}
-              </Typography>
-              <StackRow sx={{ gap: 1, mb: 1 }}>
-                <TagElement
-                  type={paymentStatusColorMap[detailOrder.payment_status] || 'default'}
-                  content={paymentStatusLabelMap[detailOrder.payment_status] || detailOrder.payment_status}
-                  width={150}
-                />
-                <TagElement
-                  type={statusColorMap[detailOrder.status] || 'default'}
-                  content={statusLabelMap[detailOrder.status] || detailOrder.status}
-                  width={150}
-                />
-              </StackRow>
-              <Divider sx={{ my: 1 }} />
-              <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                Sản phẩm
-              </Typography>
-              {(Array.isArray(detailOrder.order_items)
-                ? detailOrder.order_items
-                : (detailOrder as any).items || []
-              ).map((it: any) => {
-                const name = it.product?.product_translations?.[0]?.name || it.name;
-                const qty = it.quantity ?? it.qty ?? 1;
-                const price = it.product?.price ?? it.price ?? 0;
-                return (
-                  <Box key={it.id || name} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Box>
-                      <Typography fontWeight={600}>{name}</Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        SL: {qty}
-                      </Typography>
-                    </Box>
-                    <Box textAlign="right">
-                      <Typography>{FormatPrice(price)}</Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        Thành tiền: {FormatPrice(price * qty)}
-                      </Typography>
-                    </Box>
-                  </Box>
-                );
-              })}
-              <Divider sx={{ my: 1 }} />
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                <Typography color="text.secondary">Tổng</Typography>
-                <Typography fontWeight={700}>{FormatPrice(detailOrder.grand_total)}</Typography>
+            <Box sx={{ overflowY: 'auto', pr: 1, '&::-webkit-scrollbar': { width: 6 }, '&::-webkit-scrollbar-track': { bgcolor: 'transparent' }, '&::-webkit-scrollbar-thumb': { bgcolor: 'divider', borderRadius: 1 } }}>
+              {/* Order Code & Status */}
+              <Box sx={{ mb: 2, p: 1.5, bgcolor: 'background.default', borderRadius: 1.5 }}>
+                <Typography fontWeight={700} sx={{ mb: 1, fontSize: '1.1rem' }}>
+                  #{detailOrder.code}
+                </Typography>
+                <StackRow sx={{ gap: 1, flexWrap: 'wrap' }}>
+                  <TagElement
+                    type={paymentStatusColorMap[detailOrder.payment_status] || 'default'}
+                    content={paymentStatusLabelMap[detailOrder.payment_status] || detailOrder.payment_status}
+                  />
+                  <TagElement
+                    type={statusColorMap[detailOrder.status] || 'default'}
+                    content={statusLabelMap[detailOrder.status] || detailOrder.status}
+                  />
+                </StackRow>
               </Box>
-              <Divider sx={{ my: 1 }} />
-              <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                Thông tin giao hàng
-              </Typography>
-              <Typography variant="body2">{detailOrder.shipping_address?.name || '—'}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                {detailOrder.shipping_address?.street || '—'}, {detailOrder.shipping_address?.ward},{' '}
-                {detailOrder.shipping_address?.province}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {detailOrder.shipping_address?.phone || '—'}
-              </Typography>
+
+              {/* Refund Info - Hiển thị nếu có tiền hoàn */}
+              {detailOrder.refund_amount && Number(detailOrder.refund_amount) > 0 && (
+                <Box sx={{ mb: 2, p: 1.5, bgcolor: 'error.50', borderRadius: 1.5, border: '1px solid', borderColor: 'error.200' }}>
+                  <Typography fontWeight={700} sx={{ mb: 1, color: 'error.main', fontSize: '1rem' }}>
+                    💰 Số tiền đã được hoàn
+                  </Typography>
+                  <Stack spacing={0.75}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Số tiền hoàn:
+                      </Typography>
+                      <Typography fontWeight={700} sx={{ color: 'error.main', fontSize: '1rem' }}>
+                        {FormatPrice(detailOrder.refund_amount)}
+                      </Typography>
+                    </Box>
+                    {detailOrder.reason_refund && (
+                      <Box>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                          Lý do hoàn tiền:
+                        </Typography>
+                        <Typography variant="body2" sx={{ p: 0.75, bgcolor: 'background.paper', borderRadius: 0.75 }}>
+                          {detailOrder.reason_refund}
+                        </Typography>
+                      </Box>
+                    )}
+                    {detailOrder.refund_transaction_code && (
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="caption" color="text.secondary">
+                          Mã giao dịch hoàn tiền:
+                        </Typography>
+                        <Typography variant="caption" fontWeight={600}>
+                          {detailOrder.refund_transaction_code}
+                        </Typography>
+                      </Box>
+                    )}
+                    {detailOrder.img_refund && detailOrder.img_refund.length > 0 && (
+                      <Box>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.75 }}>
+                          Hình ảnh minh chứng:
+                        </Typography>
+                        <Stack direction="row" spacing={0.75} sx={{ flexWrap: 'wrap' }}>
+                          {detailOrder.img_refund.map((img, idx) => (
+                            <Box
+                              key={idx}
+                              component="img"
+                              src={img}
+                              alt={`refund-img-${idx}`}
+                              sx={{
+                                width: 60,
+                                height: 60,
+                                objectFit: 'cover',
+                                borderRadius: 0.75,
+                                border: '1px solid',
+                                borderColor: 'divider',
+                                cursor: 'pointer',
+                                '&:hover': { opacity: 0.8 },
+                              }}
+                            />
+                          ))}
+                        </Stack>
+                      </Box>
+                    )}
+                  </Stack>
+                </Box>
+              )}
+
+              {/* Products Section */}
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: 'text.primary' }}>
+                  Sản phẩm ({(Array.isArray(detailOrder.order_items) ? detailOrder.order_items : (detailOrder as any).items || []).length})
+                </Typography>
+                <Stack spacing={1.5}>
+                  {(Array.isArray(detailOrder.order_items)
+                    ? detailOrder.order_items
+                    : (detailOrder as any).items || []
+                  ).map((it: any) => {
+                    const name = it.product?.product_translations?.[0]?.name || it.name;
+                    const qty = it.quantity ?? it.qty ?? 1;
+                    const price = it.product?.price ?? it.price ?? 0;
+                    return (
+                      <Box
+                        key={it.id || name}
+                        sx={{
+                          p: 1.25,
+                          bgcolor: 'background.default',
+                          borderRadius: 1,
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start',
+                        }}
+                      >
+                        <Box sx={{ flex: 1 }}>
+                          <Typography fontWeight={600} sx={{ mb: 0.5, fontSize: '0.95rem' }}>
+                            {name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Số lượng: <strong>{qty}</strong>
+                          </Typography>
+                        </Box>
+                        <Box textAlign="right">
+                          <Typography fontWeight={600} sx={{ mb: 0.25 }}>
+                            {FormatPrice(price)}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {FormatPrice(price * qty)}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    );
+                  })}
+                </Stack>
+              </Box>
+
+              <Divider sx={{ my: 2 }} />
+
+              {/* Shipping Fee */}
+              {detailOrder.ship_fee && Number(detailOrder.ship_fee) > 0 ? (
+                <Box sx={{ mb: 2, p: 1.5, bgcolor: 'info.50', borderRadius: 1.5 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      Phí giao hàng
+                    </Typography>
+                    <Typography fontWeight={600}>{FormatPrice(detailOrder.ship_fee)}</Typography>
+                  </Box>
+                </Box>
+              ) : (
+                <Box sx={{ mb: 2, p: 1.5, bgcolor: 'success.50', borderRadius: 1.5, border: '1px solid', borderColor: 'success.200' }}>
+                  <Typography variant="body2" fontWeight={600} sx={{ color: 'success.main', textAlign: 'center' }}>
+                    Thanh toán khi nhận hàng (COD)
+                  </Typography>
+                </Box>
+              )}
+
+              {/* Order Total */}
+              <Box sx={{ mb: 2, p: 1.5, bgcolor: 'primary.50', borderRadius: 1.5 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography color="text.secondary" fontWeight={600}>
+                    Tổng cộng
+                  </Typography>
+                  <Typography fontWeight={700} sx={{ fontSize: '1.15rem', color: 'primary.main' }}>
+                    {FormatPrice(detailOrder.grand_total)}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Divider sx={{ my: 2 }} />
+
+              {/* Shipping Info */}
+              <Box>
+                <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: 'text.primary' }}>
+                  Thông tin giao hàng
+                </Typography>
+                <Stack spacing={0.75} sx={{ p: 1.5, bgcolor: 'background.default', borderRadius: 1.5 }}>
+                  <Box>
+                    <Typography fontWeight={600} sx={{ mb: 0.25 }}>
+                      {detailOrder.shipping_address?.name || '—'}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.5 }}>
+                      {detailOrder.shipping_address?.street || '—'}
+                      {detailOrder.shipping_address?.ward && `, ${detailOrder.shipping_address.ward}`}
+                      {detailOrder.shipping_address?.province && `, ${detailOrder.shipping_address.province}`}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" fontWeight={600}>
+                      {detailOrder.shipping_address?.phone || '—'}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </Box>
             </Box>
           )}
         </Box>

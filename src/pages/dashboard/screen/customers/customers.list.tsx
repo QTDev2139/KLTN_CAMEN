@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import TableElement from '~/components/elements/table-element/table-element';
 import { TagElement } from '~/components/elements/tag/tag.element';
 import {
@@ -10,8 +10,10 @@ import {
   TextField,
   MenuItem,
   Stack,
+  Box,
+  Pagination,
 } from '@mui/material';
-import { ModeEditOutlineOutlined } from '@mui/icons-material';
+import { ModeEditOutlineOutlined, Search as SearchIcon } from '@mui/icons-material';
 import { User } from '~/apis/user/user.interfaces.api';
 import { userApi } from '~/apis';
 import { ConvertRole } from './customers.state';
@@ -34,6 +36,9 @@ const CustomersList: React.FC = () => {
   const [listCustomers, setListCustomers] = useState<User[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [searchEmail, setSearchEmail] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const CUSTOMERS_PER_PAGE = 8;
 
   const handleUpdate = async (values?: any) => {
     if (!selectedUser || typeof selectedUser.id !== 'number') return;
@@ -47,6 +52,7 @@ const CustomersList: React.FC = () => {
       snackbar('success', 'Cập nhật khách hàng thành công');
       setOpenModal(false);
       setSelectedUser(null);
+      setCurrentPage(1); // Reset to first page after update
       fetchCustomers();
     } catch (err) {
       console.error('Lỗi cập nhật khách hàng:', err);
@@ -55,12 +61,36 @@ const CustomersList: React.FC = () => {
   }
 
   const fetchCustomers = async () => {
-    const res = await userApi.getPersonnel(4);
-    setListCustomers(res);
+    try {
+      const res = await userApi.getPersonnel(4);
+      setListCustomers(res);
+      setCurrentPage(1); // Reset to first page when fetching new data
+    } catch (error) {
+      console.error('Lỗi tải danh sách khách hàng:', error);
+      snackbar('error', 'Không tải được danh sách khách hàng');
+    }
   };
+
   useEffect(() => {
     fetchCustomers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Filter customers by email
+  const filteredCustomers = useMemo(() => {
+    return listCustomers.filter((customer) =>
+      customer.email.toLowerCase().includes(searchEmail.toLowerCase())
+    );
+  }, [listCustomers, searchEmail]);
+
+  // Paginate filtered customers
+  const paginatedCustomers = useMemo(() => {
+    return filteredCustomers.slice((currentPage - 1) * CUSTOMERS_PER_PAGE, currentPage * CUSTOMERS_PER_PAGE);
+  }, [filteredCustomers, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1); // Reset to first page when search email changes
+  }, [searchEmail]);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -84,47 +114,66 @@ const CustomersList: React.FC = () => {
 
   return (
     <React.Fragment>
-      <TableElement
-        columns={columns}
-        rows={listCustomers}
-        renderRow={(user, index) => (
-          <TableRow hover key={user.id}>
-            <TableCell>
-              <Typography sx={{ textAlign: 'center' }}>{index + 1}</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography>{user.name}</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography>{user.email}</Typography>
-            </TableCell>
-            <TableCell>
-              <TagElement
-                type={actionColor[user.status || 0] as any}
-                content={actionName[user.status || 0]}
-              />
-            </TableCell>
-            <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
-              <Typography sx={{ width: '100%', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}>
-                <Tooltip title="Sửa">
-                  <span
-                    style={{ display: 'inline-block' }}
-                    onClick={() => {
-                      if (user.role?.name === 'admin') return;
-                      setSelectedUser(user);
-                      setOpenModal(true);
-                    }}
-                  >
-                    <IconButton size="small" disabled={user.role?.name === 'admin'}>
-                      <ModeEditOutlineOutlined fontSize="small" />
-                    </IconButton>
-                  </span>
-                </Tooltip>
-              </Typography>
-            </TableCell>
-          </TableRow>
-        )}
-      />
+      <Box
+        sx={{
+          scrollbarGutter: 'stable',
+          '&:has(table)': { overflowY: 'auto' },
+        }}
+      >
+        <TableElement
+          columns={columns}
+          rows={paginatedCustomers}
+          renderRow={(user, index) => (
+            <TableRow hover key={user.id}>
+              <TableCell>
+                <Typography sx={{ textAlign: 'center' }}>{(currentPage - 1) * CUSTOMERS_PER_PAGE + index + 1}</Typography>
+              </TableCell>
+              <TableCell>
+                <Typography>{user.name}</Typography>
+              </TableCell>
+              <TableCell>
+                <Typography>{user.email}</Typography>
+              </TableCell>
+              <TableCell>
+                <TagElement
+                  type={actionColor[user.status || 0] as any}
+                  content={actionName[user.status || 0]}
+                />
+              </TableCell>
+              <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
+                <Typography sx={{ width: '100%', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}>
+                  <Tooltip title="Sửa">
+                    <span
+                      style={{ display: 'inline-block' }}
+                      onClick={() => {
+                        if (user.role?.name === 'admin') return;
+                        setSelectedUser(user);
+                        setOpenModal(true);
+                      }}
+                    >
+                      <IconButton size="small" disabled={user.role?.name === 'admin'}>
+                        <ModeEditOutlineOutlined fontSize="small" />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
+                </Typography>
+              </TableCell>
+            </TableRow>
+          )}
+        />
+      </Box>
+
+      {Math.ceil(filteredCustomers.length / CUSTOMERS_PER_PAGE) > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Pagination
+            count={Math.ceil(filteredCustomers.length / CUSTOMERS_PER_PAGE)}
+            page={currentPage}
+            variant="outlined"
+            onChange={(event, value) => setCurrentPage(value)}
+          />
+        </Box>
+      )}
+
       {/* modal cho user khi click vào phòng pending */}
       <ModalElement
         open={openModal}

@@ -15,6 +15,7 @@ import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import ContainerWrapper from '~/components/elements/container/container.element';
 import { PADDING_GAP_LAYOUT } from '~/common/constant/style.constant';
+import { useTranslation } from 'react-i18next';
 
 // helper to format sales count (>=1000 -> "1K", "10K", ...)
 const formatSalesCount = (n: number) => {
@@ -28,6 +29,8 @@ const ProductDomesticPage: React.FC = () => {
   const [product, setProduct] = useState<Product[]>([]);
   const [salesCountMap, setSalesCountMap] = useState<Record<number, number>>({});
   const { slug = 'san-pham' } = useParams<{ slug?: string }>();
+
+  const { t } = useTranslation('category');
 
   // Lấy lang từ hook thay vì useParams
   const currentLang = useLang();
@@ -75,7 +78,7 @@ const ProductDomesticPage: React.FC = () => {
       <Grid container spacing={2}>
         <Grid size={{ md: 2 }}>
           <Stack>
-            <Typography variant="h6">Danh mục</Typography>
+            <Typography variant="h6">{t('category')}</Typography>
             <Divider />
             {category.map((item) => (
               <NavLink
@@ -110,6 +113,9 @@ const ProductDomesticPage: React.FC = () => {
                 >
                   <CardMedia component="img" height="220" image={item.product_images[0].image_url} alt="Product" />
                   <CardContent>
+                    <Typography variant="h6" sx={{ ...getLimitLineCss(1) }}>
+                      {item.product_translations[0].name}
+                    </Typography>
                     <Typography variant="subtitle2" sx={{ ...getLimitLineCss(2) }}>
                       {item.product_translations[0].description}
                     </Typography>

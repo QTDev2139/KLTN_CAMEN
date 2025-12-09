@@ -19,7 +19,7 @@ import { getLimitLineCss } from '~/common/until/get-limit-line-css';
 
 export default function AuthLink() {
   const { palette } = useTheme();
-  const { t } = useTranslation('user');
+  const { t } = useTranslation(['user', 'menu-user']);
   const navigate = useNavigate();
   const { snackbar } = useSnackbar();
 
@@ -147,7 +147,7 @@ export default function AuthLink() {
               >
                 <StackRowAlignCenter onClick={handleOrders} gap={1}>
                   <ShoppingBagIcon fontSize="small" />
-                  <Typography variant="body2">Đơn hàng</Typography>
+                  <Typography variant="body2">{t('menu-user:orders')}</Typography>
                 </StackRowAlignCenter>
               </MenuItem>
               <MenuItem
@@ -163,7 +163,7 @@ export default function AuthLink() {
               >
                 <StackRowAlignCenter onClick={handleLogout} gap={1}>
                   <LogoutIcon fontSize="small" />
-                  <Typography variant="body2">Đăng xuất</Typography>
+                  <Typography variant="body2">{t('menu-user:log_out')}</Typography>
                 </StackRowAlignCenter>
               </MenuItem>
               <MenuItem
@@ -179,7 +179,7 @@ export default function AuthLink() {
                 <Link to={`${prefix}/auth/${AUTH_SCREEN.CHANGE_PASSWORD}`}>
                   <StackRowAlignCenter gap={1} sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}>
                     <VpnKeyIcon fontSize="small" />
-                    <Typography variant="body2">Đổi mật khẩu</Typography>
+                    <Typography variant="body2">{t('menu-user:change_password')}</Typography>
                   </StackRowAlignCenter>
                 </Link>
               </MenuItem>

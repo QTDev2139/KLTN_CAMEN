@@ -20,6 +20,7 @@ import { OverviewFilterProps } from './overview.screen';
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { getDateRange } from '~/common/until/date-format.until';
 import { statisticsApi } from '~/apis';
+import { FormatPrice } from '~/components/elements/format-price/format-price.element';
 
 const COLORS = ['#1976d2', '#ed6c02', '#9c27b0', '#2e7d32', '#d32f2f', '#0288d1', '#7b1fa2', '#f57c00'];
 
@@ -41,12 +42,7 @@ interface StatisticsData {
   pending_orders: KPIData;
 }
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-  }).format(value);
-};
+
 
 // Format comparison percentage
 const formatComparison = (value: number | undefined) => {
@@ -224,7 +220,7 @@ export const ListOverview = ({
         <Box sx={{ flex: 1, minWidth: 220 }}>
           <KPICard
             label="Tổng doanh thu"
-            value={statisticsData ? formatCurrency(statisticsData.current_year_sales.value) : '0 ₫'}
+            value={statisticsData ? FormatPrice(statisticsData.current_year_sales.value) : '0 ₫'}
             gradient="linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)"
             icon={<AttachMoney />}
             trend={
@@ -238,7 +234,7 @@ export const ListOverview = ({
         <Box sx={{ flex: 1, minWidth: 220 }}>
           <KPICard
             label="Doanh thu đã thanh toán"
-            value={statisticsData ? formatCurrency(statisticsData.paid_revenue.value) : '0 ₫'}
+            value={statisticsData ? FormatPrice(statisticsData.paid_revenue.value) : '0 ₫'}
             gradient="linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%)"
             icon={<AttachMoney />}
             trend={
@@ -252,7 +248,7 @@ export const ListOverview = ({
         <Box sx={{ flex: 1, minWidth: 220 }}>
           <KPICard
             label="Chưa thanh toán"
-            value={statisticsData ? formatCurrency(statisticsData.unpaid_revenue.value) : '0 ₫'}
+            value={statisticsData ? FormatPrice(statisticsData.unpaid_revenue.value) : '0 ₫'}
             gradient="linear-gradient(135deg, #f57c00 0%, #ffb74d 100%)"
             icon={<PendingActions />}
             trend={
@@ -333,7 +329,7 @@ export const ListOverview = ({
         <ChartCard
           title="Trạng thái đơn hàng"
           height={350}
-          subtitle="Tìm kiếm nút thắt cổ chai và tối ưu hóa quy trình xử lý đơn hàng"
+          subtitle="Tối ưu hóa quy trình xử lý đơn hàng"
         >
           <ResponsiveContainer width="100%" height={350}>
             <BarChart
@@ -364,10 +360,13 @@ export const ListOverview = ({
         subtitle="Phân tích xu hướng và sự tương quan giữa doanh thu đã thanh toán và tổng đơn hàng"
       >
         <ResponsiveContainer width="100%" height={350}>
-          <ComposedChart data={filteredData.revenueAndOrders} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+          <ComposedChart data={filteredData.revenueAndOrders} margin={{ top: 20, right: 30, left: 70, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke={theme.palette.divider} />
             <XAxis dataKey="month" />
-            <YAxis yAxisId="left" label={{ value: 'Doanh thu (VND)', angle: -90, position: 'insideLeft' }} />
+            <YAxis 
+              yAxisId="left" 
+              label={{ value: 'Doanh thu (VND)', angle: -90, position: 'insideLeft', offset: -40 }} 
+            />
             <YAxis
               yAxisId="right"
               orientation="right"
@@ -376,7 +375,7 @@ export const ListOverview = ({
             <Tooltip
               formatter={(value: any, name: string) => {
                 if (name === 'Doanh thu đã thanh toán') {
-                  return [`${(value / 1000).toFixed(1)}K VND`, name];
+                  return [FormatPrice(value), name];
                 }
                 return [value, name];
               }}
@@ -408,7 +407,7 @@ export const ListOverview = ({
       <ChartCard
         title="Top Sản phẩm theo Doanh thu"
         height={350}
-        subtitle="Xác định sản phẩm chủ lực (best-seller) để tập trung nguồn lực (Quy tắc 80/20)"
+        subtitle="Xác định sản phẩm chủ lực (best-seller) để tập trung nguồn lực"
       >
         <ResponsiveContainer width="100%" height={350}>
           <BarChart
@@ -421,11 +420,8 @@ export const ListOverview = ({
             <YAxis dataKey="name" type="category" width={190} tick={{ fontSize: 12 }} />
             <Tooltip
               formatter={(value: any, name: string) => {
-                if (name === 'Tổng tiền') {
-                  return [
-                    new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value),
-                    name,
-                  ];
+                if (name === 'Tổng tiền (VND)') {
+                  return [FormatPrice(value), name];
                 }
                 return [value, name];
               }}

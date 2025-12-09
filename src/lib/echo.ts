@@ -19,14 +19,15 @@ export const echo = new Echo({
 
   // Cấu hình cho VPS
   wsHost: 'vlssoft.id.vn', 
-  wsPort: 45354,            
-  wssPort: 45354,           
+  wsPort: 45355,            
+  wssPort: 45355,
+  path: '/app/',           
   forceTLS: true, 
-  // scheme: 'wss', 
+  scheme: 'wss', 
   enabledTransports: ['ws'],
 
   // Auth cho private channel (dùng JWT)
-  authEndpoint: `${process.env.REACT_APP_BASE}broadcasting/auth`,
+  authEndpoint: `${process.env.REACT_APP_BASE}api/broadcasting/auth`,
   authorizer: (channel, options) => {
     const token = localStorage.getItem('access_token');
     return {
@@ -34,7 +35,7 @@ export const echo = new Echo({
       // dùng axiosApi để gửi kèm Bearer token
         baseURL
           .post(
-            '/broadcasting/auth',
+            '/api/broadcasting/auth',
             {
               socket_id: socketId,
               channel_name: channel.name,
