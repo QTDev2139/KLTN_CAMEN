@@ -167,7 +167,7 @@ const DeclarationPage: React.FC = () => {
       <Box
         sx={{
           position: 'relative',
-          minHeight: { xs: '350px', md: '450px' },
+          minHeight: { xs: '233px', md: '300px' },
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -229,6 +229,7 @@ const DeclarationPage: React.FC = () => {
                     color: palette.primary.main,
                     textTransform: 'uppercase',
                     letterSpacing: 1,
+                    fontSize: { xs: '0.7rem', md: '0.8rem' },
                   }}
                 >
                   {t('document_status')}
@@ -240,8 +241,8 @@ const DeclarationPage: React.FC = () => {
                 component="h1"
                 sx={{
                   fontWeight: 700,
-                  mb: 2,
-                  fontSize: { xs: '2rem', md: '3.5rem' },
+                  mb: 1.5,
+                  fontSize: { xs: '1.5rem', md: '2.5rem' },
                   color: palette.text.primary,
                   animation: `${fadeInUp} 1s ease-out 0.2s`,
                   animationFillMode: 'both',
@@ -253,12 +254,12 @@ const DeclarationPage: React.FC = () => {
               <Typography
                 variant="h5"
                 sx={{
-                  mb: 3,
-                  fontSize: { xs: '1rem', md: '1.3rem' },
+                  mb: 2,
+                  fontSize: { xs: '0.85rem', md: '1rem' },
                   maxWidth: '800px',
                   margin: '0 auto',
                   color: palette.text.secondary,
-                  lineHeight: 1.7,
+                  lineHeight: 1.6,
                   animation: `${fadeInUp} 1s ease-out 0.4s`,
                   animationFillMode: 'both',
                 }}
@@ -270,10 +271,10 @@ const DeclarationPage: React.FC = () => {
                 icon={<FilePresent />}
                 label={t('stats')}
                 sx={{
-                  mt: 2,
-                  px: 2,
-                  py: 2.5,
-                  fontSize: '1rem',
+                  mt: 1.5,
+                  px: 1.5,
+                  py: 2,
+                  fontSize: '0.85rem',
                   fontWeight: 600,
                   background: palette.primary.main,
                   color: '#fff',

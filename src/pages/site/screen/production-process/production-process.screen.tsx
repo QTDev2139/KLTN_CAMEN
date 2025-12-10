@@ -169,7 +169,7 @@ const ProductionProcessPage: React.FC = () => {
             <Box
                 sx={{
                     position: 'relative',
-                    minHeight: { xs: '500px', md: '600px' },
+                    minHeight: { xs: '333px', md: '400px' },
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -243,6 +243,7 @@ const ProductionProcessPage: React.FC = () => {
                                         color: palette.primary.main,
                                         textTransform: 'uppercase',
                                         letterSpacing: 1,
+                                        fontSize: { xs: '0.7rem', md: '0.8rem' },
                                     }}
                                 >
                                     {t('procedure')}
@@ -254,8 +255,8 @@ const ProductionProcessPage: React.FC = () => {
                                 component="h1"
                                 sx={{
                                     fontWeight: 700,
-                                    mb: 3,
-                                    fontSize: { xs: '2rem', md: '3.5rem' },
+                                    mb: 2,
+                                    fontSize: { xs: '1.5rem', md: '2.5rem' },
                                     color: palette.text.primary,
                                     animation: `${fadeInUp} 1s ease-out 0.2s`,
                                     animationFillMode: 'both',
@@ -267,12 +268,12 @@ const ProductionProcessPage: React.FC = () => {
                             <Typography
                                 variant="h5"
                                 sx={{
-                                    mb: 5,
-                                    fontSize: { xs: '1.1rem', md: '1.4rem' },
+                                    mb: 3,
+                                    fontSize: { xs: '0.85rem', md: '1rem' },
                                     maxWidth: '900px',
-                                    margin: '0 auto 40px',
+                                    margin: '0 auto 30px',
                                     color: palette.text.secondary,
-                                    lineHeight: 1.8,
+                                    lineHeight: 1.6,
                                     animation: `${fadeInUp} 1s ease-out 0.4s`,
                                     animationFillMode: 'both',
                                 }}
@@ -297,29 +298,29 @@ const ProductionProcessPage: React.FC = () => {
                                         <Paper
                                             elevation={0}
                                             sx={{
-                                                p: 3,
-                                                borderRadius: 3,
+                                                p: 2,
+                                                borderRadius: 2,
                                                 background: '#fff',
                                                 border: `2px solid ${palette.primary.main}20`,
                                                 transition: 'all 0.3s ease',
                                                 '&:hover': {
-                                                    transform: 'translateY(-8px)',
-                                                    boxShadow: `0 12px 40px ${palette.primary.main}20`,
+                                                    transform: 'translateY(-6px)',
+                                                    boxShadow: `0 8px 24px ${palette.primary.main}20`,
                                                     borderColor: palette.primary.main,
                                                 },
                                             }}
                                         >
                                             <Box
                                                 sx={{
-                                                    width: 60,
-                                                    height: 60,
+                                                    width: 50,
+                                                    height: 50,
                                                     borderRadius: '50%',
                                                     background: `linear-gradient(135deg, ${palette.primary.main} 0%, ${palette.primary.light} 100%)`,
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
                                                     color: '#fff',
-                                                    margin: '0 auto 16px',
+                                                    margin: '0 auto 12px',
                                                     boxShadow: `0 4px 12px ${palette.primary.main}30`,
                                                 }}
                                             >
@@ -330,8 +331,8 @@ const ProductionProcessPage: React.FC = () => {
                                                 sx={{
                                                     fontWeight: 800,
                                                     color: palette.primary.main,
-                                                    mb: 1,
-                                                    fontSize: { xs: '2rem', md: '2.5rem' },
+                                                    mb: 0.5,
+                                                    fontSize: { xs: '1.5rem', md: '1.8rem' },
                                                 }}
                                             >
                                                 {stat.value}
@@ -341,6 +342,7 @@ const ProductionProcessPage: React.FC = () => {
                                                 sx={{
                                                     color: palette.text.secondary,
                                                     fontWeight: 600,
+                                                    fontSize: { xs: '0.875rem', md: '0.95rem' },
                                                 }}
                                             >
                                                 {stat.description}
