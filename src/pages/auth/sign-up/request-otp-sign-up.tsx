@@ -14,6 +14,7 @@ import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { BoxForm } from '~/components/elements/forms/box/box-form';
 import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   setMode: (mode: SignUpMode) => void;
@@ -39,6 +40,7 @@ const schema = Yup.object({
 export default function RequestOtpSignUp({ setMode, setEmail }: Props) {
   const currentLang = useLang();
   const prefix = getLangPrefix(currentLang);
+  const { t } = useTranslation('logout');
 
   const { snackbar } = useSnackbar();
 
@@ -82,24 +84,24 @@ export default function RequestOtpSignUp({ setMode, setEmail }: Props) {
       <BoxForm>
         <Logo />
         <Typography variant="h5" sx={{ textAlign: 'center', fontSize: FONT_SIZE.large, padding: '20px 0' }}>
-          Sign up to CamenFood
+          {t('title')}
         </Typography>
         <TextField
-          label="User Name"
+          label={t("username_placeholder")}
           fullWidth
           {...formik.getFieldProps('name')}
           error={showError('name')}
           helperText={helperText('name')}
         />
         <TextField
-          label="Email"
+          label={t("email_placeholder")}
           fullWidth
           {...formik.getFieldProps('email')}
           error={showError('email')}
           helperText={helperText('email')}
         />
         <TextField
-          label="Password"
+          label={t("password_placeholder")}
           type="password"
           fullWidth
           {...formik.getFieldProps('password')}
@@ -107,7 +109,7 @@ export default function RequestOtpSignUp({ setMode, setEmail }: Props) {
           helperText={helperText('password')}
         />
         <TextField
-          label="Confirm Password"
+          label={t("confirm_password_placeholder")}
           type="password"
           fullWidth
           {...formik.getFieldProps('confirm_password')}
@@ -115,13 +117,13 @@ export default function RequestOtpSignUp({ setMode, setEmail }: Props) {
           helperText={helperText('confirm_password')}
         />
         <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting} fullWidth>
-          {formik.isSubmitting ? 'Create account' : 'Create account'}
+          {formik.isSubmitting ? t('create_account_button') : t('create_account_button')}
         </Button>
 
         <StackRowAlignCenter sx={{ justifyContent: 'center', width: '100%', padding: '20px 0' }}>
-          <Typography sx={{ paddingRight: '6px' }}>You have an account?</Typography>
+          <Typography sx={{ paddingRight: '6px' }}>{t('have_account_prompt')}</Typography>
           <Link to={`${prefix}/auth/${AUTH_SCREEN.LOGIN}`} replace>
-            Login with an account
+            {t('login_link')}
           </Link>
         </StackRowAlignCenter>
       </BoxForm>

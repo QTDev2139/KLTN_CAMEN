@@ -16,12 +16,14 @@ import { useLang } from '~/hooks/use-lang/use-lang';
 import { getLangPrefix } from '~/common/constant/get-lang-prefix';
 import { formatDateTime } from '~/common/until/date-format.until';
 import ContainerWrapper from '~/components/elements/container/container.element';
+import { useTranslation } from 'react-i18next';
 
 export default function ProductDetailPage() {
   const { palette } = useTheme();
   const { snackbar } = useSnackbar();
   const [open, setOpen] = React.useState(false);
   const { slug } = useParams<{ slug?: string }>();
+  const { t } = useTranslation('product-detail');
 
   // Lấy lang từ hook
   const currentLang = useLang();
@@ -92,12 +94,12 @@ export default function ProductDetailPage() {
   // ];
 
   const Rated = [
-    { label: 'Tất cả', value: 'all' },
-    { label: '5 sao', value: 5 },
-    { label: '4 sao', value: 4 },
-    { label: '3 sao', value: 3 },
-    { label: '2 sao', value: 2 },
-    { label: '1 sao', value: 1 },
+    { label: t('all'), value: 'all' },
+    { label: `5 ${t('star_rating')}`, value: 5 },
+    { label: `4 ${t('star_rating')}`, value: 4 },
+    { label: `3 ${t('star_rating')}`, value: 3 },
+    { label: `2 ${t('star_rating')}`, value: 2 },
+    { label: `1 ${t('star_rating')}`, value: 1 },
   ];
   const filteredRate = useMemo(
     () =>
@@ -218,7 +220,7 @@ export default function ProductDetailPage() {
                     </Button>
                   </ButtonGroup>
                   <Typography variant="subtitle2" sx={{ color: palette.text.secondary, fontSize: '14px' }}>
-                    {productDetail?.stock_quantity} Sản phẩm có sẳn{' '}
+                    {productDetail?.stock_quantity} {t('products_available')}
                   </Typography>
                 </StackRow>
                 <StackRow gap={2} sx={{ paddingTop: 4 }}>
@@ -239,7 +241,7 @@ export default function ProductDetailPage() {
                       },
                     }}
                   >
-                    {isAddingToCart ? 'Thêm Vào Giỏ Hàng' : 'Thêm Vào Giỏ Hàng'}
+                    {isAddingToCart ? t('add_to_cart') : t('add_to_cart')}
                   </Button>
 
                   {/* Nút Mua ngay */}
@@ -266,17 +268,17 @@ export default function ProductDetailPage() {
 
         <Grid container spacing={2}>
           <Grid size={{ md: 6, xs: 12 }}>
-            <BoxContent title="Giá trị dinh dưỡng" content={productDetail?.product_translations[0].nutrition_info} />
+            <BoxContent title={t('nutritional_value')} content={productDetail?.product_translations[0].nutrition_info} />
           </Grid>
           <Grid size={{ md: 6, xs: 12 }}>
             <Stack spacing={2}>
               <BoxContent
-                title="Hướng dẫn sử dụng"
+                title={t('usage_instructions')}
                 content={productDetail?.product_translations[0].usage_instruction}
               />
               {productDetail?.product_translations[0].reason_to_choose && (
                 <BoxContent
-                  title="Lý do chọn sản phẩm"
+                  title={t('reason_to_choose')}
                   content={productDetail?.product_translations[0].reason_to_choose}
                 />
               )}
@@ -291,7 +293,7 @@ export default function ProductDetailPage() {
           >
             <Stack>
               <Typography variant="h2" sx={{ paddingBottom: PADDING_GAP_LAYOUT, color: palette.primary.main }}>
-                Đánh giá sản phẩm
+                {t('product_reviews')}
               </Typography>
               <StackRow>
                 {Rated.map((rate) => {

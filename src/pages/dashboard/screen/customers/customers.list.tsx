@@ -13,7 +13,7 @@ import {
   Box,
   Pagination,
 } from '@mui/material';
-import { ModeEditOutlineOutlined, Search as SearchIcon } from '@mui/icons-material';
+import { ModeEditOutlineOutlined } from '@mui/icons-material';
 import { User } from '~/apis/user/user.interfaces.api';
 import { userApi } from '~/apis';
 import { ConvertRole } from './customers.state';
@@ -30,13 +30,15 @@ const actionColor: Record<number, string> = {
   1: "success",
 }
 
+interface CustomersListProps {
+  searchEmail: string;
+}
 
-const CustomersList: React.FC = () => {
+const CustomersList: React.FC<CustomersListProps> = ({ searchEmail }) => {
   const { snackbar } = useSnackbar();
   const [listCustomers, setListCustomers] = useState<User[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [searchEmail, setSearchEmail] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const CUSTOMERS_PER_PAGE = 8;
 
@@ -45,6 +47,7 @@ const CustomersList: React.FC = () => {
     try {
       const payload = {
         name: values?.name ?? selectedUser.name,
+        email: values?.email ?? selectedUser.email,
         status: Number(values?.status ?? selectedUser.status),
         role_id: 4,
       };
@@ -78,6 +81,7 @@ const CustomersList: React.FC = () => {
 
   // Filter customers by email
   const filteredCustomers = useMemo(() => {
+    if (!searchEmail) return listCustomers;
     return listCustomers.filter((customer) =>
       customer.email.toLowerCase().includes(searchEmail.toLowerCase())
     );
@@ -88,8 +92,9 @@ const CustomersList: React.FC = () => {
     return filteredCustomers.slice((currentPage - 1) * CUSTOMERS_PER_PAGE, currentPage * CUSTOMERS_PER_PAGE);
   }, [filteredCustomers, currentPage]);
 
+  // Reset to first page when search email changes
   useEffect(() => {
-    setCurrentPage(1); // Reset to first page when search email changes
+    setCurrentPage(1);
   }, [searchEmail]);
 
   const formik = useFormik({
@@ -192,7 +197,13 @@ const CustomersList: React.FC = () => {
               onChange={formik.handleChange}
               disabled
             />
-            
+            <TextField
+              label="Email"
+              fullWidth
+              name="email"
+              value={selectedUser?.email ?? ''}
+              disabled
+            />
             <TextField
               select
               label="Trạng thái"

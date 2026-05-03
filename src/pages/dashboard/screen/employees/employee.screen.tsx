@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import CustomersList from './employee.list';
+import EmployeesList from './employee.list';
 import { Divider, Stack, useTheme, TextField, MenuItem } from '@mui/material';
 import { ModalElement } from '~/components/modal/modal-element/modal-element';
 import { useState } from 'react';
@@ -9,12 +9,15 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { userApi } from '~/apis';
+import SearchIcon from '@mui/icons-material/Search';
+import { StackRowJustBetween } from '~/components/elements/styles/stack.style';
 
-export default function CustomersScreen() {
+export default function EmployeesScreen() {
   const { palette } = useTheme();
   const { snackbar } = useSnackbar();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [refreshKey, setRefreshKey] = useState<number>(0);
+  const [searchEmail, setSearchEmail] = useState<string>('');
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Tên là bắt buộc').min(2, 'Tên phải có ít nhất 2 ký tự'),
@@ -43,20 +46,36 @@ export default function CustomersScreen() {
 
   return (
     <Stack spacing={2}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h3">Quản lý nhân viên</Typography>
-        <Button
-          onClick={() => {
-            formik.resetForm();
-            setOpenModal(true);
-          }}
-        >
-          <Typography variant="subtitle2">Thêm nhân viên mới</Typography>
-        </Button>
-      </Box>
+      <StackRowJustBetween>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h3">Quản lý nhân viên</Typography>
+        </Box>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <TextField
+            placeholder="Tìm kiếm theo email..."
+            size="small"
+            variant="outlined"
+            value={searchEmail}
+            onChange={(e) => setSearchEmail(e.target.value)}
+            sx={{ minWidth: 250 }}
+            InputProps={{
+              startAdornment: <SearchIcon sx={{ mr: 1, color: 'action.active' }} />,
+            }}
+          />
+          <Button
+            onClick={() => {
+              formik.resetForm();
+              setOpenModal(true);
+            }}
+            variant="outlined"
+          >
+            <Typography variant="subtitle2">Thêm nhân viên mới</Typography>
+          </Button>
+        </Stack>
+      </StackRowJustBetween>
       <Divider sx={{ color: palette.divider }} />
 
-      <CustomersList key={refreshKey} />
+      <EmployeesList key={refreshKey} searchEmail={searchEmail} />
 
       <ModalElement
         open={openModal}
@@ -105,7 +124,6 @@ export default function CustomersScreen() {
             >
               <MenuItem value="2">Ban lãnh đạo</MenuItem>
               <MenuItem value="3">Quản lý</MenuItem>
-              {/* <MenuItem value="5">Marketing</MenuItem> */}
               <MenuItem value="6">Nhân viên bán hàng</MenuItem>
               <MenuItem value="7">Nhân viên kho</MenuItem>
             </TextField>

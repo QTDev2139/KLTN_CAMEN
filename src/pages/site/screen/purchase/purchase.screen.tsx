@@ -115,7 +115,7 @@ const PurchasePage: React.FC = () => {
     (ORDER_FILTERS || []).forEach((f) => {
       if (f.value === 'all') return;
       if (f.value === 'refunded') {
-        counts[f.value] = orders.filter((o) => o.status === 'refund_requested' || o.status === 'refunded').length;
+        counts[f.value] = orders.filter((o) => o.status === 'refund_requested' ).length;
       } else {
         counts[f.value] = orders.filter((o) => o.status === f.value).length;
       }
@@ -428,7 +428,7 @@ const PurchasePage: React.FC = () => {
                 )}
                 {(order.status === 'shipped' || order.status === 'completed') && (
                   <>
-                    {order.payment_status === 'paid' && (
+                    {order.payment_status === 'paid' && order.order_items[0]?.review === null && (
                       <Button
                         variant="outlined"
                         color="error"
@@ -442,18 +442,20 @@ const PurchasePage: React.FC = () => {
                         Hoàn tiền
                       </Button>
                     )}
-                    <Button
-                      variant="outlined"
-                      color="success"
-                      startIcon={<CheckCircleOutlineIcon />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleConfirmClick(order);
-                      }}
-                    >
-                      Đã nhận hàng
-                    </Button>
                   </>
+                )}
+                {order.status === 'shipped' && (
+                  <Button
+                    variant="outlined"
+                    color="success"
+                    startIcon={<CheckCircleOutlineIcon />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleConfirmClick(order);
+                    }}
+                  >
+                    Đã nhận hàng
+                  </Button>
                 )}
                 {/* // order.status === 'cancelled' ? (
                 //   <Button
@@ -577,7 +579,15 @@ const PurchasePage: React.FC = () => {
               <Typography color="text.secondary">Không có dữ liệu</Typography>
             </Box>
           ) : (
-            <Box sx={{ overflowY: 'auto', pr: 1, '&::-webkit-scrollbar': { width: 6 }, '&::-webkit-scrollbar-track': { bgcolor: 'transparent' }, '&::-webkit-scrollbar-thumb': { bgcolor: 'divider', borderRadius: 1 } }}>
+            <Box
+              sx={{
+                overflowY: 'auto',
+                pr: 1,
+                '&::-webkit-scrollbar': { width: 6 },
+                '&::-webkit-scrollbar-track': { bgcolor: 'transparent' },
+                '&::-webkit-scrollbar-thumb': { bgcolor: 'divider', borderRadius: 1 },
+              }}
+            >
               {/* Order Code & Status */}
               <Box sx={{ mb: 2, p: 1.5, bgcolor: 'background.default', borderRadius: 1.5 }}>
                 <Typography fontWeight={700} sx={{ mb: 1, fontSize: '1.1rem' }}>
@@ -597,7 +607,16 @@ const PurchasePage: React.FC = () => {
 
               {/* Refund Info - Hiển thị nếu có tiền hoàn */}
               {detailOrder.refund_amount && Number(detailOrder.refund_amount) > 0 && (
-                <Box sx={{ mb: 2, p: 1.5, bgcolor: 'error.50', borderRadius: 1.5, border: '1px solid', borderColor: 'error.200' }}>
+                <Box
+                  sx={{
+                    mb: 2,
+                    p: 1.5,
+                    bgcolor: 'error.50',
+                    borderRadius: 1.5,
+                    border: '1px solid',
+                    borderColor: 'error.200',
+                  }}
+                >
                   <Typography fontWeight={700} sx={{ mb: 1, color: 'error.main', fontSize: '1rem' }}>
                     💰 Số tiền đã được hoàn
                   </Typography>
@@ -664,7 +683,14 @@ const PurchasePage: React.FC = () => {
               {/* Products Section */}
               <Box sx={{ mb: 2 }}>
                 <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: 'text.primary' }}>
-                  Sản phẩm ({(Array.isArray(detailOrder.order_items) ? detailOrder.order_items : (detailOrder as any).items || []).length})
+                  Sản phẩm (
+                  {
+                    (Array.isArray(detailOrder.order_items)
+                      ? detailOrder.order_items
+                      : (detailOrder as any).items || []
+                    ).length
+                  }
+                  )
                 </Typography>
                 <Stack spacing={1.5}>
                   {(Array.isArray(detailOrder.order_items)
@@ -721,7 +747,16 @@ const PurchasePage: React.FC = () => {
                   </Box>
                 </Box>
               ) : (
-                <Box sx={{ mb: 2, p: 1.5, bgcolor: 'success.50', borderRadius: 1.5, border: '1px solid', borderColor: 'success.200' }}>
+                <Box
+                  sx={{
+                    mb: 2,
+                    p: 1.5,
+                    bgcolor: 'success.50',
+                    borderRadius: 1.5,
+                    border: '1px solid',
+                    borderColor: 'success.200',
+                  }} 
+                >
                   <Typography variant="body2" fontWeight={600} sx={{ color: 'success.main', textAlign: 'center' }}>
                     Thanh toán khi nhận hàng (COD)
                   </Typography>
@@ -804,7 +839,11 @@ const PurchasePage: React.FC = () => {
         message={
           <Stack spacing={2} sx={{ width: '100%', pt: 1 }}>
             <TextField
-              label="Lý do hoàn tiền"
+              label={
+                refundReason?.payment_method === 'cod'
+                  ? 'Nhập lý do và thông tin tài khoản nhận tiền hoàn'
+                  : 'Nhập lý do hoàn tiền'
+              }
               fullWidth
               value={refundComment}
               onChange={(e) => setRefundComment(e.target.value)}
@@ -833,7 +872,14 @@ const PurchasePage: React.FC = () => {
               </Typography>
             </Stack>
             <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-              <span style={{ color: 'red' }}>*</span>Chỉ được hoàn tiền với số lượng sản phẩm nhất định.
+              <div>
+                <span style={{ color: 'red' }}>*</span>Chỉ được hoàn tiền với số lượng sản phẩm nhất định.
+              </div>
+              <div>
+                <span style={{ color: 'red' }}>*</span>Với thanh toán tiền mặt vui lòng cung cấp thông tin tài khoản
+                nhận tiền hoàn gồm:
+              </div>
+              <span style={{ color: 'red' }}>Tên ngân hàng, Số tài khoản, Tên người nhận.</span>
             </Typography>
             {refundPreviews.length > 0 && (
               <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap' }}>

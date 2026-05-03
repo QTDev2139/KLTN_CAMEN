@@ -10,10 +10,11 @@ import { StackRowAlignCenter } from '~/components/elements/styles/stack.style';
 import DeliveryView from './delivery.view';
 import ImportProductViewMissed from './import-product.view-missing';
 import DeliveryViewMissed from './delivery.view-missed';
+import { useProfile } from '~/hooks/use-profile/use-profile.hook';
 
 const ImportProductScreen: React.FC = () => {
   const { palette } = useTheme();
-
+  const { profile } = useProfile();
   const [mode, setMode] = useState<ImportProductMode>(ImportProductMode.LIST);
   const [importProduct, setImportProduct] = useState<RequestImportPayload | undefined>(undefined);
 
@@ -69,7 +70,7 @@ const ImportProductScreen: React.FC = () => {
         <Typography variant="h3">Quản lý nhập hàng</Typography>
         {mode === ImportProductMode.LIST && (
           <Button onClick={goCreate}>
-            <Typography variant="subtitle2">Thêm yêu cầu nhập hàng mới</Typography>
+            <Typography variant="subtitle2" sx={{ display: profile?.role?.name === 'manager' ? 'none' : 'block' }}>Thêm yêu cầu nhập hàng mới</Typography>
           </Button>
         )}
         {(mode === ImportProductMode.CREATE || mode === ImportProductMode.UPDATE) && (

@@ -8,7 +8,6 @@ import { StackRowJustBetween } from '~/components/elements/styles/stack.style';
 
 export default function CustomersScreen() {
   const { palette } = useTheme();
-  const [refreshKey, setRefreshKey] = useState<number>(0);
   const [searchEmail, setSearchEmail] = useState<string>('');
 
   return (
@@ -30,7 +29,7 @@ export default function CustomersScreen() {
         />
       </StackRowJustBetween>
       <Divider sx={{ color: palette.divider }} />
-      <CustomersList key={refreshKey} /> {/** searchEmail={searchEmail} */}
+      <CustomersList searchEmail={searchEmail} />
     </Stack>
   );
 }

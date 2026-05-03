@@ -28,6 +28,8 @@ import FOOTER_EN from '~/locates/en/footer.json';
 import FOOTER_VI from '~/locates/vi/footer.json';
 import CATEGORY_EN from '~/locates/en/category.json';
 import CATEGORY_VI from '~/locates/vi/category.json';
+import PRODUCT_DETAIL_VI from '~/locates/vi/product-detail.json';
+import PRODUCT_DETAIL_EN from '~/locates/en/product-detail.json';
 
 export const locates = {
   vi: { label: 'Việt Nam', icon: ViIcon },
@@ -49,6 +51,7 @@ export const resources = {
     'menu-user': MENU_USER_EN,
     footer: FOOTER_EN,
     category: CATEGORY_EN,
+    'product-detail': PRODUCT_DETAIL_EN,
   },
   vi: {
     blog: BLOG_VI,
@@ -64,6 +67,7 @@ export const resources = {
     'menu-user': MENU_USER_VI,
     footer: FOOTER_VI,
     category: CATEGORY_VI,
+    'product-detail': PRODUCT_DETAIL_VI,
   },
 };
 
@@ -86,6 +90,7 @@ i18n.use(initReactI18next).init({
     'menu-user',
     'footer',
     'category',
+    'product-detail',
   ], // translation, name space
   lng: defaultLanguages,
   defaultNS,

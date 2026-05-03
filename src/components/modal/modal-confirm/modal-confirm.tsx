@@ -17,6 +17,7 @@ type ModalConfirmProps = {
   onClose: () => void;
   onConfirm: () => void;
   loading?: boolean;
+  size?: 'xs' | 'sm' | 'md' | 'lg';
 };
 
 export const ModalConfirm: React.FC<ModalConfirmProps> = ({
@@ -26,12 +27,13 @@ export const ModalConfirm: React.FC<ModalConfirmProps> = ({
   onClose,
   onConfirm,
   loading = false,
+  size = 'xs',
 }) => {
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="xs"
+      maxWidth={size}
       fullWidth
       PaperProps={{ sx: { borderRadius: 2, p: 1 } }}
     >

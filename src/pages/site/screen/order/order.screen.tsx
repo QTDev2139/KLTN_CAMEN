@@ -112,7 +112,9 @@ const OrderPage: React.FC = () => {
         });
 
         snackbar('success', 'Tạo đơn hàng thành công!');
+        console.log(order.data?.code)
         if (values.paymentMethod === 'vnpay') {
+          console.log(order.data?.code)
           const result = await paymentApi.createPayment({
             amount: finalAmount,
             order_id: order.data?.code,

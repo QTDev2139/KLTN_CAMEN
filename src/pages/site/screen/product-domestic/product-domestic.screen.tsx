@@ -77,7 +77,14 @@ const ProductDomesticPage: React.FC = () => {
     <ContainerWrapper sx={{ padding: PADDING_GAP_LAYOUT }}>
       <Grid container spacing={2}>
         <Grid size={{ md: 2 }}>
-          <Stack>
+          <Stack
+            sx={{
+              position: 'sticky',
+              top: 80, 
+              maxHeight: 'calc(100vh - 80px)',
+              overflowY: 'auto',
+            }}
+          >
             <Typography variant="h6">{t('category')}</Typography>
             <Divider />
             {category.map((item) => (
@@ -145,7 +152,7 @@ const ProductDomesticPage: React.FC = () => {
                     </Typography>
                     <StackRowAlignCenter gap={1}>
                       <Rating name="read-only" size="small" value={1} max={1} readOnly />
-                      <Typography variant="subtitle2">5.0</Typography>
+                      <Typography variant="subtitle2">{Number(item.average_rating)?.toFixed(1) || '0.0'}</Typography>
                     </StackRowAlignCenter>
                     <StackRowAlignCenter gap={1}>
                       <LocationOn sx={{ color: palette.text.secondary, fontSize: '16px' }} />

@@ -32,7 +32,11 @@ const actionColor: Record<number, string> = {
 
 const EMPLOYEES_PER_PAGE = 9;
 
-const EmployeesList: React.FC = () => {
+interface EmployeesListProps {
+  searchEmail: string;
+}
+
+const EmployeesList: React.FC<EmployeesListProps> = ({ searchEmail }) => {
   const { snackbar } = useSnackbar();
   const [listPersonnel, setListPersonnel] = useState<User[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -52,6 +56,7 @@ const EmployeesList: React.FC = () => {
       snackbar('success', 'Cập nhật nhân viên thành công');
       setOpenModal(false);
       setSelectedUser(null);
+      setCurrentPage(1); // Reset to first page after update
       fetchPersonnel();
     } catch (err) {
       console.error('Lỗi cập nhật nhân viên:', err);
@@ -60,19 +65,38 @@ const EmployeesList: React.FC = () => {
   }
 
   const fetchPersonnel = async () => {
-    const res = await userApi.getPersonnelList();
-    setListPersonnel(res);
-    setCurrentPage(1); // Reset pagination when fetching new data
+    try {
+      const res = await userApi.getPersonnelList();
+      setListPersonnel(res);
+      setCurrentPage(1); // Reset pagination when fetching new data
+    } catch (error) {
+      console.error('Lỗi tải danh sách nhân viên:', error);
+      snackbar('error', 'Không tải được danh sách nhân viên');
+    }
   };
   
   useEffect(() => {
     fetchPersonnel();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Paginate employees
+  // Filter employees by email
+  const filteredEmployees = useMemo(() => {
+    if (!searchEmail) return listPersonnel;
+    return listPersonnel.filter((employee) =>
+      employee.email.toLowerCase().includes(searchEmail.toLowerCase())
+    );
+  }, [listPersonnel, searchEmail]);
+
+  // Paginate filtered employees
   const paginatedEmployees = useMemo(() => {
-    return listPersonnel.slice((currentPage - 1) * EMPLOYEES_PER_PAGE, currentPage * EMPLOYEES_PER_PAGE);
-  }, [listPersonnel, currentPage]);
+    return filteredEmployees.slice((currentPage - 1) * EMPLOYEES_PER_PAGE, currentPage * EMPLOYEES_PER_PAGE);
+  }, [filteredEmployees, currentPage]);
+
+  // Reset to first page when search email changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchEmail]);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -98,55 +122,62 @@ const EmployeesList: React.FC = () => {
 
   return (
     <React.Fragment>
-      <TableElement
-        columns={columns}
-        rows={paginatedEmployees}
-        renderRow={(user, index) => (
-          <TableRow hover key={user.id}>
-            <TableCell>
-              <Typography sx={{ textAlign: 'center' }}>{(currentPage - 1) * EMPLOYEES_PER_PAGE + index + 1}</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography>{user.name}</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography>{user.email}</Typography>
-            </TableCell>
-            <TableCell>
-              <TagElement type={StatusRole[user.role?.name || '']} content={NameStatusRole[user.role?.name || '']} />
-            </TableCell>
-            <TableCell>
-              <TagElement
-                type={actionColor[user.status || 0] as any}
-                content={actionName[user.status || 0]}
-              />
-            </TableCell>
-            <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
-              <Typography sx={{ width: '100%', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}>
-                <Tooltip title="Sửa">
-                  <span
-                    style={{ display: 'inline-block' }}
-                    onClick={() => {
-                      if (user.role?.name === 'admin') return;
-                      setSelectedUser(user);
-                      setOpenModal(true);
-                    }}
-                  >
-                    <IconButton size="small" disabled={user.role?.name === 'admin'}>
-                      <ModeEditOutlineOutlined fontSize="small" />
-                    </IconButton>
-                  </span>
-                </Tooltip>
-              </Typography>
-            </TableCell>
-          </TableRow>
-        )}
-      />
+      <Box
+        sx={{
+          scrollbarGutter: 'stable',
+          '&:has(table)': { overflowY: 'auto' },
+        }}
+      >
+        <TableElement
+          columns={columns}
+          rows={paginatedEmployees}
+          renderRow={(user, index) => (
+            <TableRow hover key={user.id}>
+              <TableCell>
+                <Typography sx={{ textAlign: 'center' }}>{(currentPage - 1) * EMPLOYEES_PER_PAGE + index + 1}</Typography>
+              </TableCell>
+              <TableCell>
+                <Typography>{user.name}</Typography>
+              </TableCell>
+              <TableCell>
+                <Typography>{user.email}</Typography>
+              </TableCell>
+              <TableCell>
+                <TagElement type={StatusRole[user.role?.name || '']} content={NameStatusRole[user.role?.name || '']} />
+              </TableCell>
+              <TableCell>
+                <TagElement
+                  type={actionColor[user.status || 0] as any}
+                  content={actionName[user.status || 0]}
+                />
+              </TableCell>
+              <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
+                <Typography sx={{ width: '100%', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}>
+                  <Tooltip title="Sửa">
+                    <span
+                      style={{ display: 'inline-block' }}
+                      onClick={() => {
+                        if (user.role?.name === 'admin') return;
+                        setSelectedUser(user);
+                        setOpenModal(true);
+                      }}
+                    >
+                      <IconButton size="small" disabled={user.role?.name === 'admin'}>
+                        <ModeEditOutlineOutlined fontSize="small" />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
+                </Typography>
+              </TableCell>
+            </TableRow>
+          )}
+        />
+      </Box>
 
-      {Math.ceil(listPersonnel.length / EMPLOYEES_PER_PAGE) > 1 && (
+      {Math.ceil(filteredEmployees.length / EMPLOYEES_PER_PAGE) > 1 && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
           <Pagination
-            count={Math.ceil(listPersonnel.length / EMPLOYEES_PER_PAGE)}
+            count={Math.ceil(filteredEmployees.length / EMPLOYEES_PER_PAGE)}
             page={currentPage}
             variant="outlined"
             onChange={(event, value) => setCurrentPage(value)}
@@ -188,7 +219,7 @@ const EmployeesList: React.FC = () => {
             >
               <MenuItem value="2">Ban lãnh đạo</MenuItem>
               <MenuItem value="3">Quản lý</MenuItem>
-              <MenuItem value="6">Staff</MenuItem>
+              <MenuItem value="6">Nhân viên bán hàng</MenuItem>
               <MenuItem value="7">Nhân viên kho</MenuItem>
             </TextField>
             <TextField

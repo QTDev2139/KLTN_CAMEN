@@ -25,14 +25,13 @@ import { StateLabelContact } from './contact.status';
 import { useSnackbar } from '~/hooks/use-snackbar/use-snackbar';
 import { User } from '~/apis/user/user.interfaces.api';
 import { ModalConfirm } from '~/components/modal/modal-confirm/modal-confirm';
-// import contactApi from '~/apis/contact'; // uncomment if API exists
 
 type ContactItem = {
   id: number | string;
   name: string;
   email: string;
   phone?: string;
-  title?: string; // dịch vụ
+  title?: string;
   content?: string;
   created_at?: string;
   status?: number;
@@ -43,7 +42,11 @@ type ContactItem = {
 
 const CONTACTS_PER_PAGE = 6;
 
-const ContactList: React.FC = () => {
+interface ContactListProps {
+  selectedServices: string[];
+}
+
+const ContactList: React.FC<ContactListProps> = ({ selectedServices }) => {
   const [items, setItems] = useState<ContactItem[]>([]);
   const [dsnv, setDsnv] = useState<any[]>([]);
   const { snackbar } = useSnackbar();
@@ -75,7 +78,7 @@ const ContactList: React.FC = () => {
     try {
       const data = await contactApi.listContacts();
       setItems(data);
-      setCurrentPage(1); // Reset pagination when fetching new data
+      setCurrentPage(1);
     } catch (err) {
       console.error(err);
     }
@@ -94,10 +97,23 @@ const ContactList: React.FC = () => {
     fetchProfile();
   }, []);
 
-  // Paginate contacts
+  // Filter contacts by service
+  const filteredContacts = useMemo(() => {
+    if (selectedServices.length === 0) return items;
+    return items.filter((contact) => 
+      contact.title && selectedServices.includes(contact.title)
+    );
+  }, [items, selectedServices]);
+
+  // Paginate filtered contacts
   const paginatedItems = useMemo(() => {
-    return items.slice((currentPage - 1) * CONTACTS_PER_PAGE, currentPage * CONTACTS_PER_PAGE);
-  }, [items, currentPage]);
+    return filteredContacts.slice((currentPage - 1) * CONTACTS_PER_PAGE, currentPage * CONTACTS_PER_PAGE);
+  }, [filteredContacts, currentPage]);
+
+  // Reset to first page when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedServices]);
 
   const handleUpdate = (row: ContactItem) => {
     setSelected(row);
@@ -134,13 +150,12 @@ const ContactList: React.FC = () => {
       snackbar('success', 'Xóa liên hệ thành công');
       await fetchList();
       setOpenConfirm(false);
-      setCurrentPage(1); // Reset pagination after delete
+      setCurrentPage(1);
     } catch (e) {
       console.error(e);
     }
   };
 
-  // Columns for TableElement
   const columns = [
     { id: 'stt', label: 'STT' },
     { id: 'name', label: 'Tên khách hàng', width: 200 },
@@ -156,60 +171,67 @@ const ContactList: React.FC = () => {
 
   return (
     <Stack>
-      <TableElement
-        columns={columns}
-        rows={paginatedItems}
-        renderRow={(row: ContactItem, index: number) => (
-          <TableRow key={row.id} hover>
-            <TableCell sx={{ textAlign: 'center' }}>{(currentPage - 1) * CONTACTS_PER_PAGE + index + 1}</TableCell>
-            <TableCell>{row.name}</TableCell>
-            <TableCell>{row.email}</TableCell>
-            <TableCell sx={{ textAlign: 'center' }}>{row.phone || '-'}</TableCell>
-            <TableCell sx={{ textAlign: 'center' }}>{(row.title && StateLabelContact[row.title]) || '-'}</TableCell>
-            <TableCell>
-              <TagElement
-                type={row.status === 1 ? 'success' : 'error'}
-                content={row.status === 1 ? 'Đã liên hệ' : 'Chưa liên hệ'}
-              />
-            </TableCell>
-            <TableCell sx={{ maxWidth: 320, overflow: 'hidden' }}>
-              <Typography
-                sx={{
-                  ...getLimitLineCss(1),
-                }}
-              >
-                {row.content}
-              </Typography>
-            </TableCell>
-            <TableCell sx={{ textAlign: 'center' }}>{formatDateTime(row.created_at)}</TableCell>
-            <TableCell sx={{ textAlign: 'center' }}>{row.user?.name || '-'}</TableCell>
-            <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
-              <Stack direction="row" spacing={1} justifyContent="center">
-                <IconButton size="small" title="sửa" onClick={() => handleUpdate(row)}>
-                  <EditOutlined fontSize="small" />
-                </IconButton>
-                {(role === 'admin' || role === 'root') && (
-                  <IconButton
-                    size="small"
-                    title="Xóa"
-                    onClick={() => {
-                      setSelected(row);
-                      setOpenConfirm(true);
-                    }}
-                  >
-                    <DeleteOutline fontSize="small" />
+      <Box
+        sx={{
+          scrollbarGutter: 'stable',
+          '&:has(table)': { overflowY: 'auto' },
+        }}
+      >
+        <TableElement
+          columns={columns}
+          rows={paginatedItems}
+          renderRow={(row: ContactItem, index: number) => (
+            <TableRow key={row.id} hover>
+              <TableCell sx={{ textAlign: 'center' }}>{(currentPage - 1) * CONTACTS_PER_PAGE + index + 1}</TableCell>
+              <TableCell>{row.name}</TableCell>
+              <TableCell>{row.email}</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>{row.phone || '-'}</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>{(row.title && StateLabelContact[row.title]) || '-'}</TableCell>
+              <TableCell>
+                <TagElement
+                  type={row.status === 1 ? 'success' : 'error'}
+                  content={row.status === 1 ? 'Đã liên hệ' : 'Chưa liên hệ'}
+                />
+              </TableCell>
+              <TableCell sx={{ maxWidth: 320, overflow: 'hidden' }}>
+                <Typography
+                  sx={{
+                    ...getLimitLineCss(1),
+                  }}
+                >
+                  {row.content}
+                </Typography>
+              </TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>{formatDateTime(row.created_at)}</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>{row.user?.name || '-'}</TableCell>
+              <TableCell sx={{ position: 'sticky', right: 0, backgroundColor: 'background.default' }}>
+                <Stack direction="row" spacing={1} justifyContent="center">
+                  <IconButton size="small" title="sửa" onClick={() => handleUpdate(row)}>
+                    <EditOutlined fontSize="small" />
                   </IconButton>
-                )}
-              </Stack>
-            </TableCell>
-          </TableRow>
-        )}
-      />
+                  {(role === 'admin' || role === 'root') && (
+                    <IconButton
+                      size="small"
+                      title="Xóa"
+                      onClick={() => {
+                        setSelected(row);
+                        setOpenConfirm(true);
+                      }}
+                    >
+                      <DeleteOutline fontSize="small" />
+                    </IconButton>
+                  )}
+                </Stack>
+              </TableCell>
+            </TableRow>
+          )}
+        />
+      </Box>
 
-      {Math.ceil(items.length / CONTACTS_PER_PAGE) > 1 && (
+      {Math.ceil(filteredContacts.length / CONTACTS_PER_PAGE) > 1 && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
           <Pagination
-            count={Math.ceil(items.length / CONTACTS_PER_PAGE)}
+            count={Math.ceil(filteredContacts.length / CONTACTS_PER_PAGE)}
             page={currentPage}
             variant="outlined"
             onChange={(event, value) => setCurrentPage(value)}
@@ -225,7 +247,7 @@ const ContactList: React.FC = () => {
         onConfirm={() => handleDelete(selected?.id!)}
       />
 
-      {/* View dialog (no Grid) */}
+      {/* View dialog */}
       <Dialog
         open={editOpen}
         onClose={() => {
@@ -283,13 +305,10 @@ const ContactList: React.FC = () => {
                 <Typography variant="body1">{(selected.title && StateLabelContact[selected.title]) || '-'}</Typography>
               </Box>
 
-              {/* Nội dung chiếm cả hàng */}
               <Box sx={{ gridColumn: '1 / -1' }}>
                 <Typography variant="caption" color="text.secondary">
                   Nội dung
                 </Typography>
-
-                {/* changed code */}
                 <Box
                   sx={{
                     mt: 1,
@@ -313,7 +332,6 @@ const ContactList: React.FC = () => {
                     {selected.content}
                   </Typography>
                 </Box>
-                {/* changed code */}
               </Box>
 
               <Box>

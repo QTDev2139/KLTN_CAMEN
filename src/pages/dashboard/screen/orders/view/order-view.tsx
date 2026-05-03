@@ -85,6 +85,35 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
     }
   };
 
+  const handleConfirmRefundCod = async () => {
+    setLoading(true);
+    try {
+      const amountNum = refundType === '02' ? order.grand_total : parseFloat(refundAmount as any) || 0;
+
+      if (amountNum > order.grand_total) {
+        snackbar('error', `Số tiền hoàn không được vượt quá ${FormatPrice(order.grand_total)}`);
+        setLoading(false);
+        return;
+      }
+
+      const updatePayload: any = {
+        status: 'refunded',
+        refund_amount: amountNum,
+        reason_refund: refundNote,
+      };
+      console.log('updatePayload', updatePayload);
+      await updateOrder(order.id, updatePayload);
+      snackbar('success', 'Đã xác nhận hoàn tiền COD');
+      if (onUpdateSuccess) await onUpdateSuccess();
+      onClose();
+    } catch (e) {
+      console.error(e);
+      snackbar('error', 'Hoàn tiền thất bại');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleConfirmRefund = async () => {
     setLoading(true);
     try {
@@ -131,9 +160,13 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
   };
 
   const handleRejectRefund = async () => {
+    if (!refundNote.trim()) {
+      snackbar('error', 'Vui lòng nhập lý do từ chối hoàn tiền');
+      return;
+    }
+    
     setLoading(true);
     try {
-      // Trả trạng thái về processing (hoặc thay đổi theo business rule)
       const res = await updateOrder(order.id, { status: 'refund_rejected', reason_refund: refundNote });
       snackbar('success', res.message || 'Đã từ chối hoàn tiền');
       if (onUpdateSuccess) await onUpdateSuccess();
@@ -225,40 +258,44 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
                     })}
                     {/* Trường ghi chú cho admin khi xử lý hoàn tiền */}
                   </Box>
-                    <Box sx={{ minWidth: 300, mt: 1 }}>
-                      <TextField
-                        fullWidth
-                        label="Ghi chú"
-                        placeholder="Nhập ghi chú xử lý hoàn tiền..."
-                        multiline
-                        minRows={2}
-                        value={refundNote}
-                        onChange={(e) => setRefundNote(e.target.value)}
+                  <Box sx={{ minWidth: 300, mt: 1 }}>
+                    <TextField
+                      fullWidth
+                      label="Ghi chú"
+                      placeholder="Nhập ghi chú xử lý hoàn tiền..."
+                      multiline
+                      minRows={2}
+                      value={refundNote}
+                      onChange={(e) => setRefundNote(e.target.value)}
+                      size="small"
+                    />
+                    <Box sx={{ mt: 1, display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <ToggleButtonGroup
                         size="small"
-                      />
-                      <Box sx={{ mt: 1, display: 'flex', gap: 1, alignItems: 'center' }}>
-                        <ToggleButtonGroup
-                          size="small"
-                          value={refundType}
-                          exclusive
-                          onChange={(_, v) => v && setRefundType(v)}
-                          aria-label="refund-type"
-                        >
-                          <ToggleButton value="02" aria-label="toàn bộ">Hoàn toàn bộ</ToggleButton>
-                          <ToggleButton value="03" aria-label="một phần">Hoàn một phần</ToggleButton>
-                        </ToggleButtonGroup>
+                        value={refundType}
+                        exclusive
+                        onChange={(_, v) => v && setRefundType(v)}
+                        aria-label="refund-type"
+                      >
+                        <ToggleButton value="02" aria-label="toàn bộ">
+                          Hoàn toàn bộ
+                        </ToggleButton>
+                        <ToggleButton value="03" aria-label="một phần">
+                          Hoàn một phần
+                        </ToggleButton>
+                      </ToggleButtonGroup>
 
-                        {refundType === '03' && (
-                          <TextField
-                            label="Số tiền hoàn (VND)"
-                            size="small"
-                            value={refundAmount}
-                            onChange={(e) => setRefundAmount(e.target.value.replace(/[^\d.]/g, ''))}
-                            sx={{ width: 160 }}
-                          />
-                        )}
-                      </Box>
+                      {refundType === '03' && (
+                        <TextField
+                          label="Số tiền hoàn (VND)"
+                          size="small"
+                          value={refundAmount}
+                          onChange={(e) => setRefundAmount(e.target.value.replace(/[^\d.]/g, ''))}
+                          sx={{ width: 160 }}
+                        />
+                      )}
                     </Box>
+                  </Box>
                 </Box>
               )}
             </Stack>
@@ -483,9 +520,15 @@ const OrderViewModal: React.FC<Props> = ({ open, onClose, order, editable = fals
             <Button onClick={handleRejectRefund} variant="outlined" color="inherit" disabled={loading}>
               Từ chối hoàn tiền
             </Button>
-            <Button onClick={handleConfirmRefund} variant="contained" color="primary" disabled={loading}>
-              Xác nhận hoàn tiền
-            </Button>
+            {order.payment_method === 'cod' ? (
+              <Button onClick={handleConfirmRefundCod} variant="contained" color="primary" disabled={loading}>
+                Xác nhận đã hoàn tiền
+              </Button>
+            ) : (
+              <Button onClick={handleConfirmRefund} variant="contained" color="primary" disabled={loading}>
+                Xác nhận hoàn tiền
+              </Button>
+            )}
           </>
         )}
       </DialogActions>

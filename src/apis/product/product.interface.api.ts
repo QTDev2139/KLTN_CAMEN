@@ -19,6 +19,7 @@ export interface ProductImage {
 
 export interface Product {
   id: number;
+  average_rating?: number;
   is_active: boolean;
   price: number;
   compare_at_price: string;
@@ -31,6 +32,9 @@ export interface Product {
 }
 
 export interface ProductDetail {
+  category?: any;
+  average_rating?: any;
+  is_active?: any;
   id?: number;
   price: number;
   compare_at_price: number;

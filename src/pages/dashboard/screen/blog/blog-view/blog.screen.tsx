@@ -1,6 +1,7 @@
-import { Button, Divider, Stack, Typography, useTheme } from '@mui/material';
+import { Button, Divider, Stack, Typography, useTheme, TextField } from '@mui/material';
 import { useState } from 'react';
 import { StackRowAlignCenter } from '~/components/elements/styles/stack.style';
+import SearchIcon from '@mui/icons-material/Search';
 
 import ListBlog from './list-blog';
 import CreateBlog from './create-blog';
@@ -12,6 +13,7 @@ export default function BlogScreen() {
 
   const [mode, setMode] = useState<BlogMode>(BlogMode.LIST);
   const [selected, setSelected] = useState<Post | null>(null);
+  const [searchTitle, setSearchTitle] = useState<string>('');
 
   const goList = () => {
     setSelected(null);
@@ -30,21 +32,36 @@ export default function BlogScreen() {
     <Stack spacing={2}>
       <StackRowAlignCenter sx={{ justifyContent: 'space-between' }}>
         <Typography variant="h3">Quản lý bài viết</Typography>
-        {mode === BlogMode.LIST && (
-          <Button onClick={goCreate}>
-            <Typography variant="subtitle2">Thêm bài viết mới</Typography>
-          </Button>
-        )}
-        {(mode === BlogMode.CREATE || mode === BlogMode.UPDATE) && (
-          <Button onClick={goList}>
-            <Typography variant="subtitle2">Quay Lại</Typography>
-          </Button>
-        )}
+        <Stack direction="row" spacing={2} alignItems="center">
+          {mode === BlogMode.LIST && (
+            <>
+              <TextField
+                placeholder="Tìm kiếm theo tên bài viết..."
+                size="small"
+                variant="outlined"
+                value={searchTitle}
+                onChange={(e) => setSearchTitle(e.target.value)}
+                sx={{ minWidth: 280 }}
+                InputProps={{
+                  startAdornment: <SearchIcon sx={{ mr: 1, color: 'action.active' }} />,
+                }}
+              />
+              <Button onClick={goCreate} variant="outlined">
+                <Typography variant="subtitle2">Thêm bài viết mới</Typography>
+              </Button>
+            </>
+          )}
+          {(mode === BlogMode.CREATE || mode === BlogMode.UPDATE) && (
+            <Button onClick={goList} variant="outlined">
+              <Typography variant="subtitle2">Quay Lại</Typography>
+            </Button>
+          )}
+        </Stack>
       </StackRowAlignCenter>
 
       <Divider sx={{ color: palette.divider }} />
 
-      {mode === BlogMode.LIST && <ListBlog onUpdate={goUpdate} />}
+      {mode === BlogMode.LIST && <ListBlog onUpdate={goUpdate} searchTitle={searchTitle} />}
       {(mode === BlogMode.CREATE || mode === BlogMode.UPDATE) && (
         <CreateBlog initial={selected ?? undefined} onSuccess={goList} />
       )}

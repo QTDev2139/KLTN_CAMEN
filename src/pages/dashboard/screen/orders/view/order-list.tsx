@@ -1,7 +1,7 @@
-import { ModeEditOutlineOutlined } from '@mui/icons-material';
-import { IconButton, TableCell, TableRow, Tooltip, Typography, Box, useTheme, Pagination } from '@mui/material';
+import { CancelOutlined, ModeEditOutlineOutlined } from '@mui/icons-material';
+import { IconButton, TableCell, TableRow, Tooltip, Typography, Box, Pagination, Badge } from '@mui/material';
 import React, { useEffect, useState, useMemo } from 'react';
-import { getOrders } from '~/apis/order/order.api';
+import { getOrders, updateOrder } from '~/apis/order/order.api';
 import { OrderDetail } from '~/apis/order/order.interface.api';
 import { formatDate } from '~/common/until/date-format.until';
 import { FormatPrice } from '~/components/elements/format-price/format-price.element';
@@ -21,19 +21,100 @@ import {
   statusLabelMap,
 } from '../order.state';
 import { getLimitLineCss } from '~/common/until/get-limit-line-css';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 
-const ListOrder: React.FC = () => {
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+type FilterType = 'day' | 'week' | 'month' | 'year' | 'custom';
+
+export interface OrderFilterProps {
+  filterType: FilterType;
+  startDate?: string;
+  endDate?: string;
+}
+
+interface ListOrderProps {
+  filter: OrderFilterProps;
+  searchCode?: string;
+  paymentType?: string;
+}
+
+const ListOrder: React.FC<ListOrderProps> = ({ filter, searchCode = '', paymentType = '' }) => {
   const [listOrder, setListOrder] = useState<OrderDetail[]>([]);
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [openConfirm, setOpenConfirm] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderDetail | null>(null);
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { snackbar } = useSnackbar();
   const [openView, setOpenView] = useState(false);
   const [editable, setEditable] = useState<boolean>(false);
   const [detailOrder, setDetailOrder] = useState<OrderDetail | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const ORDERS_PER_PAGE = 12;
+
+  // Thêm function để refresh danh sách
+  const fetchListOrder = async () => {
+    try {
+      setLoading(true);
+      const result = await getOrders();
+      let filtered = result || [];
+
+      // Apply date range filter
+      if (filter.startDate || filter.endDate) {
+        filtered = filtered.filter((order) => {
+          const orderDate = dayjs(order.created_at);
+          const startDate = filter.startDate ? dayjs(filter.startDate).startOf('day') : dayjs('1970-01-01');
+          const endDate = filter.endDate ? dayjs(filter.endDate).endOf('day') : dayjs();
+
+          return orderDate.isAfter(startDate) && orderDate.isBefore(endDate);
+        });
+      } else {
+        // Apply predefined filters
+        const now = dayjs();
+
+        if (filter.filterType === 'day') {
+          const today = now.startOf('day');
+          filtered = filtered.filter((o) => dayjs(o.created_at).isAfter(today));
+        } else if (filter.filterType === 'week') {
+          const weekStart = now.startOf('week');
+          filtered = filtered.filter((o) => dayjs(o.created_at).isAfter(weekStart));
+        } else if (filter.filterType === 'month') {
+          const monthStart = now.startOf('month');
+          filtered = filtered.filter((o) => dayjs(o.created_at).isAfter(monthStart));
+        } else if (filter.filterType === 'year') {
+          const yearStart = now.startOf('year');
+          filtered = filtered.filter((o) => dayjs(o.created_at).isAfter(yearStart));
+        }
+      }
+
+      // Apply search filter
+      if (searchCode) {
+        filtered = filtered.filter((order) => order.code.toLowerCase().includes(searchCode.toLowerCase()));
+      }
+
+      // Apply payment type filter
+      if (paymentType) {
+        filtered = filtered.filter((order) => order.payment_method === paymentType);
+      }
+
+      setListOrder(filtered);
+      setCurrentPage(1); // Reset pagination when fetching new data
+    } catch (error) {
+      console.error(error);
+      snackbar('error', 'Không tải được danh sách đơn hàng');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchListOrder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, searchCode, paymentType]);
 
   const filteredOrders = useMemo(() => {
     if (activeFilter === 'all') return listOrder;
@@ -42,6 +123,21 @@ const ListOrder: React.FC = () => {
     }
     return listOrder.filter((o) => o.status === activeFilter);
   }, [listOrder, activeFilter]);
+
+  // Badge counts for filters
+  const filterCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: listOrder.length || 0 };
+    ORDER_FILTERS.forEach((f) => {
+      if (f.value === 'all') return;
+      if (f.value === 'refunded') {
+        // Only count refund_requested for badge display
+        counts[f.value] = listOrder.filter((o) => o.status === 'refund_requested').length;
+      } else {
+        counts[f.value] = listOrder.filter((o) => o.status === f.value).length;
+      }
+    });
+    return counts;
+  }, [listOrder]);
 
   // Paginate filtered orders
   const paginatedOrders = useMemo(() => {
@@ -53,40 +149,23 @@ const ListOrder: React.FC = () => {
     setCurrentPage(1); // Reset to first page when filter changes
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmCancel = async () => {
     if (!selectedOrder) return;
     setLoadingDelete(true);
     try {
-      // TODO: Implement delete order API
-      // await deleteOrder(selectedOrder.id);
+      await updateOrder(selectedOrder.id, { status: 'cancelled' });
+      console.log('Canceling order with id:', selectedOrder.id);
       setListOrder((prev) => prev.filter((o) => o.id !== selectedOrder.id));
-      snackbar('success', 'Xóa đơn hàng thành công');
+      snackbar('success', 'Hủy đơn hàng thành công');
     } catch (error) {
       console.error(error);
-      snackbar('error', 'Xóa đơn hàng thất bại');
+      snackbar('error', 'Hủy đơn hàng thất bại');
     } finally {
       setLoadingDelete(false);
       setOpenConfirm(false);
       setSelectedOrder(null);
     }
   };
-
-  // Thêm function để refresh danh sách
-  const fetchListOrder = async () => {
-    try {
-      const result = await getOrders();
-      setListOrder(result || []);
-      setCurrentPage(1); // Reset pagination when fetching new data
-    } catch (error) {
-      console.error(error);
-      snackbar('error', 'Không tải được danh sách đơn hàng');
-    }
-  };
-
-  useEffect(() => {
-    fetchListOrder();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const columns = [
     { id: 'stt', label: 'STT' },
@@ -110,13 +189,14 @@ const ListOrder: React.FC = () => {
           userSelect: 'none',
         }}
       >
-        {ORDER_FILTERS.map((filter) => {
-          const active = activeFilter === filter.value;
+        {ORDER_FILTERS.map((filterItem) => {
+          const active = activeFilter === filterItem.value;
+          const SHOW_BADGE_FOR = ['pending', 'processing', 'shipped', 'refunded'];
           return (
             <Box
-              key={filter.value}
+              key={filterItem.value}
               component="div"
-              onClick={() => handleFilterChange(filter.value)}
+              onClick={() => handleFilterChange(filterItem.value)}
               sx={{
                 px: 2,
                 py: 0.75,
@@ -140,18 +220,25 @@ const ListOrder: React.FC = () => {
                 },
               }}
             >
-              <Typography
-                variant="subtitle2"
-                sx={{
-                  fontWeight: 600,
-                  lineHeight: 1.4,
-                  minWidth: 90,
-                  textAlign: 'center',
-                  letterSpacing: 0.15,
-                }}
+              <Badge
+                badgeContent={filterCounts[filterItem.value] ?? 0}
+                color="primary"
+                invisible={!(SHOW_BADGE_FOR.includes(filterItem.value) && (filterCounts[filterItem.value] ?? 0) > 0)}
+                sx={{ '& .MuiBadge-badge': { fontSize: 11, minWidth: 20, height: 20 } }}
               >
-                {filter.label}
-              </Typography>
+                <Typography
+                  variant="subtitle2"
+                  sx={{
+                    fontWeight: 600,
+                    lineHeight: 1.4,
+                    minWidth: 90,
+                    textAlign: 'center',
+                    letterSpacing: 0.15,
+                  }}
+                >
+                  {filterItem.label}
+                </Typography>
+              </Badge>
             </Box>
           );
         })}
@@ -168,7 +255,7 @@ const ListOrder: React.FC = () => {
           rows={paginatedOrders}
           renderRow={(order, index) => (
             <TableRow hover key={order.id ?? index}>
-              <TableCell sx={{ padding: '0 16px' }} >
+              <TableCell sx={{ padding: '0 16px' }}>
                 <Typography sx={{ textAlign: 'center' }}>{(currentPage - 1) * ORDERS_PER_PAGE + index + 1}</Typography>
               </TableCell>
               <TableCell sx={{ padding: '0 16px' }}>
@@ -217,22 +304,39 @@ const ListOrder: React.FC = () => {
                       <VisibilityOutlinedIcon />
                     </IconButton>
                   </Tooltip>
+
                   <Tooltip title="Sửa">
-                    <IconButton
-                      onClick={() => {
-                        setDetailOrder(order);
-                        setEditable(true);
-                        setOpenView(true);
-                      }}
-                      disabled={
-                        order.status === 'completed' ||
-                        order.status === 'cancelled' ||
-                        order.status === 'refunded' ||
-                        order.status === 'refund_requested'
-                      }
-                    >
-                      <ModeEditOutlineOutlined />
-                    </IconButton>
+                    <span>
+                      <IconButton
+                        onClick={() => {
+                          setDetailOrder(order);
+                          setEditable(true);
+                          setOpenView(true);
+                        }}
+                        disabled={
+                          order.status === 'completed' ||
+                          order.status === 'cancelled' ||
+                          order.status === 'refunded' ||
+                          order.status === 'refund_requested'
+                        }
+                      >
+                        <ModeEditOutlineOutlined />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
+
+                  <Tooltip title="Hủy">
+                    <span>
+                      <IconButton
+                        disabled={order.status !== 'pending' && order.status !== 'processing'}
+                        onClick={() => {
+                          setSelectedOrder(order);
+                          setOpenConfirm(true);
+                        }}
+                      >
+                        <CancelOutlined />
+                      </IconButton>
+                    </span>
                   </Tooltip>
                 </StackRowJustCenter>
               </TableCell>
@@ -254,13 +358,14 @@ const ListOrder: React.FC = () => {
 
       <ModalConfirm
         open={openConfirm}
-        title="Xóa đơn hàng"
-        message={`Bạn có chắc muốn xóa đơn hàng "${selectedOrder?.code}" không?`}
+        size='sm'
+        title="Hủy đơn hàng"
+        message={`Bạn có chắc muốn hủy đơn hàng "${selectedOrder?.code}" không?`}
         onClose={() => {
           setOpenConfirm(false);
           setSelectedOrder(null);
         }}
-        onConfirm={handleConfirmDelete}
+        onConfirm={handleConfirmCancel}
         loading={loadingDelete}
       />
       <OrderViewModal

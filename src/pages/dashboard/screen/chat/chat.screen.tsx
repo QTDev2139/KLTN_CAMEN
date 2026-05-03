@@ -519,9 +519,10 @@ const ChatScreen: React.FC = () => {
                 const rows: React.ReactNode[] = [];
                 let lastDateKey = '';
                 messages.forEach((msg) => {
-                  // Kiểm tra nếu sender là khách hàng (role_id = 4) thì hiển thị bên trái
-                  // Ngược lại (nhân viên/staff) thì hiển thị bên phải
-                  const isCustomerMessage = msg.sender?.role_id === 4;
+                  // Xác định tin nhắn của khách hàng: ưu tiên so sánh sender_id với customer_id của room
+                  const isCustomerMessage =
+                    (selectedRoom && msg.sender_id === selectedRoom.customer_id) ||
+                    msg.sender?.role_id === 4;
                   const isMine = !isCustomerMessage;
 
                   const dateKey = msg.created_at ? new Date(msg.created_at).toDateString() : 'unknown';

@@ -188,7 +188,8 @@ const ListCoupon: React.FC = () => {
                     disabled={
                       (role !== 'root' && coupon.state === 'rejected') ||
                       (role === 'root' && coupon.state !== 'pending') ||
-                      (role !== 'root' && coupon.state === 'pending')
+                      (role !== 'root' && coupon.state === 'pending') ||
+                      role === 'staff'
                     }
                   >
                     {/* Thay root bằng giám đốc  */}
@@ -196,7 +197,7 @@ const ListCoupon: React.FC = () => {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Xóa">
-                  <IconButton onClick={() => handleOpenConfirm(coupon)}>
+                  <IconButton disabled={role === 'staff'} onClick={() => handleOpenConfirm(coupon)}>
                     <DeleteOutline />
                   </IconButton>
                 </Tooltip>
